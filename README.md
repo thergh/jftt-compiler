@@ -1,1 +1,1 @@
-The program compiles programs written in a custom language to a version of assembly.
+Program compiles programs written in a custom language specified by a grammar to a version of assembly.
