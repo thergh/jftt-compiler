@@ -24,7 +24,7 @@ class MyParser(Parser):
     
     @_('')
     def procedures(self, p):
-        return ('procs_empty')
+        return [('procs_empty')]
     
     
     @_('PROGRAM IS declarations BEGIN commands END')
@@ -45,7 +45,7 @@ class MyParser(Parser):
         return ('comms_comm', p[0])
     
     
-    @_('identifier ASSIGN expression')
+    @_('identifier ASSIGN expression ";"')
     def command(self, p):
         return ('comm_id_ASSIGN_expr', p[0], p[2])
     
@@ -75,20 +75,20 @@ class MyParser(Parser):
         return ('comm_FOR_PID_FROM_val_DOWNTO_val_DO_comm_ENDFOR',
                 p.PID, p[3], p[5], p[7])
     
-    @_('proc_call')
+    @_('proc_call ";"')
     def command(self, p):
         return ('comm_pcall', p[0])
     
-    @_('READ identifier')
+    @_('READ identifier ";"')
     def command(self, p):
         return ('comm_READ_id', p[1])
     
-    @_('WRITE value')
+    @_('WRITE value ";"')
     def command(self, p):
         return ('comm_WRITE_val', p[1])
     
     
-    @_('PID "(" args ")"')
+    @_('PID "(" args_decl ")"')
     def proc_head(self, p):
         return ('phead_PID_ard', p.PID, p[2])
     
@@ -187,31 +187,31 @@ class MyParser(Parser):
         return ('id', p.PID)
     
     
-# if __name__ == '__main__':
-#     lexer = MyLexer()
-#     parser = MyParser()
-
-#     with open('../examples/program0.imp', 'r') as file:
-#         data = file.read()
-        
-#     tokens = lexer.tokenize(data)
-    
-#     result = parser.parse(tokens)
-    
-#     print(result)
-
-
 if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
 
-    while True:
-        try:
-            text = input('calc > ')
-            result = parser.parse(lexer.tokenize(text))
-            print(result)
-        except EOFError:
-            break
+    with open('examples/program0.imp', 'r') as file:
+        data = file.read()
+        
+    tokens = lexer.tokenize(data)
+    
+    result = parser.parse(tokens)
+    
+    print(result)
+
+
+# if __name__ == '__main__':
+#     lexer = MyLexer()
+#     parser = MyParser()
+
+#     while True:
+#         try:
+#             text = input('calc > ')
+#             result = parser.parse(lexer.tokenize(text))
+#             print(result)
+#         except EOFError:
+#             break
         
         
     

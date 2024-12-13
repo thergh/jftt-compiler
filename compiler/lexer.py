@@ -5,7 +5,7 @@ class MyLexer(Lexer):
     
     tokens = {PROCEDURE, IS, BEGIN, END, PROGRAM, IF, THEN, ELSE, ENDIF,
               WHILE, DO, ENDWHILE, REPEAT, UNTIL, FOR, FROM, TO, ENDFOR,
-              READ, WRITE, PID, NUM, T, NE, GE, LE, ASSIGN}
+              READ, WRITE, PID, NUM, T, NE, GE, LE, ASSIGN, DOWNTO}
     
     literals = {'+', '-', '*', '/', '%', '=', '>', '<', '(', ')',
                 '[', ']', ',', ';', ':'}
@@ -37,6 +37,7 @@ class MyLexer(Lexer):
     GE = r'>='
     LE = r'<='
     ASSIGN = r':='
+    DOWNTO = r'DOWNTO'
     
     
     
