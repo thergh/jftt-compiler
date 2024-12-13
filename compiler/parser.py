@@ -7,6 +7,20 @@ class MyParser(Parser):
     tokens = MyLexer.tokens
     
     
+    
+    @_('value "+" value',
+       'value "-" value',
+       'value "*" value',
+       'value "/" value',
+       'value "%" value',)
+    def expression(self, p):
+        return ('expr')
+    
+    @_('value')
+    def expression(self, p):
+        return ('expr_val', p[0])
+    
+    
     @_('value "=" value',
        'value NE value',
        'value ">" value',
@@ -14,7 +28,7 @@ class MyParser(Parser):
        'value GE value',
        'value LE value',
        )
-    def condidtion(self, p):
+    def condition(self, p):
         return ('cond', p[1], p[0], p[2])
     
     
