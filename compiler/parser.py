@@ -7,6 +7,16 @@ class MyParser(Parser):
     tokens = MyLexer.tokens
     
     
+    @_('value "=" value',
+       'value NE value',
+       'value ">" value',
+       'value "<" value',
+       'value GE value',
+       'value LE value',
+       )
+    def condidtion(self, p):
+        return ('cond', p[1], p[0], p[2])
+    
     
     @_('NUM')
     def value(self, p):

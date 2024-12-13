@@ -5,10 +5,10 @@ class MyLexer(Lexer):
     
     tokens = {PROCEDURE, IS, BEGIN, END, PROGRAM, IF, THEN, ELSE, ENDIF,
               WHILE, DO, ENDWHILE, REPEAT, UNTIL, FOR, FROM, TO, ENDFOR,
-              READ, WRITE, PID, NUM, T}
+              READ, WRITE, PID, NUM, T, NE, GE, LE, ASSIGN}
     
-    literals = {'+', '-', '*', '/', '%', '=', '!=', '>', '<', '>=', '<=',
-                '(', ')', '[', ']', ',', ';', ':', ':='}
+    literals = {'+', '-', '*', '/', '%', '=', '>', '<', '(', ')',
+                '[', ']', ',', ';', ':'}
     
     PROCEDURE = r'PROCEDURE'
     IS = r'IS'
@@ -22,8 +22,8 @@ class MyLexer(Lexer):
     WHILE = r'WHILE'
     DO = r'DO'
     ENDWHILE = r'ENDWHILE'
-    REPEAT =r'REPEAT'
-    UNTIL =r'UNTIL'
+    REPEAT = r'REPEAT'
+    UNTIL = r'UNTIL'
     FOR = r'FOR'
     FROM = r'FROM'
     TO = r'TO'
@@ -33,6 +33,13 @@ class MyLexer(Lexer):
     T = r'T'    
     PID = r'[_a-z]+'
     NUM = r'0|[1-9]+[0-9]*'
+    NE = r'!='
+    GE = r'>='
+    LE = r'<='
+    ASSIGN = r':='
+    
+    
+    
     
     ignore = ' \t'
     
