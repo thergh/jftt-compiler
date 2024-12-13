@@ -191,7 +191,7 @@ if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
 
-    with open('examples/program0.imp', 'r') as file:
+    with open('examples/program3.imp', 'r') as file:
         data = file.read()
         
     tokens = lexer.tokenize(data)
