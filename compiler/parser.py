@@ -81,7 +81,7 @@ class MyParser(Parser):
     
     @_('READ identifier ";"')
     def command(self, p):
-        return ('comm=READ_id', p[1])
+        return ('comm=READ_id_;', p[1])
     
     @_('WRITE value ";"')
     def command(self, p):
@@ -104,7 +104,7 @@ class MyParser(Parser):
     
     @_('declarations "," PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
-        return ('decs=decs_PID_[_NUM_:_NUM_]', p[0], p.PID, p[4], p[6])
+        return ('decs=decs_,_PID_[_NUM_:_NUM_]', p[0], p.PID, p[4], p[6])
     
     @_('PID')
     def declarations(self, p):
