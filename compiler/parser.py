@@ -132,7 +132,7 @@ class MyParser(Parser):
         return ('ard_T_PID', p[0], p.PID)
     
     
-    @_('args PID')
+    @_('args "," PID')
     def args(self, p):
         return ('ar_ar_PID', p[0], p[1])
     

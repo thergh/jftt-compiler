@@ -11,14 +11,15 @@ class MyLexer(Lexer):
                 '[', ']', ',', ';', ':'}
     
     PROCEDURE = r'PROCEDURE'
+    DOWNTO = r'DOWNTO'
     IS = r'IS'
     BEGIN = r'BEGIN'
-    END = r'END'
     PROGRAM = r'PROGRAM'
     IF = r'IF'
     THEN = r'THEN'
     ELSE = r'ELSE'
     ENDIF = r'ENDIF'
+    END = r'END'
     WHILE = r'WHILE'
     DO = r'DO'
     ENDWHILE = r'ENDWHILE'
@@ -37,7 +38,7 @@ class MyLexer(Lexer):
     GE = r'>='
     LE = r'<='
     ASSIGN = r':='
-    DOWNTO = r'DOWNTO'
+
     
     
     
