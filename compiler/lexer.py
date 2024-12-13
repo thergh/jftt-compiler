@@ -1,5 +1,6 @@
 from sly import Lexer
 
+
 class MyLexer(Lexer):
     
     tokens = {PROCEDURE, IS, BEGIN, END, PROGRAM, IF, THEN, ELSE, ENDIF,
@@ -35,10 +36,7 @@ class MyLexer(Lexer):
     
     ignore = ' \t'
     
-    ignore_comment = r'\#.*'
-    
-    ignore_newline = r'\n+'
-    
+    ignore_comment = r'\#.*' 
     
     @_(r'\n+')
     def ignore_newline(self, t):
@@ -47,3 +45,15 @@ class MyLexer(Lexer):
     def error(self, t):
         print("Line %d: Wrong character %r '%s'" % (self.lineno, t.value[0]))
         self.index += 1
+        
+        
+        
+if __name__ == '__main__':
+    
+    lexer = MyLexer()
+    
+    with open('../examples/program0.imp', 'r') as file:
+        data = file.read()
+        
+    for token in lexer.tokenize(data):
+        print('type=%r, value=%r' % (token.type, token.value))
