@@ -19,6 +19,7 @@ class ProceduresType(Enum):
     SHORT = 'SHORT'
     EMPTY = 'EMPTY'
     
+    
 class Procedures(ASTNode):
     def __init__(self, procedures_type, **kwargs):
         super().__init__()
@@ -34,6 +35,7 @@ class MainType(Enum):
     LONG = 'LONG'    
     SHORT = 'SHORT'
 
+
 class Main(ASTNode):
     def __init__(self, main_type, **kwargs):
         super().__init__()
@@ -46,14 +48,15 @@ class Main(ASTNode):
         
         
 class CommandsType(Enum):
-    PLURAL = 'PLURAL'
+    REC = 'REC'
     SINGLE = 'SINGLE'    
+        
         
 class Commands(ASTNode):
     def __init__(self, commands_type,  **kwargs):
         super().__init__()
         
-        if not isinstance(commands_type, MainType):
+        if not isinstance(commands_type, CommandsType):
             raise ValueError("Invalid type")
         
         self.commands_type = commands_type
@@ -71,6 +74,7 @@ class CommandType(Enum):
     PROC_CALL = 'PROC_CALL'
     READ = 'READ'
     WRITE = 'WRITE'    
+    
     
 class Command(ASTNode):
     def __init__(self, command_type, **kwargs):
@@ -98,8 +102,8 @@ class ProcCall(ASTNode):
         
 
 class DeclarationsType(Enum):
-    PLURAL_PID = 'PLURAL_PID'
-    PLURAL_TABLE = 'PLURAL_TABLE'
+    REC_PID = 'REC_PID'
+    REC_TABLE = 'REC_TABLE'
     SINGLE_PID = 'SINGLE_PID'
     SINGLE_TABLE = 'SINGLE_TABLE'
     
@@ -116,10 +120,11 @@ class Declarations(ASTNode):
         
 
 class ArgsDeclType(Enum):
-    PLURAL_PID = 'PLURATL_PID'
-    PLURAL_T = 'PLURAL_T'
+    REC_PID = 'PLURATL_PID'
+    REC_T = 'REC_T'
     SINGLE_PID = 'SINGLE_PID'
     SINGLE_T = 'SINGLE_T'    
+          
           
 class ArgsDecl(ASTNode):
     def __init__(self, args_decl_type, **kwargs):
@@ -133,8 +138,9 @@ class ArgsDecl(ASTNode):
         
         
 class ArgsType(Enum):
-    PLURAL = 'PLURAL'
+    REC = 'REC'
     SINGLE = 'SINGLE'        
+        
         
 class Args(ASTNode):
     def __init__(self, args_type, **kwargs):
@@ -147,12 +153,19 @@ class Args(ASTNode):
         self.attributes = kwargs
         
     
+class ExpressionType(Enum):
+    VALUE = 'VALUE'    
+    OPER = 'OPER'
+
 class Expression(ASTNode):
-    def __init__(self, value1=None, value2=None, operator=None):
+    def __init__(self, expression_type, **kwargs):
         super().__init__()
-        self.value1 = value1
-        self.value2 = value2
-        self.operator = operator
+
+        if not isinstance(expression_type, ExpressionType):
+            raise ValueError("Invalid type")
+
+        self.expression_type = expression_type
+        self.attributes = kwargs
         
         
 class Condition(ASTNode):
@@ -166,6 +179,7 @@ class Condition(ASTNode):
 class ValueType(Enum):
     NUM = 'NUM'
     ID = 'ID'
+        
         
 class Value(ASTNode):
     def __init__(self, value_type, **kwargs):
@@ -182,6 +196,7 @@ class IdentifierType(Enum):
     PID_TABLE = 'PID_TABLE'
     NUM_TABLE = 'NUM_TABLE'
     PID = 'PID'
+        
         
 class Identifier(ASTNode):
     def __init__(self, identifier_type, **kwargs):
@@ -203,7 +218,7 @@ class MyParser(Parser):
     @_('procedures main')
     def program_all(self, p):
         return ProgramAll(p[0], p[1])
-    
+
     
     @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
     def procedures(self, p):
@@ -229,11 +244,11 @@ class MyParser(Parser):
     
     @_('commands command')
     def commands(self, p):
-        return ('comms=comms_comm', p[0], p[1])
+        return Commands(CommandsType.REC, commands=p[0], command=p[1])
     
     @_('command')
     def commands(self, p):
-        return ('comms=comm', p[0])
+        return Commands(CommandsType.SINGLE, command=p[0])
     
     
     @_('identifier ASSIGN expression ";"')
@@ -242,99 +257,97 @@ class MyParser(Parser):
     
     @_('IF condition THEN commands ELSE commands ENDIF')
     def command(self, p):
-        return ('comm=IF_cond_THEN_comm_ELSE_comm_ENDIF', p[1], p[3], p[5])
+        return Command(CommandType.IF_ELSE, condition=p[1], commands1=p[3], commands2=p[5])
     
     @_('IF condition THEN commands ENDIF')
     def command(self, p):
-        return ('comm=IF_cond_THEN_cond_ENDIF', p[1], p[3])
+        return Command(CommandType.IF, condition=p[1], commands=p[3])
     
     @_('WHILE condition DO commands ENDWHILE')
     def command(self, p):
-        return ('comm=WHILE_cond_DO_comm_ENDWHILE', p[1], p[3])
+        return Command(CommandType.WHILE, condition=p[1], commands=p[3])
     
     @_('REPEAT commands UNTIL condition ";"')
     def command(self, p):
-        return ('comm=REPEAT_comm_UNTIL_cond_;', p[1], p[3])
+        return Command(CommandType.REPEAT, commands=p[1], condition=p[3])
     
     @_('FOR PID FROM value TO value DO commands ENDFOR')
     def command(self, p):
-        return ('comm=FROM_PID_FROM_val_TO_val_DO_comm_ENDFOR',
-                p.PID, p[3], p[5], p[7])
+        return Command(CommandType.FOR, PID=p.PID, value1=p[3], value2=p[5], commands=p[7])
     
     @_('FOR PID FROM value DOWNTO value DO commands ENDFOR')
     def command(self, p):
-        return ('comm=FOR_PID_FROM_val_DOWNTO_val_DO_comm_ENDFOR',
-                p.PID, p[3], p[5], p[7])
+        return Command(CommandType.FOR_DOWN, PID=p.PID, value1=p[3], value2=p[5], commands=p[7])
     
     @_('proc_call ";"')
     def command(self, p):
-        return ('comm=pcall_;', p[0])
+        return Command(CommandType.PROC_CALL, proc_call=p[0])
     
     @_('READ identifier ";"')
     def command(self, p):
-        return ('comm=READ_id_;', p[1])
+        return Command(CommandType.READ, idenditief=p[1])
     
     @_('WRITE value ";"')
     def command(self, p):
-        return ('comm=WRITE_val_;', p[1])
+        return Command(CommandType.WRITE, value=p[1])
     
     
     @_('PID "(" args_decl ")"')
     def proc_head(self, p):
-        return ('phead=PID_(_ard_)', p.PID, p[2])
+        return ProcHead(p.PID, p[2])
     
     
     @_('PID "(" args ")"')
     def proc_call(self, p):
-        return ('pcall=PID_(_ar_)', p.PID, p[2])
+        return ProcCall(p.PID, p[2])
     
     
     @_('declarations "," PID')
     def declarations(self, p):
-        return ('decs=decs_,_PID', p[0], p[2])
+        return Declarations(DeclarationsType.REC_PID, declarations=p[0], PID=p.PID)
     
     @_('declarations "," PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
-        return ('decs=decs_,_PID_[_NUM_:_NUM_]', p[0], p.PID, p[4], p[6])
+        return Declarations(DeclarationsType.REC_TABLE, declarations=p[0], PID=p.PID, num1=p[4], num2=p[6])
     
     @_('PID')
     def declarations(self, p):
-        return ('decs=PID', p.PID)
+        return Declarations(DeclarationsType.SINGLE_PID, PID=p.PID)
     
     @_('"T" PID')
     def declarations(self, p):
-        return ('decs=T_PID', p.PID)    
+        return Declarations(DeclarationsType.SINGLE_TABLE, PID=p.PID)
         
     
     @_('args_decl "," PID')
     def args_decl(self, p):
-        return ('ard=ard_,_PID', p[0], p[2])
+        return ArgsDecl(ArgsDeclType.REC_PID, args_decl=p[0], PID=p.PID)
     
     @_('args_decl "," "T" PID')
     def args_decl(self, p):
-        return ('ard=ard_T_PID', p[0], p[3])    
+        return ArgsDecl(ArgsDeclType.REC_T, args_decl=p[0], PID=p.PID)
             
     @_('PID')
     def args_decl(self, p):
-        return ('ard=PID', p.PID)   
+        return ArgsDecl(ArgsDeclType.SINGLE_PID, PID=p.PID)
     
     @_('"T" PID')
     def args_decl(self, p):
-        return ('ard=T_PID', p[0], p.PID)
+        return ArgsDecl(ArgsDeclType.SINGLE_T, PID=p.PID)
     
     
     @_('args "," PID')
     def args(self, p):
-        return ('ar=ar_,_PID', p[0], p[2])
+        return Args(ArgsType.REC, args=p[0], PID=p.PID)
     
     @_('PID')
     def args(self, p):
-        return ('ar=PID', p[0])
+        return Args(ArgsType.SINGLE, PID=p.PID)
     
     
     @_('value')
     def expression(self, p):
-        return ('expr=val', p[0])
+        return Expression(ExpressionType.VALUE, value=p[0])
 
     @_('value "+" value',
        'value "-" value',
@@ -342,7 +355,7 @@ class MyParser(Parser):
        'value "/" value',
        'value "%" value',)
     def expression(self, p):
-        return ('expr=val_*_val')
+        return Expression(ExpressionType.OPER, value1=p[0], value2=p[2], operator=p[1])
     
     
     @_('value "=" value',
@@ -353,29 +366,29 @@ class MyParser(Parser):
        'value LE value',
        )
     def condition(self, p):
-        return ('cond=val_?_val', p[1], p[0], p[2])
+        return Condition(p[0], p[2], p[1])
     
     
     @_('NUM')
     def value(self, p):
-        return ('val=NUM', p.NUM)
+        return Value(ValueType.NUM, value=p[0])
         
     @_('identifier')
     def value(self, p):
-        return('val=id', p[0])
+        return Value(ValueType.ID, identifier=p[0])
     
     
     @_('PID "[" PID "]"')
     def identifier(self, p):
-        return ('id=PID_[_PID_]', p[0], p[2])
+        return Identifier(IdentifierType.PID_TABLE, PID1=p[0], PID2=p[2])
         
     @_('PID "[" NUM "]"')  
     def identifier(self, p):
-        return ('id=[_num_]', p.PID, p.NUM)
+        return Identifier(IdentifierType.NUM_TABLE, PID=p.PID, NUM=p.NUM)
         
     @_('PID')  
     def identifier(self, p):
-        return ('id=PID', p.PID)
+        return Identifier(IdentifierType.PID, PID=p.PID)
     
     
 if __name__ == '__main__':
