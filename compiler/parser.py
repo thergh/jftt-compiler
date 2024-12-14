@@ -50,10 +50,14 @@ class CommandsType(Enum):
     SINGLE = 'SINGLE'    
         
 class Commands(ASTNode):
-    def __init__(self, commands=None, command=None):
+    def __init__(self, commands_type,  **kwargs):
         super().__init__()
-        self.commands = commands
-        self.command = command
+        
+        if not isinstance(commands_type, MainType):
+            raise ValueError("Invalid type")
+        
+        self.commands_type = commands_type
+        self.attributes = kwargs
         
         
 class CommandType(Enum):
@@ -101,12 +105,14 @@ class DeclarationsType(Enum):
     
         
 class Declarations(ASTNode):
-    def __init__(self, declarations=None, PID=None, NUM1=None, NUM2=None):
+    def __init__(self, declarations_type, **kwargs):
         super().__init__()
-        self.declarations = declarations
-        self.PID = PID
-        self.NUM1 = NUM1
-        self.NUM2 = NUM2
+        
+        if not isinstance(declarations_type, DeclarationsType):
+            raise ValueError("Invalid type")
+          
+        self.declarations_type = declarations_type
+        self.attributes = kwargs
         
 
 class ArgsDeclType(Enum):
@@ -116,10 +122,14 @@ class ArgsDeclType(Enum):
     SINGLE_T = 'SINGLE_T'    
           
 class ArgsDecl(ASTNode):
-    def __init__(self, args_decl=None, PID=None):
+    def __init__(self, args_decl_type, **kwargs):
         super().__init__()
-        self.args_decl = args_decl
-        self.PID = PID
+        
+        if not isinstance(args_decl_type, ArgsDeclType):
+            raise ValueError("Invalid type")
+        
+        self.args_decl_type = args_decl_type
+        self.attributes = kwargs
         
         
 class ArgsType(Enum):
@@ -127,10 +137,14 @@ class ArgsType(Enum):
     SINGLE = 'SINGLE'        
         
 class Args(ASTNode):
-    def __init__(self, args=None, PID=None):
+    def __init__(self, args_type, **kwargs):
         super().__init__()
-        self.args = args
-        self.PID = PID
+        
+        if not isinstance(args_type, ArgsType):
+            raise ValueError("Invalid type")
+        
+        self.args_type = args_type
+        self.attributes = kwargs
         
     
 class ExpressionType(Enum):
@@ -142,13 +156,17 @@ class ExpressionType(Enum):
     SINGLE = 'SINGLE'    
     
 class Expression(ASTNode):
-    def __init__(self, value1=None, value2=None):
+    def __init__(self, expression_type, **kwargs):
         super().__init__()
-        self.value1 = value1
-        self.value2 = value2
+        
+        if not isinstance(expression_type, ExpressionType):
+            raise ValueError("Invalid type")
+        
+        self.expression_type = expression_type
+        self.attributes = kwargs
         
         
-class Condition(Enum):
+class ConditionType(Enum):
     EQ = 'EQ'
     NE = 'NE'
     G = 'G'
@@ -157,10 +175,14 @@ class Condition(Enum):
     LE = 'LE'
 
 class Condition(ASTNode):
-    def __init__(self, value1=None, value2=None):
+    def __init__(self, condition_type, **kwargs):
         super().__init__()
-        self.value1 = value1
-        self.value2 = value2
+        
+        if not isinstance(condition_type, ConditionType):
+            raise ValueError("Invalid type")
+        
+        self.condition_type = condition_type
+        self.attributes = kwargs
         
         
 class ValueType(Enum):
@@ -168,10 +190,14 @@ class ValueType(Enum):
     ID = 'ID'
         
 class Value(ASTNode):
-    def __init__(self, NUM=None, identifier=None):
+    def __init__(self, value_type, **kwargs):
         super().__init__()
-        self.NUM = NUM
-        self.identifier = identifier
+        
+        if not isinstance(value_type, ValueType):
+            raise ValueError("Invalid type")
+        
+        self.value_type = value_type
+        self.attributes = kwargs
         
         
 class IdentifierType(Enum):
@@ -180,11 +206,14 @@ class IdentifierType(Enum):
     PID = 'PID'
         
 class Identifier(ASTNode):
-    def __init__(self, PID1=None, PID2=None, NUM=None):
+    def __init__(self, identifier_type, **kwargs):
         super().__init__()
-        self.PID1 = PID1
-        self.PID2 = PID2
-        self.NUM = NUM
+        
+        if not isinstance(identifier_type, IdentifierType):
+            raise ValueError("Invalid type")
+        
+        self.identifier_type = identifier_type
+        self.attributes = kwargs
             
     
     
