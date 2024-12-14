@@ -147,42 +147,20 @@ class Args(ASTNode):
         self.attributes = kwargs
         
     
-class ExpressionType(Enum):
-    ADD = 'ADD'
-    SUB = 'SUB'
-    MUL = 'MUL'
-    DIV ='DIV'
-    MOD = 'MOD'
-    SINGLE = 'SINGLE'    
-    
 class Expression(ASTNode):
-    def __init__(self, expression_type, **kwargs):
+    def __init__(self, value1=None, value2=None, operator=None):
         super().__init__()
-        
-        if not isinstance(expression_type, ExpressionType):
-            raise ValueError("Invalid type")
-        
-        self.expression_type = expression_type
-        self.attributes = kwargs
+        self.value1 = value1
+        self.value2 = value2
+        self.operator = operator
         
         
-class ConditionType(Enum):
-    EQ = 'EQ'
-    NE = 'NE'
-    G = 'G'
-    L = 'L'
-    GE = 'GE'
-    LE = 'LE'
-
 class Condition(ASTNode):
-    def __init__(self, condition_type, **kwargs):
+    def __init__(self, value1=None, value2=None, condition=None):
         super().__init__()
-        
-        if not isinstance(condition_type, ConditionType):
-            raise ValueError("Invalid type")
-        
-        self.condition_type = condition_type
-        self.attributes = kwargs
+        self.value1 = value1
+        self.value2 = value2
+        self.condition = condition
         
         
 class ValueType(Enum):
