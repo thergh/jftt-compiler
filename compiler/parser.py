@@ -1,9 +1,11 @@
 from sly import Parser
 from lexer import MyLexer
+from enum import Enum
 
 
 class ASTNode:
     pass
+
 
 class ProgramAll(ASTNode):
     def __init__(self, procedures, main):
@@ -11,7 +13,12 @@ class ProgramAll(ASTNode):
         self.procedures = procedures
         self.main = main
     
-
+    
+class ProceduresType(Enum):
+    LONG = 'LONG'
+    SHORT = 'SHORT'
+    EMPTY = 'EMPTY'
+    
 class Procedures(ASTNode):
     def __init__(self, procedures=None, proc_head=None, declarations=None, commands=None):
         super().__init__()
@@ -21,12 +28,20 @@ class Procedures(ASTNode):
         self.commands = commands
     
     
+class MainType(Enum):
+    LONG = 'LONG'    
+    SHORT = 'SHORT'
+
 class Main(ASTNode):
     def __init__(self, declarations=None, commands=None):
         super().__init__()
         self.declarations = declarations
         self.commands = commands
         
+        
+class CommandsType(Enum):
+    PLURAL = 'PLURAL'
+    SINGLE = 'SINGLE'    
         
 class Commands(ASTNode):
     def __init__(self, commands=None, command=None):
@@ -35,21 +50,29 @@ class Commands(ASTNode):
         self.command = command
         
         
+class CommandType(Enum):
+    ASSIGN = 'ASSIGN'
+    IF_ELSE = 'IF_ELSE'
+    IF = 'IF'
+    WHILE = 'WHILE'
+    REPEAT = 'REPEAT'
+    FOR = 'FOR'
+    FOR_DOWN = 'FOR_DOWN'
+    PROC_CALL = 'PROC_CALL'
+    READ = 'READ'
+    WRITE = 'WRITE'    
+    
 class Command(ASTNode):
-    def __init__(self, PID=None, identifier=None, expression=None, condition=None,
-                 commands1=None, commands2=None, value1=None, value2=None, proc_call=None):
+    def __init__(self, command_type, **kwargs):
         super().__init__()
-        self.PID = PID
-        self.identifier = identifier
-        self.expression = expression
-        self.condition = condition
-        self.commands1 = commands1
-        self.commands2 = commands2
-        self.value1 = value1
-        self.value2 = value2
-        self.proc_call = proc_call
         
+        if not isinstance(command_type, CommandType):
+            raise ValueError("Invalid command type")
         
+        self.command_type = command_type
+        self.attributes = kwargs
+        
+
 class ProcHead(ASTNode):
     def __init__(self, PID=None, args_decl=None):
         super().__init__()
@@ -63,6 +86,13 @@ class ProcCall(ASTNode):
         self.PID = PID
         self.args = args
         
+
+class DeclarationsType(Enum):
+    PLURAL_PID = 'PLURAL_PID'
+    PLURAL_TABLE = 'PLURAL_TABLE'
+    SINGLE_PID = 'SINGLE_PID'
+    SINGLE_TABLE = 'SINGLE_TABLE'
+    
         
 class Declarations(ASTNode):
     def __init__(self, declarations=None, PID=None, NUM1=None, NUM2=None):
@@ -72,7 +102,13 @@ class Declarations(ASTNode):
         self.NUM1 = NUM1
         self.NUM2 = NUM2
         
-        
+
+class ArgsDeclType(Enum):
+    PLURAL_PID = 'PLURATL_PID'
+    PLURAL_T = 'PLURAL_T'
+    SINGLE_PID = 'SINGLE_PID'
+    SINGLE_T = 'SINGLE_T'    
+          
 class ArgsDecl(ASTNode):
     def __init__(self, args_decl=None, PID=None):
         super().__init__()
@@ -80,13 +116,25 @@ class ArgsDecl(ASTNode):
         self.PID = PID
         
         
+class ArgsType(Enum):
+    PLURAL = 'PLURAL'
+    SINGLE = 'SINGLE'        
+        
 class Args(ASTNode):
     def __init__(self, args=None, PID=None):
         super().__init__()
         self.args = args
         self.PID = PID
         
-        
+    
+class ExpressionType(Enum):
+    ADD = 'ADD'
+    SUB = 'SUB'
+    MUL = 'MUL'
+    DIV ='DIV'
+    MOD = 'MOD'
+    SINGLE = 'SINGLE'    
+    
 class Expression(ASTNode):
     def __init__(self, value1=None, value2=None):
         super().__init__()
@@ -94,6 +142,14 @@ class Expression(ASTNode):
         self.value2 = value2
         
         
+class Condition(Enum):
+    EQ = 'EQ'
+    NE = 'NE'
+    G = 'G'
+    L = 'L'
+    GE = 'GE'
+    LE = 'LE'
+
 class Condition(ASTNode):
     def __init__(self, value1=None, value2=None):
         super().__init__()
@@ -101,12 +157,21 @@ class Condition(ASTNode):
         self.value2 = value2
         
         
+class ValueType(Enum):
+    NUM = 'NUM'
+    ID = 'ID'
+        
 class Value(ASTNode):
     def __init__(self, NUM=None, identifier=None):
         super().__init__()
         self.NUM = NUM
         self.identifier = identifier
         
+        
+class IdentifierType(Enum):
+    PID_TABLE = 'PID_TABLE'
+    NUM_TABLE = 'NUM_TABLE'
+    PID = 'PID'
         
 class Identifier(ASTNode):
     def __init__(self, PID1=None, PID2=None, NUM=None):
@@ -160,7 +225,7 @@ class MyParser(Parser):
     
     @_('identifier ASSIGN expression ";"')
     def command(self, p):
-        return ('comm_id=ASSIGN_expr_;', p[0], p[2])
+        return Command(CommandType.ASSIGN, identifier=p[0], expression=p[2])
     
     @_('IF condition THEN commands ELSE commands ENDIF')
     def command(self, p):
