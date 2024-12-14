@@ -2,20 +2,45 @@ from sly import Parser
 from lexer import MyLexer
 
 
+class ASTNode:
+    pass
+
+class ProgramAll(ASTNode):
+    def __init__(self, procedures, main):
+        super().__init__()
+        self.procedures = procedures
+        self.main = main
+    
+
+class ProceduresDecl(ASTNode):
+    def __init__(self, procedures, proc_head, declarations, commands):
+        super().__init__()
+        self.procedures = procedures
+        self.proc_head = proc_head
+        self.declarations = declarations
+        self.commands = commands
+    
 class MyParser(Parser):
     
     tokens = MyLexer.tokens
     
+    # @_('procedures main')
+    # def program_all(self, p):
+    #     return ('prall=procs_mn', p[0], p[1])
     
     @_('procedures main')
     def program_all(self, p):
-        return ('prall=procs_mn', p[0], p[1])
+        return ProgramAll(p[0], p[1])
     
+    
+    # @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
+    # def procedures(self, p):
+    #     return ('procs=procs_PROCEDURE_phead_IS_decs_BEGIN_comms_END',
+    #             p[0], p[2], p[4], p[6])
     
     @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
     def procedures(self, p):
-        return ('procs=procs_PROCEDURE_phead_IS_decs_BEGIN_comms_END',
-                p[0], p[2], p[4], p[6])
+        return (ProceduresDecl(p[0], p[2], p[4], p[6]))
     
     @_('procedures PROCEDURE proc_head IS BEGIN commands END')
     def procedures(self, p):
@@ -196,8 +221,10 @@ if __name__ == '__main__':
         
     tokens = lexer.tokenize(data)
     
-    result = parser.parse(tokens)
+    result: ProgramAll = parser.parse(tokens)
     
     print(result)
+    print(result)
 
+    
     
