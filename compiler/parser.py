@@ -12,44 +12,37 @@ class ProgramAll(ASTNode):
         self.main = main
     
 
-class ProceduresDecl(ASTNode):
-    def __init__(self, procedures, proc_head, declarations, commands):
+class Procedures(ASTNode):
+    def __init__(self, procedures=None, proc_head=None, declarations=None, commands=None):
         super().__init__()
         self.procedures = procedures
         self.proc_head = proc_head
         self.declarations = declarations
         self.commands = commands
     
+    
+    
 class MyParser(Parser):
     
     tokens = MyLexer.tokens
-    
-    # @_('procedures main')
-    # def program_all(self, p):
-    #     return ('prall=procs_mn', p[0], p[1])
-    
+
+
     @_('procedures main')
     def program_all(self, p):
         return ProgramAll(p[0], p[1])
     
     
-    # @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
-    # def procedures(self, p):
-    #     return ('procs=procs_PROCEDURE_phead_IS_decs_BEGIN_comms_END',
-    #             p[0], p[2], p[4], p[6])
-    
     @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
     def procedures(self, p):
-        return (ProceduresDecl(p[0], p[2], p[4], p[6]))
+        return Procedures(p[0], p[2], p[4], p[6])
     
     @_('procedures PROCEDURE proc_head IS BEGIN commands END')
     def procedures(self, p):
-        return ('procs=procs_PROCEDURE_phead_IS_BEGIN_comm_END',
-                p[0], p[2], p[5])
+        return Procedures(p[0], p[2], None, p[5])
     
     @_('')
     def procedures(self, p):
-        return [('procs=empty')]
+        return Procedures()
     
     
     @_('PROGRAM IS declarations BEGIN commands END')
