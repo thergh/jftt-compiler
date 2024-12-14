@@ -28,9 +28,94 @@ class Main(ASTNode):
         self.commands = commands
         
         
+class Commands(ASTNode):
+    def __init__(self, commands=None, command=None):
+        super().__init__()
+        self.commands = commands
+        self.command = command
         
         
+class Command(ASTNode):
+    def __init__(self, PID=None, identifier=None, expression=None, condition=None,
+                 commands1=None, commands2=None, value1=None, value2=None, proc_call=None):
+        super().__init__()
+        self.PID = PID
+        self.identifier = identifier
+        self.expression = expression
+        self.condition = condition
+        self.commands1 = commands1
+        self.commands2 = commands2
+        self.value1 = value1
+        self.value2 = value2
+        self.proc_call = proc_call
         
+        
+class ProcHead(ASTNode):
+    def __init__(self, PID=None, args_decl=None):
+        super().__init__()
+        self.PID = PID
+        self.args_decl =args_decl
+        
+        
+class ProcCall(ASTNode):
+    def __init__(self, PID=None, args=None):
+        super().__init__()
+        self.PID = PID
+        self.args = args
+        
+        
+class Declarations(ASTNode):
+    def __init__(self, declarations=None, PID=None, NUM1=None, NUM2=None):
+        super().__init__()
+        self.declarations = declarations
+        self.PID = PID
+        self.NUM1 = NUM1
+        self.NUM2 = NUM2
+        
+        
+class ArgsDecl(ASTNode):
+    def __init__(self, args_decl=None, PID=None):
+        super().__init__()
+        self.args_decl = args_decl
+        self.PID = PID
+        
+        
+class Args(ASTNode):
+    def __init__(self, args=None, PID=None):
+        super().__init__()
+        self.args = args
+        self.PID = PID
+        
+        
+class Expression(ASTNode):
+    def __init__(self, value1=None, value2=None):
+        super().__init__()
+        self.value1 = value1
+        self.value2 = value2
+        
+        
+class Condition(ASTNode):
+    def __init__(self, value1=None, value2=None):
+        super().__init__()
+        self.value1 = value1
+        self.value2 = value2
+        
+        
+class Value(ASTNode):
+    def __init__(self, NUM=None, identifier=None):
+        super().__init__()
+        self.NUM = NUM
+        self.identifier = identifier
+        
+        
+class Identifier(ASTNode):
+    def __init__(self, PID1=None, PID2=None, NUM=None):
+        super().__init__()
+        self.PID1 = PID1
+        self.PID2 = PID2
+        self.NUM = NUM
+            
+    
     
 class MyParser(Parser):
     
