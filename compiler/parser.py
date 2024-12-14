@@ -20,12 +20,14 @@ class ProceduresType(Enum):
     EMPTY = 'EMPTY'
     
 class Procedures(ASTNode):
-    def __init__(self, procedures=None, proc_head=None, declarations=None, commands=None):
+    def __init__(self, procedures_type, **kwargs):
         super().__init__()
-        self.procedures = procedures
-        self.proc_head = proc_head
-        self.declarations = declarations
-        self.commands = commands
+        
+        if not isinstance(procedures_type, ProceduresType):
+            raise ValueError("Invalid type")
+        
+        self.procedures_type = procedures_type
+        self.attributes = kwargs
     
     
 class MainType(Enum):
@@ -33,10 +35,14 @@ class MainType(Enum):
     SHORT = 'SHORT'
 
 class Main(ASTNode):
-    def __init__(self, declarations=None, commands=None):
+    def __init__(self, main_type, **kwargs):
         super().__init__()
-        self.declarations = declarations
-        self.commands = commands
+        
+        if not isinstance(main_type, MainType):
+            raise ValueError("Invalid type")
+        
+        self.main_type = main_type
+        self.attributes = kwargs
         
         
 class CommandsType(Enum):
@@ -67,7 +73,7 @@ class Command(ASTNode):
         super().__init__()
         
         if not isinstance(command_type, CommandType):
-            raise ValueError("Invalid command type")
+            raise ValueError("Invalid type")
         
         self.command_type = command_type
         self.attributes = kwargs
@@ -194,24 +200,24 @@ class MyParser(Parser):
     
     @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
     def procedures(self, p):
-        return Procedures(p[0], p[2], p[4], p[6])
+        return Procedures(ProceduresType.LONG, procedures=p[0], proc_head=p[2], declarations=p[4], commands=p[6])
     
     @_('procedures PROCEDURE proc_head IS BEGIN commands END')
     def procedures(self, p):
-        return Procedures(p[0], p[2], None, p[5])
+        return Procedures(ProceduresType.SHORT, procedures=p[0], proc_head=p[2], commands=p[5])
     
     @_('')
     def procedures(self, p):
-        return Procedures()
+        return Procedures(ProceduresType.EMPTY)
     
     
     @_('PROGRAM IS declarations BEGIN commands END')
     def main(self, p):
-        return Main(p[2], p[4])
+        return Main(MainType.LONG, declarations=p[2], commands=p[4])
     
     @_('PROGRAM IS BEGIN commands END')
     def main(self, p):
-        return Main(None, p[3])
+        return Main(MainType.SHORT, commands=p[3])
     
     
     @_('commands command')
