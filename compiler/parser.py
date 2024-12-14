@@ -21,6 +21,16 @@ class Procedures(ASTNode):
         self.commands = commands
     
     
+class Main(ASTNode):
+    def __init__(self, declarations=None, commands=None):
+        super().__init__()
+        self.declarations = declarations
+        self.commands = commands
+        
+        
+        
+        
+        
     
 class MyParser(Parser):
     
@@ -47,11 +57,11 @@ class MyParser(Parser):
     
     @_('PROGRAM IS declarations BEGIN commands END')
     def main(self, p):
-        return ('mn=PROGRAM_IS_decs_BEGIN_comms_END', p[2], p[4])
+        return Main(p[2], p[4])
     
     @_('PROGRAM IS BEGIN commands END')
     def main(self, p):
-        return ('mn=PROGRAM_IS_BEGIN_comms_END', p[3])
+        return Main(None, p[3])
     
     
     @_('commands command')
