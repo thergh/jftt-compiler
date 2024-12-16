@@ -24,7 +24,7 @@ class MyParser(Parser):
     
     @_('')
     def procedures(self, p):
-        return [('procs=EMPTY')]
+        return ('procs=EMPTY')
     
     
     @_('PROGRAM IS declarations BEGIN commands END')

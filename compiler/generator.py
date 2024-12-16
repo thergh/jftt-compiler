@@ -58,6 +58,7 @@ class CodeGenerator:
     def generate_code(self):
         # declarations will be 
         declarations = self.get_declarations()
+        decs_list = self.extract_decs(declarations)
     
     
     
@@ -80,9 +81,29 @@ class CodeGenerator:
         return declarations
     
     
-    # def extract_decs(self, decs):
-    #     """ Changes declarations from
-    #     recursive form to a list """
+    def decs_to_list(self, decs):
+        """ Changes declarations from
+        recursive form to a list 
+        # TODO: implement 'T_PID', 'REC_T'
+        """
+        
+        tag = decs[0]
+        if self.debug:
+            print("\ndecs tag: ", tag)
+            
+        if tag == 'decs=PID':
+            decs_list = []
+            decs_list.append(decs[1])
+            return decs_list
+        elif tag == 'decs=REC_PID':
+            decs_list = self.decs_to_list(decs[1])
+            decs_list.append(decs[2])
+            return decs_list
+        else:
+            print("Error: Wrong tag")
+            return
+            
+            
         
         
         
@@ -106,8 +127,14 @@ if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
 
-    with open('examples/program0.imp', 'r') as file:
+    # with open('examples/program0.imp', 'r') as file:
+    #     data = file.read()
+        
+    with open('examples/my0.imp', 'r') as file:
         data = file.read()
+       
+        
+        
         
     tokens = lexer.tokenize(data)
     
@@ -115,6 +142,7 @@ if __name__ == '__main__':
     
     
     gen = CodeGenerator(parsed, True)
-    gen.get_declarations()
-    
+    decs = gen.get_declarations()
+    decs_list = gen.extract_decs(decs)
+    print(decs_list)
     # print(result)
