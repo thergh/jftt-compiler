@@ -24,7 +24,7 @@ class SymbolTable:
     
     def get_symbol(self, name):
         if name not in self.table:
-            print(f"Error: {name} not in table.")
+            print(f"\nError: {name} not in table.")
             return      
         return self.table[name]  
         
@@ -53,7 +53,6 @@ class CodeGenerator:
             print("\nprocedures: ", self.procedures)
             print("\nmain: ", self.main)
         
-        
     
     def generate_code(self):
 
@@ -65,20 +64,19 @@ class CodeGenerator:
             decs_list = None
         
     
-    
-    
     def get_declarations(self):
         """ Gets declarations from program
         and returns them in the recursive form """
         
-        if self.debug:
-            print("\nmain[0]: ", self.main[0])
+        # if self.debug:
+        #     print("\nmain[0]: ", self.main[0])
             
         if self.main[0] != 'mn=LONG': # program has no declarations
             print("Program has no declarations")
             return None
         
-        declarations = self.main[1]    
+        declarations = self.main[1]   
+         
         if self.debug:
             print("\ndeclarations: ", declarations)
             
@@ -88,11 +86,11 @@ class CodeGenerator:
     def decs_to_list(self, decs):
         """ Changes declarations from
         recursive form to a list 
-        # TODO: implement 'T_PID', 'REC_T'
+        # TODO: implement arrays: 'T_PID', 'REC_T'
         """
         
         if decs is None:
-            print("Error: declarations type is 'None'")
+            print("\nError: declarations type is 'None'")
             return
         
         tag = decs[0]
@@ -108,25 +106,36 @@ class CodeGenerator:
             decs_list.append(decs[2])
             return decs_list
         else:
-            print("Error: Wrong tag")
+            print("\nError: Wrong tag")
             return
             
-            
         
+    # def group_commands(self, commands):
+    #     comm_list = []
+    #     comm_list.append(commands[1]) 
+    #     if commands[0] == 'comms=SINGLE':        
+    #         return comm_list
         
-        
-
+    #     else:
+    #         comm_list.append(self.group_commands(commands[1]))
+    #         return comm_list
     
     
-    def group_commands(self, commands):
-        comm_list = []
-        comm_list.append(commands[1]) 
-        if commands[0] == 'comms=SINGLE':        
-            return comm_list
+    def get_main_commands(self):
+        main_tag = self.main[0]
         
+        if main_tag == 'mn=SHORT': # program has no declarations
+            commands = self.main[1]
+        elif main_tag == 'mn=LONG':
+            commands = self.main[2]
         else:
-            comm_list.append(self.group_commands(commands[1]))
-            return comm_list
+            print("\nError: Wrong tag: ", main_tag)
+            return
+        
+        if self.debug:
+            print("\nmain commands: ", commands)
+        
+        return commands
 
 
 
@@ -140,17 +149,15 @@ if __name__ == '__main__':
         
     with open('examples/my0.imp', 'r') as file:
         data = file.read()
-       
-        
-        
         
     tokens = lexer.tokenize(data)
     
     parsed = parser.parse(tokens)
     
-    
     gen = CodeGenerator(parsed, True)
     decs = gen.get_declarations()
     decs_list = gen.decs_to_list(decs)
-    print(decs_list)
+    main_commands = gen.get_main_commands()
+    # print(main_commands)
+    # print(decs_list)
     # print(result)
