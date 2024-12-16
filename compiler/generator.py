@@ -66,7 +66,7 @@ class CodeGenerator:
     
     def get_declarations(self):
         """ Gets declarations from program
-        and returns them in the recursive form """
+        and returns them in a recursive form """
         
         # if self.debug:
         #     print("\nmain[0]: ", self.main[0])
@@ -94,17 +94,19 @@ class CodeGenerator:
             return
         
         tag = decs[0]
-        if self.debug:
-            print("\ndecs tag: ", tag)
+        # if self.debug:
+        #     print("\ndecs tag: ", tag)
             
         if tag == 'decs=PID':
             decs_list = []
             decs_list.append(decs[1])
             return decs_list
+        
         elif tag == 'decs=REC_PID':
             decs_list: list = self.decs_to_list(decs[1])
             decs_list.append(decs[2])
             return decs_list
+        
         else:
             print("\nError: Wrong tag")
             return
@@ -122,6 +124,9 @@ class CodeGenerator:
     
     
     def get_main_commands(self):
+        """ Gets main commands from the program
+        and returns them in a recursive form """
+        
         main_tag = self.main[0]
         
         if main_tag == 'mn=SHORT': # program has no declarations
@@ -138,6 +143,30 @@ class CodeGenerator:
         return commands
 
 
+    def comms_to_list(self, comms):
+        """ Changes commands from
+        recursive form to a list """
+        
+        if decs is None:
+            print("\nError: comms' type is 'None'")
+            return
+        
+        tag = comms[0]
+        
+        if tag == 'comms=SINGLE':
+            comms_list = []
+            comms_list.append(comms[1])
+            return comms_list
+        
+        elif tag == 'comms=REC':
+            comms_list: list = self.comms_to_list(comms[1])
+            comms_list.append(comms[2])
+            return comms_list
+            
+        else: 
+            print("\nError: Wrong tag: ", tag)
+            return
+        
 
 
 if __name__ == '__main__':
@@ -158,6 +187,8 @@ if __name__ == '__main__':
     decs = gen.get_declarations()
     decs_list = gen.decs_to_list(decs)
     main_commands = gen.get_main_commands()
+    comms_list = gen.comms_to_list(main_commands)
+    print("comms list: ", comms_list)
     # print(main_commands)
     # print(decs_list)
     # print(result)
