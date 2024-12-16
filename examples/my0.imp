@@ -1,0 +1,6 @@
+# program do testowania
+PROGRAM IS
+BEGIN
+    n := 1
+    WRITE n;
+END
