@@ -56,9 +56,14 @@ class CodeGenerator:
         
     
     def generate_code(self):
-        # declarations will be 
+
         declarations = self.get_declarations()
-        decs_list = self.extract_decs(declarations)
+        
+        if declarations is not None:
+            decs_list = self.decs_to_list(declarations)
+        else:
+            decs_list = None
+        
     
     
     
@@ -70,8 +75,7 @@ class CodeGenerator:
             print("\nmain[0]: ", self.main[0])
             
         if self.main[0] != 'mn=LONG': # program has no declarations
-            if self.debug:
-                    print("Program has no declarations")
+            print("Program has no declarations")
             return None
         
         declarations = self.main[1]    
@@ -87,6 +91,10 @@ class CodeGenerator:
         # TODO: implement 'T_PID', 'REC_T'
         """
         
+        if decs is None:
+            print("Error: declarations type is 'None'")
+            return
+        
         tag = decs[0]
         if self.debug:
             print("\ndecs tag: ", tag)
@@ -96,7 +104,7 @@ class CodeGenerator:
             decs_list.append(decs[1])
             return decs_list
         elif tag == 'decs=REC_PID':
-            decs_list = self.decs_to_list(decs[1])
+            decs_list: list = self.decs_to_list(decs[1])
             decs_list.append(decs[2])
             return decs_list
         else:
@@ -143,6 +151,6 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, True)
     decs = gen.get_declarations()
-    decs_list = gen.extract_decs(decs)
+    decs_list = gen.decs_to_list(decs)
     print(decs_list)
     # print(result)
