@@ -10,6 +10,7 @@ class CodeGenerator:
         self.debug = debug
         self.procedures = program[1]
         self.main = program[2]
+        self.table: SymbolTable = SymbolTable()
         
         if self.debug:
             print("\nprocedures: ", self.procedures)
@@ -129,6 +130,13 @@ class CodeGenerator:
             print("\nError: Wrong tag: ", tag)
             return
         
+        
+    def insert_decs_list(self, decs_list):
+        """ 
+        # TODO: HANDLE ARRAYS T
+        """
+        for x in decs_list:
+            self.table.add_symbol(x)
 
 
 if __name__ == '__main__':
@@ -148,9 +156,7 @@ if __name__ == '__main__':
     gen = CodeGenerator(parsed, True)
     decs = gen.get_declarations()
     decs_list = gen.decs_to_list(decs)
-    main_commands = gen.get_main_commands()
-    comms_list = gen.comms_to_list(main_commands)
-    print("comms list: ", comms_list)
-    # print(main_commands)
-    # print(decs_list)
-    # print(result)
+
+
+    gen.insert_decs_list(decs_list)
+    gen.table.display()

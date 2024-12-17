@@ -27,8 +27,7 @@ class SymbolTable:
         
     def display(self):
         for x in self.table:
-            print(self.table[x])
-        # for name, attributes in name_table.table.items():
+            print(f"{x}: {self.table[x]}")
         
         
     def find_name(self, offset):
