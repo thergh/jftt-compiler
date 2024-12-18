@@ -158,9 +158,25 @@ class CodeGenerator:
             self.table.add_symbol(x)
             
             
+            
+            
+    ################ VM code generation ################
+    def gc_comm_READ(self, n):
+        """ Generates code for command READ """
 
+        mem_offset = self.table[n]['offset']
+        c: Code = Code('GET', mem_offset)
+        
+        return [c]
+        
 
-
+    def gc_comm_WRITE(self, n):
+        """ Generates code for command WRITE """
+        
+        mem_offset = self.table[n]['offset']
+        c: Code = Code('PUT', mem_offset)
+        
+        return [c]
 
 
 
