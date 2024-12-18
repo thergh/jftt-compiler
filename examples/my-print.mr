@@ -1,0 +1,4 @@
+# program wyswietla podana liczbe
+GET 100
+PUT 100
+HALT

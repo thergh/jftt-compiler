@@ -4,6 +4,24 @@ from table import SymbolTable
   
   
   
+class Code:
+    """ Represents vm code """
+    
+    def __init__(self, name, value=None):
+        self.name = name
+        self.value = value
+        
+    def to_string(self):
+        """ Changes format of a code
+        from tuple to string """
+        
+        if self.value is None:
+            return f"{self.name}"
+        
+        else:
+            return f"{self.name} {self.value}"    
+
+  
 class CodeGenerator:
     def __init__(self, program, debug=False):
         self.program = program
@@ -11,6 +29,7 @@ class CodeGenerator:
         self.procedures = program[1]
         self.main = program[2]
         self.table: SymbolTable = SymbolTable()
+        self.code_list = []
         
         if self.debug:
             print("\nprocedures: ", self.procedures)
@@ -137,6 +156,12 @@ class CodeGenerator:
         """
         for x in decs_list:
             self.table.add_symbol(x)
+            
+            
+
+
+
+
 
 
 if __name__ == '__main__':

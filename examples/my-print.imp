@@ -1,0 +1,6 @@
+PROGRAM IS:
+    n
+BEGIN
+    READ n;
+    WRITE n;
+END

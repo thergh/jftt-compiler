@@ -3,7 +3,7 @@
 class SymbolTable:
     def __init__(self):
         self.table = {}
-        self.memory_offset = 0
+        self.memory_offset = 1
     
     
     def add_symbol(self, name, is_array=False, is_assigned=False):
