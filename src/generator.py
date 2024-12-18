@@ -58,8 +58,12 @@ class CodeGenerator:
             
         for x in main_comms_list:
             self.handle_command(x)
-
+            
+            
         
+        code_string = gen.code_list_to_string()
+        code_string.append("HALT")
+        return code_string
             
         
     
@@ -197,6 +201,8 @@ class CodeGenerator:
             string_list.append(x.to_string())
             
         return string_list
+    
+        
             
     ################ VM code generation ################
     
@@ -260,11 +266,12 @@ class CodeGenerator:
 if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
+    
+    input = 'examples/my-print.imp'
+    output = 'output/my-out.mr'
 
-    # with open('examples/program0.imp', 'r') as file:
-    #     data = file.read()
-        
-    with open('examples/my-print.imp', 'r') as file:
+
+    with open(input, 'r') as file:
         data = file.read()
         
     tokens = lexer.tokenize(data)
@@ -272,7 +279,10 @@ if __name__ == '__main__':
     parsed = parser.parse(tokens)
     
     gen = CodeGenerator(parsed, True)
-    gen.generate_code()
+    
     # print(gen.code_list_to_string())
-    code_string = gen.code_list_to_string()
-    print(code_string)
+    code = gen.generate_code()
+
+    with open(output, 'w') as file:
+        for line in code:
+            file.write(line + '\n')
