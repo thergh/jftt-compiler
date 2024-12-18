@@ -32,8 +32,8 @@ class CodeGenerator:
         self.code_list = []
         
         if self.debug:
-            print("\nprocedures: ", self.procedures)
-            print("\nmain: ", self.main)
+            print("CodeGenerator.procedures: ", self.procedures)
+            print("CodeGenerator.main: ", self.main)
         
     
     def generate_code(self):
@@ -53,8 +53,11 @@ class CodeGenerator:
         main_comms = self.get_main_commands()
         main_comms_list = self.comms_to_list(main_comms)
         
-        if self.debug:
-            print("main comms: ", main_comms_list)
+        # if self.debug:
+        #     print("main comms: ", main_comms_list)
+            
+        for x in main_comms_list:
+            self.handle_command(x)
 
             
         
@@ -62,9 +65,6 @@ class CodeGenerator:
     def get_declarations(self):
         """ Gets declarations from program
         and returns them in a recursive form """
-        
-        # if self.debug:
-        #     print("\nmain[0]: ", self.main[0])
             
         if self.main[0] != 'mn_LONG': # program has no declarations
             print("Program has no declarations")
@@ -73,7 +73,7 @@ class CodeGenerator:
         declarations = self.main[1]   
          
         if self.debug:
-            print("\ndeclarations: ", declarations)
+            print("get_declarations(): ", declarations)
             
         return declarations
     
@@ -89,22 +89,21 @@ class CodeGenerator:
             return
         
         tag = decs[0]
-        # if self.debug:
-        #     print("\ndecs tag: ", tag)
+        decs_list: list = []
             
         if tag == 'decs_PID':
-            decs_list = []
             decs_list.append(decs[1])
-            return decs_list
         
         elif tag == 'decs_REC_PID':
-            decs_list: list = self.decs_to_list(decs[1])
+            decs_list = self.decs_to_list(decs[1])
             decs_list.append(decs[2])
-            return decs_list
+            
         
         else:
             print("\nError: Wrong tag")
             return
+        
+        return decs_list
             
         
     # def group_commands(self, commands):
@@ -133,7 +132,7 @@ class CodeGenerator:
             return
         
         if self.debug:
-            print("\nmain commands: ", commands)
+            print("get_main_commands(): ", commands)
         
         return commands
 
@@ -186,6 +185,10 @@ class CodeGenerator:
             return
             
             
+    def print_code_list(self, code_list):
+        for x in code_list:
+            print(f"{x.name, x.value}")
+            
     ################ VM code generation ################
     
     def gc_comm_READ(self, command):
@@ -197,8 +200,14 @@ class CodeGenerator:
         if identifier[0] == 'id_PID':
             name = identifier[1]
             
-        mem_idx = self.table[name]['idx']
+        mem_idx = self.table.get_symbol(name)['idx']
+        
         c: Code = Code('GET', mem_idx)
+        
+        if self.debug:
+            print(f"gc_comm_READ(): ", end='')
+            self.print_code_list([c])
+                        
         return [c]
         
 
@@ -225,10 +234,15 @@ class CodeGenerator:
             if identifier[0] == 'id_PID':
                 # TODO: array T case
                 name = identifier[1]
-                mem_idx = self.table[name]['idx']
+                mem_idx = self.table.get_symbol(name)['idx']
+                # mem_idx = self.table[name]['idx']
                 
                 c_list.append(Code('PUT', mem_idx))
-        
+                
+        if self.debug:
+            print(f"gc_comm_WRITE(): ", end='')
+            self.print_code_list(c_list)
+            
         return c_list
 
 
