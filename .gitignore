@@ -1,0 +1,6 @@
+/virtual-machine/main.o
+/virtual-machine/mw-cln.o
+/virtual-machine/lexer.o
+/virtual-machine/mw.o
+/virtual-machine/parser.o
+
