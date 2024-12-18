@@ -3,7 +3,9 @@
 class SymbolTable:
     def __init__(self):
         self.table = {}
-        self.memory_idx = 1
+        self.memory_idx = 100
+        # mem slot 0: accumulator
+        # mem slot 1: printing values
     
     
     def add_symbol(self, name, is_array=False, is_assigned=False):

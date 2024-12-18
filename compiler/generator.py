@@ -171,12 +171,27 @@ class CodeGenerator:
             self.table.add_symbol(x)
             
             
+    def handle_command(self, command):
+        tag = command[0]
+        
+        # TODO: add other commands
+        if tag == 'comm_WRITE':
+            self.code_list.extend(self.gc_comm_WRITE(command))
+            
+        elif tag == 'comm_READ':
+            self.code_list.extend(self.gc_comm_READ(command))
+            
+        else:
+            print(f"Error: wrong command tag: {tag}")
+            return
             
             
     ################ VM code generation ################
     
-    def gc_comm_READ(self, identifier):
+    def gc_comm_READ(self, command):
         """ Generates code for command READ """
+        
+        identifier = command[1]
         
         # identifier can be a name TODO: or table name 
         if identifier[0] == 'id_PID':
@@ -187,17 +202,35 @@ class CodeGenerator:
         return [c]
         
 
-    def gc_comm_WRITE(self, value):
+    def gc_comm_WRITE(self, command):
         """ Generates code for command WRITE """
+        c_list = []
         
-        # # value can be a number or an identifier
-        # if value[0] == 'val_NUM':
-        #     return
+        value = command[1]
         
-        # mem_idx = self.table[val]['idx']
-        # c: Code = Code('PUT', mem_idx)
-        # return [c]
-        return
+        # in this case value is a number
+        if value[0] == 'val_NUM':
+            # TODO:
+            number = value[1]
+            
+            # 'PUT' prints a value from memory,
+            # so I place our value in memory slot '1'
+            # and then pint it
+            # c_list.append(Code('STORE'))
+            
+        # in this case value is a name of a variable
+        elif value[0] == 'val_ID':
+            identifier = value[1]
+            
+            if identifier[0] == 'id_PID':
+                # TODO: array T case
+                name = identifier[1]
+                mem_idx = self.table[name]['idx']
+                
+                c_list.append(Code('PUT', mem_idx))
+        
+        return c_list
+
 
 
 
