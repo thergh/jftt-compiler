@@ -189,6 +189,13 @@ class CodeGenerator:
         for x in code_list:
             print(f"{x.name, x.value}")
             
+            
+    def code_list_to_string(self):
+        string_list = []
+        for x in self.code_list:
+            string_list.append[x.to_string()]
+        
+            
     ################ VM code generation ################
     
     def gc_comm_READ(self, command):
