@@ -3,7 +3,7 @@
 class SymbolTable:
     def __init__(self):
         self.table = {}
-        self.memory_offset = 1
+        self.memory_idx = 1
     
     
     def add_symbol(self, name, is_array=False, is_assigned=False):
@@ -11,11 +11,11 @@ class SymbolTable:
             print(f"Error: {name} already exists.")
             return
         self.table[name] = {
-            'offset': self.memory_offset,
+            'idx': self.memory_idx,
             'is_array': is_array,
             'is_assigned' : is_assigned
         }
-        self.memory_offset += 1
+        self.memory_idx += 1
         
     
     def get_symbol(self, name):
@@ -30,7 +30,7 @@ class SymbolTable:
             print(f"{x}: {self.table[x]}")
         
         
-    def find_name(self, offset):
+    def find_name(self, idx):
         for x in self.table:
-            if self.table[x]['offset'] == offset:
+            if self.table[x]['idx'] == idx:
                 return x

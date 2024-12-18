@@ -1,5 +1,6 @@
-PROGRAM IS:
-    n
+# Binarna postać liczby 
+PROGRAM IS
+	n
 BEGIN
     READ n;
     WRITE n;

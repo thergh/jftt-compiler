@@ -38,12 +38,25 @@ class CodeGenerator:
     
     def generate_code(self):
 
+        # Handling initial declarations
         declarations = self.get_declarations()
         
         if declarations is not None:
             decs_list = self.decs_to_list(declarations)
         else:
             decs_list = None
+            
+        for x in decs_list:
+            self.table.add_symbol(x)
+            
+        # Handling initial commands
+        main_comms = self.get_main_commands()
+        main_comms_list = self.comms_to_list(main_comms)
+        
+        if self.debug:
+            print("main comms: ", main_comms_list)
+
+            
         
     
     def get_declarations(self):
@@ -53,7 +66,7 @@ class CodeGenerator:
         # if self.debug:
         #     print("\nmain[0]: ", self.main[0])
             
-        if self.main[0] != 'mn=LONG': # program has no declarations
+        if self.main[0] != 'mn_LONG': # program has no declarations
             print("Program has no declarations")
             return None
         
@@ -79,12 +92,12 @@ class CodeGenerator:
         # if self.debug:
         #     print("\ndecs tag: ", tag)
             
-        if tag == 'decs=PID':
+        if tag == 'decs_PID':
             decs_list = []
             decs_list.append(decs[1])
             return decs_list
         
-        elif tag == 'decs=REC_PID':
+        elif tag == 'decs_REC_PID':
             decs_list: list = self.decs_to_list(decs[1])
             decs_list.append(decs[2])
             return decs_list
@@ -97,7 +110,7 @@ class CodeGenerator:
     # def group_commands(self, commands):
     #     comm_list = []
     #     comm_list.append(commands[1]) 
-    #     if commands[0] == 'comms=SINGLE':        
+    #     if commands[0] == 'comms_SINGLE':        
     #         return comm_list
         
     #     else:
@@ -111,9 +124,9 @@ class CodeGenerator:
         
         main_tag = self.main[0]
         
-        if main_tag == 'mn=SHORT': # program has no declarations
+        if main_tag == 'mn_SHORT': # program has no declarations
             commands = self.main[1]
-        elif main_tag == 'mn=LONG':
+        elif main_tag == 'mn_LONG':
             commands = self.main[2]
         else:
             print("\nError: Wrong tag: ", main_tag)
@@ -129,18 +142,18 @@ class CodeGenerator:
         """ Changes commands from
         recursive form to a list """
         
-        if decs is None:
+        if comms is None:
             print("\nError: comms' type is 'None'")
             return
         
         tag = comms[0]
         
-        if tag == 'comms=SINGLE':
+        if tag == 'comms_SINGLE':
             comms_list = []
             comms_list.append(comms[1])
             return comms_list
         
-        elif tag == 'comms=REC':
+        elif tag == 'comms_REC':
             comms_list: list = self.comms_to_list(comms[1])
             comms_list.append(comms[2])
             return comms_list
@@ -161,22 +174,30 @@ class CodeGenerator:
             
             
     ################ VM code generation ################
-    def gc_comm_READ(self, n):
+    
+    def gc_comm_READ(self, identifier):
         """ Generates code for command READ """
-
-        mem_offset = self.table[n]['offset']
-        c: Code = Code('GET', mem_offset)
         
+        # identifier can be a name TODO: or table name 
+        if identifier[0] == 'id_PID':
+            name = identifier[1]
+            
+        mem_idx = self.table[name]['idx']
+        c: Code = Code('GET', mem_idx)
         return [c]
         
 
-    def gc_comm_WRITE(self, n):
+    def gc_comm_WRITE(self, value):
         """ Generates code for command WRITE """
         
-        mem_offset = self.table[n]['offset']
-        c: Code = Code('PUT', mem_offset)
+        # # value can be a number or an identifier
+        # if value[0] == 'val_NUM':
+        #     return
         
-        return [c]
+        # mem_idx = self.table[val]['idx']
+        # c: Code = Code('PUT', mem_idx)
+        # return [c]
+        return
 
 
 
@@ -187,7 +208,7 @@ if __name__ == '__main__':
     # with open('examples/program0.imp', 'r') as file:
     #     data = file.read()
         
-    with open('examples/my0.imp', 'r') as file:
+    with open('examples/my-print.imp', 'r') as file:
         data = file.read()
         
     tokens = lexer.tokenize(data)
@@ -195,9 +216,5 @@ if __name__ == '__main__':
     parsed = parser.parse(tokens)
     
     gen = CodeGenerator(parsed, True)
-    decs = gen.get_declarations()
-    decs_list = gen.decs_to_list(decs)
-
-
-    gen.insert_decs_list(decs_list)
-    gen.table.display()
+    gen.generate_code()
+    print(gen.code_list)
