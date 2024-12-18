@@ -59,6 +59,7 @@ class CodeGenerator:
         for x in main_comms_list:
             self.handle_command(x)
 
+        
             
         
     
@@ -193,8 +194,9 @@ class CodeGenerator:
     def code_list_to_string(self):
         string_list = []
         for x in self.code_list:
-            string_list.append[x.to_string()]
-        
+            string_list.append(x.to_string())
+            
+        return string_list
             
     ################ VM code generation ################
     
@@ -271,4 +273,6 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, True)
     gen.generate_code()
-    print(gen.code_list)
+    # print(gen.code_list_to_string())
+    code_string = gen.code_list_to_string()
+    print(code_string)
