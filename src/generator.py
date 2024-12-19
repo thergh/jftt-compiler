@@ -61,7 +61,7 @@ class CodeGenerator:
             
             
         
-        code_string = gen.code_list_to_string()
+        code_string = self.code_list_to_string()
         code_string.append("HALT")
         return code_string
             
@@ -280,9 +280,15 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, True)
     
-    # print(gen.code_list_to_string())
     code = gen.generate_code()
 
-    with open(output, 'w') as file:
-        for line in code:
-            file.write(line + '\n')
+    gen.table.add_array("arr", 0, 10)
+    gen.table.add_symbol("x")
+    gen.table.display()
+    
+#     # print(gen.code_list_to_string())
+#     code = gen.generate_code()
+
+#     with open(output, 'w') as file:
+#         for line in code:
+#             file.write(line + '\n')

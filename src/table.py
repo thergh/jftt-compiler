@@ -8,16 +8,40 @@ class SymbolTable:
         # mem slot 1: printing values
     
     
-    def add_symbol(self, name, is_array=False, is_assigned=False):
+    def add_symbol(self, name):
         if name in self.table:
             print(f"Error: {name} already exists.")
             return
+        
         self.table[name] = {
             'idx': self.memory_idx,
-            'is_array': is_array,
-            'is_assigned' : is_assigned
+            'is_array': False,
+            'start_idx': 0,
+            'end_idx': 0
         }
+        
         self.memory_idx += 1
+        
+        
+    def add_array(self, name, start_idx, end_idx):
+        if name in self.table:
+            print(f"Error: {name} already exists.")
+            return
+        
+        if end_idx < start_idx:
+            print(f"Error: start_idx bigger than end_idx: {start_idx} > {end_idx}")
+            return
+        
+        length = end_idx - start_idx
+        
+        self.table[name] = {
+            'idx': self.memory_idx,
+            'is_array': True,
+            'start_idx': start_idx,
+            'end_idx': end_idx
+        }
+        
+        self.memory_idx += length + 1
         
     
     def get_symbol(self, name):
