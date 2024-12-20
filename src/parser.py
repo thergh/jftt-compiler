@@ -112,7 +112,7 @@ class MyParser(Parser):
     
     @_('PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
-        return ('decs_ARRAY', p.PID)    
+        return ('decs_ARRAY', p.PID, p[2], p[4])    
         
     
     @_('args_decl "," PID')
