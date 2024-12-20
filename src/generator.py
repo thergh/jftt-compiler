@@ -89,12 +89,12 @@ class CodeGenerator:
             self.table.add_array(decs[1], decs[2], decs[3])
         
         elif tag == 'decs_REC_PID':
-            self.table.add_symbol(decs[2])
             self.decs_to_table(decs[1])
+            self.table.add_symbol(decs[2])
 
         elif tag == 'decs_REC_ARRAY':
-            self.table.add_array(decs[2], decs[3], decs[4])
             self.decs_to_table(decs[1])
+            self.table.add_array(decs[2], decs[3], decs[4])
             
         else:
             print("\nError: Wrong tag")
@@ -144,14 +144,6 @@ class CodeGenerator:
         else: 
             print("\nError: Wrong tag: ", tag)
             return
-        
-        
-    def insert_decs_list(self, decs_list):
-        """ 
-        # TODO: HANDLE ARRAYS T
-        """
-        for x in decs_list:
-            self.table.add_symbol(x)
             
             
     def handle_command(self, command):
@@ -188,20 +180,41 @@ class CodeGenerator:
     def gc_comm_READ(self, command):
         """ Generates code for command READ """
         
+        c_list = []
         identifier = command[1]
+        tag = identifier[0]
         
         # identifier can be a name TODO: or table name 
-        if identifier[0] == 'id_PID':
+        if tag == 'id_PID':
             name = identifier[1]
+            mem_idx = self.table.get_symbol(name)['idx']
+            c: Code = Code('GET', mem_idx)
+            c_list.append(c)
             
-        mem_idx = self.table.get_symbol(name)['idx']
-        
-        c: Code = Code('GET', mem_idx)
+        elif tag == 'id_ARRAY_NUM':
+            name = identifier[1]
+            array_mem_idx = self.table.get_symbol(name)['idx']
+            start_idx = self.table.get_symbol(name)['start_idx']
+            element_idx = identifier[2]
+            # we must account for a possible offset
+            # of indices in an array
+            mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+            c: Code = Code('GET', mem_idx)
+            c_list.append(c)
+            
+        elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
+            name = identifier[1]
+            array_mem_idx = self.table.get_symbol(name)['idx']
+            start_idx = self.table.get_symbol(name)['start_idx']
+            element_PID = identifier[2]
+            element_idx = self.table.get_symbol(element_PID)['idx']
+            mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+            c: Code = Code('GET', mem_idx)
+            c_list.append(c)
         
         if self.debug:
             print(f"gc_comm_READ(): ", end='')
             self.print_code_list([c])
-                        
         return [c]
         
 
