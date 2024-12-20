@@ -17,7 +17,7 @@ if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
     
-    input = 'examples/my-print.imp'
+    input = 'examples/my0.imp'
     output = 'output/my-out.mr'
 
 
