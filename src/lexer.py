@@ -33,7 +33,7 @@ class MyLexer(Lexer):
     END = r'END'
     T = r'T'    
     PID = r'[_a-z]+'
-    NUM = r'0|[1-9]+[0-9]*'
+    NUM = r'0|[1-9]+[0-9]*|-[1-9]+[0-9]*'
     NE = r'!='
     GE = r'>='
     LE = r'<='
