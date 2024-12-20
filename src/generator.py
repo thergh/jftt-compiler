@@ -193,16 +193,14 @@ class CodeGenerator:
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
-            name = identifier[1]
-            array_mem_idx = self.table.get_symbol(name)['position']
-            start_idx = self.table.get_symbol(name)['start_idx']
-            element_idx = identifier[2]
-            # we must account for a possible offset
-            # of indices in an array
-            mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+            arr = identifier[1]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(name)['start_idx']
+            idx_value = identifier[2]
+            position = int(arr_pos) + int(idx_value) - int(arr_offset)
             
             c_list.append(Code('# READ'))
-            c_list.append(Code('GET', mem_idx))
+            c_list.append(Code('GET', position))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
             arr = identifier[1]
@@ -257,11 +255,12 @@ class CodeGenerator:
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_NUM':
-                name = identifier[1]
-                array_mem_idx = self.table.get_symbol(name)['position']
-                start_idx = self.table.get_symbol(name)['start_idx']
-                element_idx = identifier[2]
-                mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+                arr = identifier[1]
+                idx_value = identifier[2]
+                arr_pos = self.table.get_symbol(name)['position']
+                arr_offset = self.table.get_symbol(name)['start_idx']
+                
+                position = int(arr_pos) + int(idx_value) - int(arr_offset)
                 
                 c_list.append(Code('# WRITE'))
                 c_list.append(Code('PUT', mem_idx))
