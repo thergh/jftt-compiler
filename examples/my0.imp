@@ -1,16 +1,8 @@
 # Binarna postać liczby 
 PROGRAM IS
-	n, p, arr[-1:13]
+	n, arr[-10:10]
 BEGIN
     READ n;
-    REPEAT
-	p:=n/2;
-	p:=2*p;
-	IF n>p THEN 
-	    WRITE 1;
-	ELSE 
-	    WRITE 0;
-	ENDIF
-	n:=n/2;
-    UNTIL n=0;
+    READ arr[-5];
+    WRITE n;
 END

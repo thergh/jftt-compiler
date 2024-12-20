@@ -231,7 +231,7 @@ class CodeGenerator:
             
             # 'PUT' prints a value from memory,
             # so I place our value in memory slot '1'
-            # and then pint it
+            # and then print it
             # c_list.append(Code('STORE'))
             
         # in this case value is a name of a variable

@@ -176,11 +176,11 @@ class MyParser(Parser):
     
     @_('PID "[" PID "]"')
     def identifier(self, p):
-        return ('id_TAB_PID', p[0], p[2])
+        return ('id_ARRAY_PID', p[0], p[2])
         
     @_('PID "[" NUM "]"')  
     def identifier(self, p):
-        return ('id_TAB_NUM', p.PID, p.NUM)
+        return ('id_ARRAY_NUM', p.PID, p.NUM)
         
     @_('PID')  
     def identifier(self, p):
