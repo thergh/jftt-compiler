@@ -188,8 +188,7 @@ class CodeGenerator:
         if tag == 'id_PID':
             name = identifier[1]
             mem_idx = self.table.get_symbol(name)['idx']
-            c: Code = Code('GET', mem_idx)
-            c_list.append(c)
+            c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
             name = identifier[1]
@@ -199,8 +198,7 @@ class CodeGenerator:
             # we must account for a possible offset
             # of indices in an array
             mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
-            c: Code = Code('GET', mem_idx)
-            c_list.append(c)
+            c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
             name = identifier[1]
@@ -209,23 +207,22 @@ class CodeGenerator:
             element_PID = identifier[2]
             element_idx = self.table.get_symbol(element_PID)['idx']
             mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
-            c: Code = Code('GET', mem_idx)
-            c_list.append(c)
+            c_list.append(Code('GET', mem_idx))
         
         if self.debug:
             print(f"gc_comm_READ(): ", end='')
-            self.print_code_list([c])
-        return [c]
+            self.print_code_list(c_list)
+        return c_list
         
 
     def gc_comm_WRITE(self, command):
         """ Generates code for command WRITE """
         c_list = []
-        
         value = command[1]
+        val_tag = value[0]
         
         # in this case value is a number
-        if value[0] == 'val_NUM':
+        if val_tag == 'val_NUM':
             # TODO:
             number = value[1]
             
@@ -235,15 +232,31 @@ class CodeGenerator:
             # c_list.append(Code('STORE'))
             
         # in this case value is a name of a variable
-        elif value[0] == 'val_ID':
+        elif val_tag == 'val_ID':
             identifier = value[1]
+            id_tag = identifier[0]
             
-            if identifier[0] == 'id_PID':
+            if id_tag == 'id_PID':
                 # TODO: array T case
                 name = identifier[1]
                 mem_idx = self.table.get_symbol(name)['idx']
-                # mem_idx = self.table[name]['idx']
+                c_list.append(Code('PUT', mem_idx))
                 
+            elif id_tag == 'id_ARRAY_NUM':
+                name = identifier[1]
+                array_mem_idx = self.table.get_symbol(name)['idx']
+                start_idx = self.table.get_symbol(name)['start_idx']
+                element_idx = identifier[2]
+                mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+                c_list.append(Code('PUT', mem_idx))
+                
+            elif id_tag == 'id_ARRAY_PID':
+                name = identifier[1]
+                array_mem_idx = self.table.get_symbol(name)['idx']
+                start_idx = self.table.get_symbol(name)['start_idx']
+                element_PID = identifier[2]
+                element_idx = self.table.get_symbol(element_PID)['idx']
+                mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
                 c_list.append(Code('PUT', mem_idx))
                 
         if self.debug:
