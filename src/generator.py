@@ -177,6 +177,58 @@ class CodeGenerator:
             
     ################ VM code generation ################
     
+    def gc_comm_ASSIGN(self, command):
+        """ Generates code for command ASSIGN """
+        # TODO:
+        # for now only for single numbers,
+        # not complicated expressions
+        
+        c_list = []
+        identifier = command[1]
+        expression = command[2]
+        
+        if expression[0] == 'expr_VAL':
+            value = expression[1]
+            
+        else:
+            print("Error: Complicated expressions not yet implemented :(")
+            return
+        
+        if identifier[0] == 'id_PID':
+            id = identifier[1]
+            id_pos = self.table.get_symbol(id)['position']
+            
+            c_list.append(Code('SET', value))
+            c_list.append(Code('STORE', id_pos))
+            
+        elif identifier[0] == 'id_ARRAY_NUM':
+            arr = identifier[1]
+            idx_val = identifier[2]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            position = arr_pos + idx_val - arr_offset
+            
+            c_list.append(Code('SET', value))
+            c_list.append(Code('STORE', position))
+            
+        elif identifier[0] == 'id_ARRAY_PID':
+            arr = identifier[1]
+            idx = identifier[2]
+            idx_pos = self.table.get_symbol(idx)['position']
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            
+            c_list.append(Code('SET', arr_offset))
+            c_list.append(Code('STORE', 1))
+            c_list.append(Code('SET', arr_pos))
+            c_list.append(Code('ADD', idx_pos))
+            c_list.append(Code('SUB', 1))
+            c_list.append(Code('STORE', 1))
+            c_list.append(Code('SET', value))
+            c_list.append(Code('STOREI', 1))
+    
+        return c_list    
+    
     def gc_comm_READ(self, command):
         """ Generates code for command READ """
         
@@ -188,6 +240,7 @@ class CodeGenerator:
         if tag == 'id_PID':
             name = identifier[1]
             mem_idx = self.table.get_symbol(name)['position']
+            self.table.get_symbol(name)['assigned'] = True
             
             c_list.append(Code('# READ'))
             c_list.append(Code('GET', mem_idx))

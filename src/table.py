@@ -5,7 +5,7 @@ class SymbolTable:
         self.table = {}
         self.mem_pos = 100
         # mem slot 0: accumulator
-        # mem slot 1: printing values
+        # 1-99 utility slots (registers?)
     
     
     def add_symbol(self, name):
@@ -17,7 +17,8 @@ class SymbolTable:
             'position': self.mem_pos,
             'is_array': False,
             'start_idx': 0,
-            'end_idx': 0
+            'end_idx': 0,
+            'assigned': False
         }
         
         self.mem_pos += 1
@@ -38,7 +39,8 @@ class SymbolTable:
             'position': self.mem_pos,
             'is_array': True,
             'start_idx': start_idx,
-            'end_idx': end_idx
+            'end_idx': end_idx,
+            'assigned': False
         }
         
         self.mem_pos += length + 1
