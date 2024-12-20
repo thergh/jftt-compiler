@@ -104,15 +104,15 @@ class MyParser(Parser):
     
     @_('declarations "," PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
-        return ('decs_REC_T', p[0], p.PID, p[4], p[6])
+        return ('decs_REC_ARRAY', p[0], p.PID, p[4], p[6])
     
     @_('PID')
     def declarations(self, p):
         return ('decs_PID', p.PID)
     
-    @_('"T" PID')
+    @_('PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
-        return ('decs_T_PID', p.PID)    
+        return ('decs_ARRAY', p.PID)    
         
     
     @_('args_decl "," PID')
