@@ -4,5 +4,5 @@ PROGRAM IS
 BEGIN
     READ n;
     READ arr[n];
-    #WRITE arr[n];
+    WRITE arr[n];
 END

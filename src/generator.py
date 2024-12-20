@@ -266,9 +266,11 @@ class CodeGenerator:
                 idx_pos = self.table.get_symbol(idx)['position']
                 arr_offset = self.table.get_symbol(arr)['start_idx']
                 
-                c_list.append(Code('LOADI', idx_pos))
-                c_list.append(Code('ADD', arr_pos))
-                c_list.append(Code('SUB', arr_offset))
+                c_list.append(Code('SET', arr_offset))
+                c_list.append(Code('STORE', 1))
+                c_list.append(Code('SET', arr_pos))
+                c_list.append(Code('ADD', idx_pos))
+                c_list.append(Code('SUB', 1))
                 c_list.append(Code('LOADI', 0))
                 c_list.append(Code('PUT', 0))
                 
