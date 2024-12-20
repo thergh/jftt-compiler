@@ -187,12 +187,12 @@ class CodeGenerator:
         # identifier can be a name TODO: or table name 
         if tag == 'id_PID':
             name = identifier[1]
-            mem_idx = self.table.get_symbol(name)['idx']
+            mem_idx = self.table.get_symbol(name)['position']
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
             name = identifier[1]
-            array_mem_idx = self.table.get_symbol(name)['idx']
+            array_mem_idx = self.table.get_symbol(name)['position']
             start_idx = self.table.get_symbol(name)['start_idx']
             element_idx = identifier[2]
             # we must account for a possible offset
@@ -201,13 +201,24 @@ class CodeGenerator:
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
-            name = identifier[1]
-            array_mem_idx = self.table.get_symbol(name)['idx']
-            start_idx = self.table.get_symbol(name)['start_idx']
-            element_PID = identifier[2]
-            element_idx = self.table.get_symbol(element_PID)['idx']
-            mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
-            c_list.append(Code('GET', mem_idx))
+            arr = identifier[1]
+            idx = identifier[2]
+            
+            arr_pos = self.table.get_symbol(arr)['position']
+            idx_pos = self.table.get_symbol(idx)['position']
+            c_list.append(Code('LOADI', idx_pos))
+            c_list.append(Code('ADD', arr_pos))
+            c_list.append(Code('STORE', 1))
+            c_list.append(Code('GET', 0))
+            c_list.append(Code('STOREI', 1))
+            
+            # name = identifier[1]
+            # array_mem_idx = self.table.get_symbol(name)['position']
+            # start_idx = self.table.get_symbol(name)['start_idx']
+            # element_PID = identifier[2]
+            # element_idx = self.table.get_symbol(element_PID)['position']
+            # mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+            # c_list.append(Code('GET', mem_idx))
         
         if self.debug:
             print(f"gc_comm_READ(): ", end='')
@@ -239,12 +250,12 @@ class CodeGenerator:
             if id_tag == 'id_PID':
                 # TODO: array T case
                 name = identifier[1]
-                mem_idx = self.table.get_symbol(name)['idx']
+                mem_idx = self.table.get_symbol(name)['position']
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_NUM':
                 name = identifier[1]
-                array_mem_idx = self.table.get_symbol(name)['idx']
+                array_mem_idx = self.table.get_symbol(name)['position']
                 start_idx = self.table.get_symbol(name)['start_idx']
                 element_idx = identifier[2]
                 mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
@@ -252,10 +263,10 @@ class CodeGenerator:
                 
             elif id_tag == 'id_ARRAY_PID':
                 name = identifier[1]
-                array_mem_idx = self.table.get_symbol(name)['idx']
+                array_mem_idx = self.table.get_symbol(name)['position']
                 start_idx = self.table.get_symbol(name)['start_idx']
                 element_PID = identifier[2]
-                element_idx = self.table.get_symbol(element_PID)['idx']
+                element_idx = self.table.get_symbol(element_PID)['position']
                 mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
                 c_list.append(Code('PUT', mem_idx))
                 

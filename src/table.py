@@ -3,7 +3,7 @@
 class SymbolTable:
     def __init__(self):
         self.table = {}
-        self.memory_idx = 100
+        self.mem_pos = 100
         # mem slot 0: accumulator
         # mem slot 1: printing values
     
@@ -14,13 +14,13 @@ class SymbolTable:
             return
         
         self.table[name] = {
-            'idx': self.memory_idx,
+            'position': self.mem_pos,
             'is_array': False,
             'start_idx': 0,
             'end_idx': 0
         }
         
-        self.memory_idx += 1
+        self.mem_pos += 1
         
         
     def add_array(self, name, start_idx, end_idx):
@@ -35,13 +35,13 @@ class SymbolTable:
         length = int(end_idx) - int(start_idx)
         
         self.table[name] = {
-            'idx': self.memory_idx,
+            'position': self.mem_pos,
             'is_array': True,
             'start_idx': start_idx,
             'end_idx': end_idx
         }
         
-        self.memory_idx += length + 1
+        self.mem_pos += length + 1
         
     
     def get_symbol(self, name):
@@ -56,7 +56,7 @@ class SymbolTable:
             print(f"{x}: {self.table[x]}")
         
         
-    def find_name(self, idx):
+    def find_name(self, position):
         for x in self.table:
-            if self.table[x]['idx'] == idx:
+            if self.table[x]['position'] == position:
                 return x

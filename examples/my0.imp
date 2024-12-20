@@ -3,6 +3,6 @@ PROGRAM IS
 	n, arr[-10:10]
 BEGIN
     READ n;
-    READ arr[-5];
-    WRITE n;
+    READ arr[n];
+    WRITE arr[n];
 END
