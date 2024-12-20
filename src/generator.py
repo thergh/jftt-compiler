@@ -42,25 +42,15 @@ class CodeGenerator:
         declarations = self.get_declarations()
         
         if declarations is not None:
-            decs_list = self.decs_to_list(declarations)
-        else:
-            decs_list = None
-            
-        for x in decs_list:
-            self.table.add_symbol(x)
+            self.decs_to_table(declarations)
             
         # Handling initial commands
         main_comms = self.get_main_commands()
         main_comms_list = self.comms_to_list(main_comms)
         
-        # if self.debug:
-        #     print("main comms: ", main_comms_list)
-            
         for x in main_comms_list:
             self.handle_command(x)
-            
-            
-        
+
         code_string = self.code_list_to_string()
         code_string.append("HALT")
         return code_string
@@ -83,44 +73,33 @@ class CodeGenerator:
         return declarations
     
     
-    def decs_to_list(self, decs):
-        """ Changes declarations from
-        recursive form to a list 
-        # TODO: implement arrays: 'T_PID', 'REC_T'
-        """
+    def decs_to_table(self, decs):
+        """ Writes declarations to the sumbl table """
         
         if decs is None:
             print("\nError: declarations type is 'None'")
             return
         
         tag = decs[0]
-        decs_list: list = []
             
         if tag == 'decs_PID':
-            decs_list.append(decs[1])
+            self.table.add_symbol(decs[1])
+
+        elif tag == 'decs_ARRAY':
+            self.table.add_array(decs[1], decs[2], decs[3])
         
         elif tag == 'decs_REC_PID':
-            decs_list = self.decs_to_list(decs[1])
-            decs_list.append(decs[2])
+            self.table.add_symbol(decs[2])
+            self.decs_to_table(decs[1])
+
+        elif tag == 'decs_REC_ARRAY':
+            self.table.add_array(decs[2], decs[3], decs[4])
+            self.decs_to_table(decs[1])
             
-        
         else:
             print("\nError: Wrong tag")
             return
         
-        return decs_list
-            
-        
-    # def group_commands(self, commands):
-    #     comm_list = []
-    #     comm_list.append(commands[1]) 
-    #     if commands[0] == 'comms_SINGLE':        
-    #         return comm_list
-        
-    #     else:
-    #         comm_list.append(self.group_commands(commands[1]))
-    #         return comm_list
-    
     
     def get_main_commands(self):
         """ Gets main commands from the program
@@ -267,7 +246,7 @@ if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
     
-    input = 'examples/my-print.imp'
+    input = 'examples/my0.imp'
     output = 'output/my-out.mr'
 
 
@@ -280,11 +259,16 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, True)
     
-    code = gen.generate_code()
-
-    gen.table.add_array("arr", 0, 10)
-    gen.table.add_symbol("x")
+    gen.generate_code()
+    
     gen.table.display()
+    
+        
+    # code = gen.generate_code()
+
+    # gen.table.add_array("arr", 0, 10)
+    # gen.table.add_symbol("x")
+    # gen.table.display()
     
 #     # print(gen.code_list_to_string())
 #     code = gen.generate_code()

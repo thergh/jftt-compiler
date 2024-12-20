@@ -32,7 +32,7 @@ class SymbolTable:
             print(f"Error: start_idx bigger than end_idx: {start_idx} > {end_idx}")
             return
         
-        length = end_idx - start_idx
+        length = int(end_idx) - int(start_idx)
         
         self.table[name] = {
             'idx': self.memory_idx,

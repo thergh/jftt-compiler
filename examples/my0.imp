@@ -1,6 +1,6 @@
 # Binarna postać liczby 
 PROGRAM IS
-	n, p
+	n, p, arr[-1:13]
 BEGIN
     READ n;
     REPEAT
