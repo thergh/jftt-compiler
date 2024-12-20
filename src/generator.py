@@ -188,6 +188,8 @@ class CodeGenerator:
         if tag == 'id_PID':
             name = identifier[1]
             mem_idx = self.table.get_symbol(name)['position']
+            
+            c_list.append(Code('# READ'))
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
@@ -198,6 +200,8 @@ class CodeGenerator:
             # we must account for a possible offset
             # of indices in an array
             mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+            
+            c_list.append(Code('# READ'))
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
@@ -207,6 +211,7 @@ class CodeGenerator:
             idx_pos = self.table.get_symbol(idx)['position']
             arr_offset = self.table.get_symbol(arr)['start_idx']
             
+            c_list.append(Code('# READ'))
             c_list.append(Code('SET', arr_offset))
             c_list.append(Code('STORE', 1))
             c_list.append(Code('SET', arr_pos))
@@ -215,8 +220,6 @@ class CodeGenerator:
             c_list.append(Code('STORE', 1))
             c_list.append(Code('GET', 0))
             c_list.append(Code('STOREI', 1))
-
-  
         
         if self.debug:
             print(f"gc_comm_READ(): ")
@@ -249,6 +252,8 @@ class CodeGenerator:
                 # TODO: array T case
                 name = identifier[1]
                 mem_idx = self.table.get_symbol(name)['position']
+                
+                c_list.append(Code('# WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_NUM':
@@ -257,6 +262,8 @@ class CodeGenerator:
                 start_idx = self.table.get_symbol(name)['start_idx']
                 element_idx = identifier[2]
                 mem_idx = int(array_mem_idx) + int(element_idx) - int(start_idx)
+                
+                c_list.append(Code('# WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_PID':
@@ -266,6 +273,7 @@ class CodeGenerator:
                 idx_pos = self.table.get_symbol(idx)['position']
                 arr_offset = self.table.get_symbol(arr)['start_idx']
                 
+                c_list.append(Code('# WRITE'))
                 c_list.append(Code('SET', arr_offset))
                 c_list.append(Code('STORE', 1))
                 c_list.append(Code('SET', arr_pos))
