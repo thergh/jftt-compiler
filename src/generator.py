@@ -227,47 +227,25 @@ class CodeGenerator:
         else:
             print("Error: Complicated expressions not yet implemented :(")
             return
+
+        c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
+        c_list.append(Code('STORE', 1)) # store id1_pos in reg1
         
-        if identifier[0] == 'id_PID':
-            id = identifier[1]
-            id_pos = self.table.get_symbol(id)['position']
+        value_tag = value[0]
+        
+        if value_tag == 'val_NUM':
+            num_val = value[1]
+            c_list.append(Code('SET', num_val)) # put num_val in reg0
+            c_list.append(Code('STOREI', 1)) # set velue on position
             
-            # value can be a number or a PID
-            # number case
-            if value[0] == 'val_NUM':
-                c_list.append(Code('SET', value))
-                c_list.append(Code('STORE', id_pos))
-            elif value[0] == 'val_ID':
-                return
+        elif value_tag == 'val_ID':
+            identifier2 = value[1]
+            c_list.extend(self.id_pos_to_acc(identifier2)) # reg0: id2_pos
+            c_list.append(Code('LOADI', 0)) # load value of id2_pos to reg0
+            c_list.append(Code('STOREI', 1)) # set velue on position
             
-            
-        elif identifier[0] == 'id_ARRAY_NUM':
-            arr = identifier[1]
-            idx_val = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            position = arr_pos + idx_val - arr_offset
-            
-            c_list.append(Code('SET', value))
-            c_list.append(Code('STORE', position))
-            
-        elif identifier[0] == 'id_ARRAY_PID':
-            arr = identifier[1]
-            idx = identifier[2]
-            idx_pos = self.table.get_symbol(idx)['position']
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            
-            c_list.append(Code('SET', arr_offset))
-            c_list.append(Code('STORE', 1))
-            c_list.append(Code('SET', arr_pos))
-            c_list.append(Code('ADD', idx_pos))
-            c_list.append(Code('SUB', 1))
-            c_list.append(Code('STORE', 1))
-            c_list.append(Code('SET', value))
-            c_list.append(Code('STOREI', 1))
-    
         return c_list    
+    
     
     def gc_comm_READ(self, command):
         """ Generates code for command READ """
