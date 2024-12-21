@@ -178,7 +178,35 @@ class CodeGenerator:
     
         
             
-    ################ VM code generation ################
+    ###################### code generation ######################
+    
+    def cond_eq(self, condition):
+        """ if value == value:
+                return 1
+            else
+                return 0 """
+        
+        
+    
+    
+    def value_to_acc(self, value):
+        """ Generates code that puts the number held
+        by 'value' into the accumulator """
+    
+        c_list = []
+        
+        value_tag = value[0]
+        
+        if value_tag == 'val_NUM':
+            number = value[1]
+            c_list.append(Code('SET', number))
+        
+        elif value_tag == 'val_ID':
+            identifier = value[1]
+            c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
+            c_list.append(Code('LOADI', 0)) # load value of id to reg0
+        
+        return c_list
     
     
     def id_pos_to_acc(self, identifier):
