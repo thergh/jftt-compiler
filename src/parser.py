@@ -47,7 +47,7 @@ class MyParser(Parser):
     
     @_('identifier ASSIGN expression ";"')
     def command(self, p):
-        return ('comm_id_ASSIGN', p[0], p[2])
+        return ('comm_ASSIGN', p[0], p[2])
     
     @_('IF condition THEN commands ELSE commands ENDIF')
     def command(self, p):

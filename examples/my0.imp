@@ -1,7 +1,7 @@
 PROGRAM IS
-	n, arr[-10:10]
+	n, m
 BEGIN
-    READ n;
-    READ arr[n];
-    WRITE arr[n];
+    m := 7;
+    n := m;
+    WRITE n;
 END

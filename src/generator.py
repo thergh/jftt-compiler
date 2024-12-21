@@ -156,6 +156,9 @@ class CodeGenerator:
         elif tag == 'comm_READ':
             self.code_list.extend(self.gc_comm_READ(command))
             
+        elif tag == 'comm_ASSIGN':
+            self.code_list.extend(self.gc_comm_ASSIGN(command))
+            
         else:
             print(f"Error: wrong command tag: {tag}")
             return
@@ -228,6 +231,8 @@ class CodeGenerator:
             print("Error: Complicated expressions not yet implemented :(")
             return
 
+        c_list.append(Code('# ASSIGN'))
+        
         c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
         c_list.append(Code('STORE', 1)) # store id1_pos in reg1
         
