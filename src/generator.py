@@ -177,6 +177,40 @@ class CodeGenerator:
             
     ################ VM code generation ################
     
+    
+    def id_pos_to_acc(self, identifier):
+        """ Generates code that puts position
+        of id into accumulator. """
+
+        id_tag = identifier[0]
+        c_list = []
+        
+        if id_tag == 'id_PID':
+            id = identifier[1]
+            id_pos = self.table.get_symbol(id)['position']
+            c_list.append(Code('SET', id_pos))
+            
+        elif id_tag == 'id_ARRAY_NUM':
+            arr = identifier[1]
+            number = identifier[2]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            position = arr_pos + number - arr_offset
+            c_list.append(Code('SET', position))
+            
+        elif id_tag == 'id_ARRAY_PID':
+            arr = identifier[1]
+            idx = identifier[2]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            idx_pos = self.table.get_symbol(idx)['position']
+            c_list.append(Code('LOADI', idx_pos)) # loads idx value to acc
+            c_list.append(Code('ADD', arr_pos))
+            c_list.append(Code('SUB', arr_offset)) # now id position is in acc
+            
+        return c_list
+    
+    
     def gc_comm_ASSIGN(self, command):
         """ Generates code for command ASSIGN """
         # TODO:
@@ -198,8 +232,14 @@ class CodeGenerator:
             id = identifier[1]
             id_pos = self.table.get_symbol(id)['position']
             
-            c_list.append(Code('SET', value))
-            c_list.append(Code('STORE', id_pos))
+            # value can be a number or a PID
+            # number case
+            if value[0] == 'val_NUM':
+                c_list.append(Code('SET', value))
+                c_list.append(Code('STORE', id_pos))
+            elif value[0] == 'val_ID':
+                return
+            
             
         elif identifier[0] == 'id_ARRAY_NUM':
             arr = identifier[1]
