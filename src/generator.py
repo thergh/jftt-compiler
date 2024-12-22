@@ -48,8 +48,9 @@ class CodeGenerator:
         main_comms = self.get_main_commands()
         main_comms_list = self.comms_to_list(main_comms)
         
-        for x in main_comms_list:
-            self.handle_command(x)
+        # for x in main_comms_list:
+        #     self.handle_command(x)
+        self.code_list.extend(self.handle_command_list(main_comms_list))
 
         code_string = self.code_list_to_string()
         code_string.append("HALT")
@@ -145,24 +146,40 @@ class CodeGenerator:
             print("\nError: Wrong tag: ", tag)
             return
             
+     
+    def handle_command_list(self, comm_list: list):
+        """ Generates code for a command list """
+        
+        c_list = []
+        
+        for x in comm_list:
+            c_list.extend(self.handle_command(x))
+            
+        return c_list
+    
             
     def handle_command(self, command):
+        """ Generates code for a command """
+        
         tag = command[0]
+        c_list = []
         
         # TODO: add other commands
         if tag == 'comm_WRITE':
-            self.code_list.extend(self.gc_comm_WRITE(command))
+            c_list.extend(self.gc_comm_WRITE(command))
             
         elif tag == 'comm_READ':
-            self.code_list.extend(self.gc_comm_READ(command))
+            c_list.extend(self.gc_comm_READ(command))
             
         elif tag == 'comm_ASSIGN':
-            self.code_list.extend(self.gc_comm_ASSIGN(command))
+            c_list.extend(self.gc_comm_ASSIGN(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
             return
             
+        return c_list
+    
             
     def print_code_list(self, code_list):
         for x in code_list:
@@ -382,7 +399,6 @@ class CodeGenerator:
             print("Error: Complicated expressions not yet implemented :(")
             return
 
-        c_list.append(Code('\t# ASSIGN'))
         
         c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
         c_list.append(Code('STORE', 1)) # store id1_pos in reg1
@@ -416,7 +432,6 @@ class CodeGenerator:
             mem_idx = self.table.get_symbol(name)['position']
             self.table.get_symbol(name)['assigned'] = True
             
-            c_list.append(Code('#\t READ'))
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
@@ -426,7 +441,6 @@ class CodeGenerator:
             idx_value = identifier[2]
             position = int(arr_pos) + int(idx_value) - int(arr_offset)
             
-            c_list.append(Code('#\t READ'))
             c_list.append(Code('GET', position))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
@@ -436,7 +450,6 @@ class CodeGenerator:
             idx_pos = self.table.get_symbol(idx)['position']
             arr_offset = self.table.get_symbol(arr)['start_idx']
             
-            c_list.append(Code('#\t READ'))
             c_list.append(Code('SET', arr_offset))
             c_list.append(Code('STORE', 1))
             c_list.append(Code('SET', arr_pos))
@@ -478,7 +491,6 @@ class CodeGenerator:
                 name = identifier[1]
                 mem_idx = self.table.get_symbol(name)['position']
                 
-                c_list.append(Code('\t# WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_NUM':
@@ -489,7 +501,6 @@ class CodeGenerator:
                 
                 position = int(arr_pos) + int(idx_value) - int(arr_offset)
                 
-                c_list.append(Code('#\t WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_PID':
@@ -499,7 +510,6 @@ class CodeGenerator:
                 idx_pos = self.table.get_symbol(idx)['position']
                 arr_offset = self.table.get_symbol(arr)['start_idx']
                 
-                c_list.append(Code('#\t WRITE'))
                 c_list.append(Code('SET', arr_offset))
                 c_list.append(Code('STORE', 1))
                 c_list.append(Code('SET', arr_pos))
