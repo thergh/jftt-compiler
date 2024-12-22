@@ -1,7 +1,7 @@
 PROGRAM IS
 	n, m, arr[0:10]
 BEGIN
-    m := 7;
+    READ m;
     n := m;
     arr[0] := 12;
     WRITE n;

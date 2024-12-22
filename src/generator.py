@@ -426,38 +426,10 @@ class CodeGenerator:
         identifier = command[1]
         tag = identifier[0]
         
-        # identifier can be a name TODO: or table name 
-        if tag == 'id_PID':
-            name = identifier[1]
-            mem_idx = self.table.get_symbol(name)['position']
-            self.table.get_symbol(name)['assigned'] = True
-            
-            c_list.append(Code('GET', mem_idx))
-            
-        elif tag == 'id_ARRAY_NUM':
-            arr = identifier[1]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(name)['start_idx']
-            idx_value = identifier[2]
-            position = int(arr_pos) + int(idx_value) - int(arr_offset)
-            
-            c_list.append(Code('GET', position))
-            
-        elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
-            arr = identifier[1]
-            idx = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            idx_pos = self.table.get_symbol(idx)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            
-            c_list.append(Code('SET', arr_offset))
-            c_list.append(Code('STORE', 1))
-            c_list.append(Code('SET', arr_pos))
-            c_list.append(Code('ADD', idx_pos))
-            c_list.append(Code('SUB', 1))
-            c_list.append(Code('STORE', 1))
-            c_list.append(Code('GET', 0))
-            c_list.append(Code('STOREI', 1))
+        c_list.extend(self.id_pos_to_acc(identifier))
+        c_list.append(Code('STORE', 1))
+        c_list.append(Code('GET', 0))
+        c_list.append(Code('STOREI', 1))
         
         if self.debug:
             print(f"gc_comm_READ(): ")
