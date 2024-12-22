@@ -197,6 +197,32 @@ class CodeGenerator:
         return c_list
     
     
+    def handle_condition(self, condition):
+        cond_tag = condition[2]
+        
+        if cond_tag == "=":
+            return self.cond_EQ(condition)
+        
+        elif cond_tag == "NE":
+            return self.cond_NE(condition)
+        
+        elif cond_tag == ">":
+            return self.cond_G(condition)
+        
+        elif cond_tag == "<":
+            return self.cond_L(condition)
+        
+        elif cond_tag == "GE":
+            return self.cond_GE(condition)
+        
+        elif cond_tag == "LE":
+            return self.cond_LE(condition)
+
+        else:
+            print(f"Error: Wrong tag: {cond_tag}")
+            return
+    
+    
     def cond_EQ(self, condition):
         """ Puts evaluation of condition '=' in accumulator. 
         True:   1
@@ -381,6 +407,14 @@ class CodeGenerator:
             
         return c_list
     
+    
+    def gc_comm_IF(self, command):
+        """ Generates code for command IF """
+        # TODO
+        condition = command[1]
+        commands = command[2]
+        comm_list = self.comms_to_list()
+        
     
     def gc_comm_ASSIGN(self, command):
         """ Generates code for command ASSIGN """
