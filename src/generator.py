@@ -49,8 +49,8 @@ class CodeGenerator:
         main_comms_list = self.comms_to_list(main_comms)
         
         # for x in main_comms_list:
-        #     self.handle_command(x)
-        self.code_list.extend(self.handle_command_list(main_comms_list))
+        #     self.gc_command(x)
+        self.code_list.extend(self.gc_command_list(main_comms_list))
 
         code_string = self.code_list_to_string()
         code_string.append("HALT")
@@ -145,20 +145,36 @@ class CodeGenerator:
         else: 
             print("\nError: Wrong tag: ", tag)
             return
+    
             
-     
-    def handle_command_list(self, comm_list: list):
+    def print_code_list(self, code_list):
+        for x in code_list:
+            print(f"{x.name, x.value}")
+            
+            
+    def code_list_to_string(self):
+        string_list = []
+        for x in self.code_list:
+            string_list.append(x.to_string())
+            
+        return string_list
+    
+
+    ###################### code generation ######################
+    
+    
+    def gc_command_list(self, comm_list: list):
         """ Generates code for a command list """
         
         c_list = []
         
         for x in comm_list:
-            c_list.extend(self.handle_command(x))
+            c_list.extend(self.gc_command(x))
             
         return c_list
     
             
-    def handle_command(self, command):
+    def gc_command(self, command):
         """ Generates code for a command """
         
         tag = command[0]
@@ -180,22 +196,6 @@ class CodeGenerator:
             
         return c_list
     
-            
-    def print_code_list(self, code_list):
-        for x in code_list:
-            print(f"{x.name, x.value}")
-            
-            
-    def code_list_to_string(self):
-        string_list = []
-        for x in self.code_list:
-            string_list.append(x.to_string())
-            
-        return string_list
-    
-        
-            
-    ###################### code generation ######################
     
     def cond_EQ(self, condition):
         """ Puts evaluation of condition '=' in accumulator. 
