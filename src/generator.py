@@ -180,8 +180,8 @@ class CodeGenerator:
             
     ###################### code generation ######################
     
-    def cond_eq(self, condition):
-        """ Puts evaluation of condition in accumulator. 
+    def cond_EQ(self, condition):
+        """ Puts evaluation of condition '=' in accumulator. 
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -198,6 +198,116 @@ class CodeGenerator:
         c_list.append(Code('SET', 0))   # if False, acc := 0
         c_list.append(Code('JUMP', 2))  
         c_list.append(Code('SET', 1))
+        
+        return c_list
+    
+    
+    def cond_NE(self, condition):
+        """ Puts evaluation of condition '!=' in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
+        
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JZERO', 3))
+        c_list.append(Code('SET', 1))
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 0))
+        
+        return c_list
+    
+    
+    def cond_G(self, condition):
+        """ Puts evaluation of condition '>' in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
+        
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JPOS', 3))
+        c_list.append(Code('SET', 0))
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 1))
+        
+        return c_list
+    
+    
+    def cond_L(self, condition):
+        """ Puts evaluation of condition '<' in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
+        
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JNEG', 3))
+        c_list.append(Code('SET', 0))
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 1))
+        
+        return c_list
+    
+    
+    def cond_GE(self, condition):
+        """ Puts evaluation of condition '>=' in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
+        
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JNEG', 3))
+        c_list.append(Code('SET', 1))
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 0))
+        
+        return c_list
+    
+    
+    def cond_LE(self, condition):
+        """ Puts evaluation of condition '<=' in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
+        
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JPOS', 3))
+        c_list.append(Code('SET', 1))
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 0))
         
         return c_list
     
