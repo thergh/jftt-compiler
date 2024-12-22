@@ -189,6 +189,9 @@ class CodeGenerator:
             
         elif tag == 'comm_ASSIGN':
             c_list.extend(self.gc_comm_ASSIGN(command))
+            
+        elif tag == 'comm_IF':
+            c_list.extend(self.gc_comm_IF(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
@@ -198,12 +201,14 @@ class CodeGenerator:
     
     
     def handle_condition(self, condition):
+        """ Puts evaluated condition in accumulator """
+        
         cond_tag = condition[2]
         
         if cond_tag == "=":
             return self.cond_EQ(condition)
         
-        elif cond_tag == "NE":
+        elif cond_tag == "!=":
             return self.cond_NE(condition)
         
         elif cond_tag == ">":
@@ -212,10 +217,10 @@ class CodeGenerator:
         elif cond_tag == "<":
             return self.cond_L(condition)
         
-        elif cond_tag == "GE":
+        elif cond_tag == ">=":
             return self.cond_GE(condition)
         
-        elif cond_tag == "LE":
+        elif cond_tag == "<=":
             return self.cond_LE(condition)
 
         else:
@@ -411,9 +416,20 @@ class CodeGenerator:
     def gc_comm_IF(self, command):
         """ Generates code for command IF """
         # TODO
+        c_list = []
         condition = command[1]
         commands = command[2]
-        comm_list = self.comms_to_list()
+        comms_list: list = self.comms_to_list(commands)
+        comms_code = self.gc_command_list(comms_list)
+        comms_code_length = len(comms_code)
+        
+        c_list.extend(self.handle_condition(condition))
+        # if condition value is 0, we skip the commands
+        # TODO: BUGGED, idk if bug is here or in conditions
+        c_list.append(Code('JZERO', comms_code_length + 1))
+        c_list.extend(comms_code)
+        
+        return c_list
         
     
     def gc_comm_ASSIGN(self, command):

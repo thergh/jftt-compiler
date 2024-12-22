@@ -1,9 +1,9 @@
 PROGRAM IS
-	n, m, arr[0:10]
+	n, m
 BEGIN
-    READ m;
-    n := m;
-    arr[0] := 12;
-    WRITE n;
-    WRITE arr[0];
+    n := 10;
+    m := 20;
+    IF 10 < 10 THEN
+        WRITE n;
+    ENDIF
 END
