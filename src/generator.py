@@ -366,7 +366,7 @@ class CodeGenerator:
             number = identifier[2]
             arr_pos = self.table.get_symbol(arr)['position']
             arr_offset = self.table.get_symbol(arr)['start_idx']
-            position = arr_pos + number - arr_offset
+            position = int(arr_pos) + int(number) - int(arr_offset)
             c_list.append(Code('SET', position))
             
         elif id_tag == 'id_ARRAY_PID':
@@ -469,54 +469,9 @@ class CodeGenerator:
         """ Generates code for command WRITE """
         c_list = []
         value = command[1]
-        val_tag = value[0]
         
-        # in this case value is a number
-        if val_tag == 'val_NUM':
-            # TODO:
-            number = value[1]
-            
-            # 'PUT' prints a value from memory,
-            # so I place our value in memory slot '1'
-            # and then print it
-            # c_list.append(Code('STORE'))
-            
-        # in this case value is a name of a variable
-        elif val_tag == 'val_ID':
-            identifier = value[1]
-            id_tag = identifier[0]
-            
-            if id_tag == 'id_PID':
-                # TODO: array T case
-                name = identifier[1]
-                mem_idx = self.table.get_symbol(name)['position']
-                
-                c_list.append(Code('PUT', mem_idx))
-                
-            elif id_tag == 'id_ARRAY_NUM':
-                arr = identifier[1]
-                idx_value = identifier[2]
-                arr_pos = self.table.get_symbol(name)['position']
-                arr_offset = self.table.get_symbol(name)['start_idx']
-                
-                position = int(arr_pos) + int(idx_value) - int(arr_offset)
-                
-                c_list.append(Code('PUT', mem_idx))
-                
-            elif id_tag == 'id_ARRAY_PID':
-                arr = identifier[1]
-                idx = identifier[2]
-                arr_pos = self.table.get_symbol(arr)['position']
-                idx_pos = self.table.get_symbol(idx)['position']
-                arr_offset = self.table.get_symbol(arr)['start_idx']
-                
-                c_list.append(Code('SET', arr_offset))
-                c_list.append(Code('STORE', 1))
-                c_list.append(Code('SET', arr_pos))
-                c_list.append(Code('ADD', idx_pos))
-                c_list.append(Code('SUB', 1))
-                c_list.append(Code('LOADI', 0))
-                c_list.append(Code('PUT', 0))
+        c_list.extend(self.value_to_acc(value))
+        c_list.append(Code('PUT', 0))
                 
         if self.debug:
             print(f"gc_comm_WRITE(): ")

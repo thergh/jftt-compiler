@@ -1,7 +1,9 @@
 PROGRAM IS
-	n, m
+	n, m, arr[0:10]
 BEGIN
     m := 7;
     n := m;
+    arr[0] := 12;
     WRITE n;
+    WRITE arr[0];
 END
