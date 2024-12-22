@@ -151,7 +151,7 @@ class MyParser(Parser):
        'value "/" value',
        'value "%" value',)
     def expression(self, p):
-        return ('expr_OP', p[0], p[2], p[1])
+        return ('expr_OP', p[0], p[1], p[2])
     
     
     @_('value "=" value',
@@ -162,7 +162,7 @@ class MyParser(Parser):
        'value LE value',
        )
     def condition(self, p):
-        return ('cond', p[0], p[2], p[1])
+        return ('cond', p[0], p[1], p[2])
     
     
     @_('NUM')

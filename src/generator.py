@@ -158,7 +158,7 @@ class CodeGenerator:
             
         elif tag == 'comm_ASSIGN':
             self.code_list.extend(self.gc_comm_ASSIGN(command))
-            
+
         else:
             print(f"Error: wrong command tag: {tag}")
             return
@@ -181,12 +181,25 @@ class CodeGenerator:
     ###################### code generation ######################
     
     def cond_eq(self, condition):
-        """ if value == value:
-                return 1
-            else
-                return 0 """
+        """ Puts evaluation of condition in accumulator. 
+        True:   1
+        False:  0
+        Side effects in registers: 10 """
+            
+        c_list = []
+        value1 = condition[1]
+        value2 = condition[3]
         
+        c_list.extend(self.value_to_acc(value1))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('SUB', 10))
+        c_list.append(Code('JZERO', 3)) # if True, acc := 1
+        c_list.append(Code('SET', 0))   # if False, acc := 0
+        c_list.append(Code('JUMP', 2))  
+        c_list.append(Code('SET', 1))
         
+        return c_list
     
     
     def value_to_acc(self, value):
@@ -259,7 +272,7 @@ class CodeGenerator:
             print("Error: Complicated expressions not yet implemented :(")
             return
 
-        c_list.append(Code('# ASSIGN'))
+        c_list.append(Code('\t# ASSIGN'))
         
         c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
         c_list.append(Code('STORE', 1)) # store id1_pos in reg1
@@ -293,7 +306,7 @@ class CodeGenerator:
             mem_idx = self.table.get_symbol(name)['position']
             self.table.get_symbol(name)['assigned'] = True
             
-            c_list.append(Code('# READ'))
+            c_list.append(Code('#\t READ'))
             c_list.append(Code('GET', mem_idx))
             
         elif tag == 'id_ARRAY_NUM':
@@ -303,7 +316,7 @@ class CodeGenerator:
             idx_value = identifier[2]
             position = int(arr_pos) + int(idx_value) - int(arr_offset)
             
-            c_list.append(Code('# READ'))
+            c_list.append(Code('#\t READ'))
             c_list.append(Code('GET', position))
             
         elif tag == 'id_ARRAY_PID': # TODO: not tested!!!
@@ -313,7 +326,7 @@ class CodeGenerator:
             idx_pos = self.table.get_symbol(idx)['position']
             arr_offset = self.table.get_symbol(arr)['start_idx']
             
-            c_list.append(Code('# READ'))
+            c_list.append(Code('#\t READ'))
             c_list.append(Code('SET', arr_offset))
             c_list.append(Code('STORE', 1))
             c_list.append(Code('SET', arr_pos))
@@ -355,7 +368,7 @@ class CodeGenerator:
                 name = identifier[1]
                 mem_idx = self.table.get_symbol(name)['position']
                 
-                c_list.append(Code('# WRITE'))
+                c_list.append(Code('\t# WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_NUM':
@@ -366,7 +379,7 @@ class CodeGenerator:
                 
                 position = int(arr_pos) + int(idx_value) - int(arr_offset)
                 
-                c_list.append(Code('# WRITE'))
+                c_list.append(Code('#\t WRITE'))
                 c_list.append(Code('PUT', mem_idx))
                 
             elif id_tag == 'id_ARRAY_PID':
@@ -376,7 +389,7 @@ class CodeGenerator:
                 idx_pos = self.table.get_symbol(idx)['position']
                 arr_offset = self.table.get_symbol(arr)['start_idx']
                 
-                c_list.append(Code('# WRITE'))
+                c_list.append(Code('#\t WRITE'))
                 c_list.append(Code('SET', arr_offset))
                 c_list.append(Code('STORE', 1))
                 c_list.append(Code('SET', arr_pos))
@@ -411,11 +424,21 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, True)
     
-    gen.generate_code()
     
-    gen.table.display()
     
-        
+    # gen.table.display()
+
+    val1 = ('val_NUM', 10)
+    val2 = ('val_NUM', -10)
+    cond = ('cond', val1, "=", val2)
+    gen.code_list.extend(gen.cond_eq(cond))
+    
+    
+    code = gen.generate_code()
+    for c in code:
+        print(c)
+    
+    
     # code = gen.generate_code()
 
     # gen.table.add_array("arr", 0, 10)

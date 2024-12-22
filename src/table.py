@@ -5,7 +5,9 @@ class SymbolTable:
         self.table = {}
         self.mem_pos = 100
         # mem slot 0: accumulator
-        # 1-99 utility slots (registers?)
+        # 1-9 slots for code generation
+        # 10-19 slots for utility functions
+        # 100+ memory
     
     
     def add_symbol(self, name):
