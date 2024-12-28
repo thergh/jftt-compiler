@@ -1,9 +1,11 @@
 PROGRAM IS
-	n, m
+	n
 BEGIN
     n := 0;
-    WHILE n < 10 DO
+
+    WHILE n > -20 DO
+        n := n - 1;
         WRITE n;
-        n := n + 1;
     ENDWHILE
+    
 END

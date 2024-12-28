@@ -529,6 +529,12 @@ class CodeGenerator:
                 c_list.extend(self.value_to_acc(value1))
                 c_list.append(Code('ADD', 30))
             
+            if operation_tag == "-":
+                c_list.extend(self.value_to_acc(value2))
+                c_list.append(Code('STORE', 30))
+                c_list.extend(self.value_to_acc(value1))
+                c_list.append(Code('SUB', 30))
+            
             else:
                 print(f"Error: wrong operator: {operation_tag}")
         
