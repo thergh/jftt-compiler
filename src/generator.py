@@ -259,17 +259,9 @@ class CodeGenerator:
         
         value_tag = value[0]
         
-        if value_tag == 'val_NUM':
-            num_val = value[1]
-            c_list.append(Code('SET', num_val)) # put num_val in reg0
-            c_list.append(Code('STOREI', 1)) # set velue on position
-            
-        elif value_tag == 'val_ID':
-            identifier2 = value[1]
-            c_list.extend(self.id_pos_to_acc(identifier2)) # reg0: id2_pos
-            c_list.append(Code('LOADI', 0)) # load value of id2_pos to reg0
-            c_list.append(Code('STOREI', 1)) # set velue on position
-            
+        c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
+        c_list.append(Code('STOREI', 1)) # set velue on position
+
         return c_list    
     
     
@@ -528,7 +520,23 @@ class CodeGenerator:
         return c_list
 
 
-
+    def calculate_expression(self, expression):
+        """ Calculates expression and puts its value to acc """
+        
+        c_list = []
+        tag = expression[0]
+        
+        if tag == 'expr_VAL':
+            value = expression[1]
+            c_list.extend(self.value_to_acc(value))
+        
+        # elif tag == 'expr_OP':
+            
+            
+        
+        return c_list
+        
+        
 
 if __name__ == '__main__':
     lexer = MyLexer()
