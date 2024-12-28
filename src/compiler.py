@@ -4,20 +4,12 @@ from generator import CodeGenerator
 
 
 
-
-if __name__ == '__main__':
-    lexer = MyLexer()
-    parser = MyParser()
-    
-    input = 'examples/my-print.imp'
-    output = 'output/my-out.mr'
-
-
 if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
     
     input = 'examples/my0.imp'
+    # input = 'examples/program1.imp'
     output = 'output/my-out.mr'
 
 

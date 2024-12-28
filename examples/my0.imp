@@ -1,13 +1,12 @@
 PROGRAM IS
 	n
 BEGIN
-    n := -100;
+    
+    n := 0;
 
-    IF n > 0 THEN
-        WRITE 1;
-    ELSE
-        WRITE 0;
-    ENDIF
-
+    REPEAT
+        WRITE n;
+        n := n + 1;
+    UNTIL n < 10;
     
 END

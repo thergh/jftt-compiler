@@ -198,6 +198,9 @@ class CodeGenerator:
             
         elif tag == 'comm_WHILE':
             c_list.extend(self.gc_comm_WHILE(command))
+            
+        elif tag == 'comm_REPEAT':
+            c_list.extend(self.gc_comm_REPEAT(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
@@ -534,6 +537,30 @@ class CodeGenerator:
         c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1))
         
         return c_list
+    
+    
+    def gc_comm_REPEAT(self, command):
+        """ Generates code for command REPEAT """
+
+        c_list = []
+        condition = command[2]
+        commands = command[1]
+        comms_list: list = self.comms_to_list(commands)
+        comms_code = self.gc_command_list(comms_list)
+        comms_code_length = len(comms_code)
+        cond_code = self.handle_condition(condition)
+        cond_code_length = len(cond_code)
+        
+        # c_list.extend(self.handle_condition(condition))
+        # c_list.append(Code('JZERO', comms_code_length + 2))
+        # c_list.extend(comms_code)
+        # c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1))
+        
+        c_list.extend(comms_code)
+        c_list.extend(self.handle_condition(condition))
+        c_list.append(Code('JPOS', - comms_code_length - cond_code_length))
+        
+        return c_list
 
 
     def calculate_expression(self, expression):
@@ -571,36 +598,36 @@ class CodeGenerator:
         
         
 
-if __name__ == '__main__':
-    lexer = MyLexer()
-    parser = MyParser()
+# if __name__ == '__main__':
+#     lexer = MyLexer()
+#     parser = MyParser()
     
-    input = 'examples/my0.imp'
-    output = 'output/my-out.mr'
+#     input = 'examples/my0.imp'
+#     output = 'output/my-out.mr'
 
 
-    with open(input, 'r') as file:
-        data = file.read()
+#     with open(input, 'r') as file:
+#         data = file.read()
         
-    tokens = lexer.tokenize(data)
+#     tokens = lexer.tokenize(data)
     
-    parsed = parser.parse(tokens)
+#     parsed = parser.parse(tokens)
     
-    gen = CodeGenerator(parsed, True)
+#     gen = CodeGenerator(parsed, True)
     
     
     
-    # gen.table.display()
+#     # gen.table.display()
 
-    val1 = ('val_NUM', 10)
-    val2 = ('val_NUM', -10)
-    cond = ('cond', val1, "=", val2)
-    gen.code_list.extend(gen.cond_eq(cond))
+#     val1 = ('val_NUM', 10)
+#     val2 = ('val_NUM', -10)
+#     cond = ('cond', val1, "=", val2)
+#     gen.code_list.extend(gen.cond_eq(cond))
     
     
-    code = gen.generate_code()
-    for c in code:
-        print(c)
+#     code = gen.generate_code()
+#     for c in code:
+#         print(c)
     
     
     # code = gen.generate_code()
