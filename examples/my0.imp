@@ -4,5 +4,6 @@ BEGIN
     n := 0;
     WHILE n < 10 DO
         WRITE n;
+        n := n + 1;
     ENDWHILE
 END

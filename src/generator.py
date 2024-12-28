@@ -238,26 +238,13 @@ class CodeGenerator:
     
     def gc_comm_ASSIGN(self, command):
         """ Generates code for command ASSIGN """
-        # TODO:
-        # for now only for single numbers,
-        # not complicated expressions
-        
+ 
         c_list = []
         identifier = command[1]
         expression = command[2]
-        
-        if expression[0] == 'expr_VAL':
-            value = expression[1]
-            
-        else:
-            print("Error: Complicated expressions not yet implemented :(")
-            return
-
-        
+    
         c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
         c_list.append(Code('STORE', 1)) # store id1_pos in reg1
-        
-        value_tag = value[0]
         
         c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
         c_list.append(Code('STOREI', 1)) # set velue on position
@@ -521,7 +508,8 @@ class CodeGenerator:
 
 
     def calculate_expression(self, expression):
-        """ Calculates expression and puts its value to acc """
+        """ Calculates expression and puts its value to acc.
+        Uses registers 30 """
         
         c_list = []
         tag = expression[0]
@@ -530,9 +518,19 @@ class CodeGenerator:
             value = expression[1]
             c_list.extend(self.value_to_acc(value))
         
-        # elif tag == 'expr_OP':
+        elif tag == 'expr_OP':
+            value1 = expression[1]
+            value2 = expression[3]
+            operation_tag = expression[2]
             
+            if operation_tag == "+":
+                c_list.extend(self.value_to_acc(value2))
+                c_list.append(Code('STORE', 30))
+                c_list.extend(self.value_to_acc(value1))
+                c_list.append(Code('ADD', 30))
             
+            else:
+                print(f"Error: wrong operator: {operation_tag}")
         
         return c_list
         
