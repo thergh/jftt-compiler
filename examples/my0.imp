@@ -1,9 +1,7 @@
 PROGRAM IS
 	n, m
 BEGIN
-    n := 10;
-    m := 20;
-    IF 10 < 10 THEN
-        WRITE n;
+    IF 1 <= 0 THEN
+        WRITE 100;
     ENDIF
 END

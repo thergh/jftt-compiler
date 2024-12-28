@@ -212,9 +212,11 @@ class CodeGenerator:
             return self.cond_NE(condition)
         
         elif cond_tag == ">":
+            print("\ncond_G\n")
             return self.cond_G(condition)
         
         elif cond_tag == "<":
+            print("\ncond_L\n")
             return self.cond_L(condition)
         
         elif cond_tag == ">=":
@@ -229,6 +231,7 @@ class CodeGenerator:
     
     
     def cond_EQ(self, condition):
+        # OK
         """ Puts evaluation of condition '=' in accumulator. 
         True:   1
         False:  0
@@ -251,6 +254,7 @@ class CodeGenerator:
     
     
     def cond_NE(self, condition):
+        # OK
         """ Puts evaluation of condition '!=' in accumulator. 
         True:   1
         False:  0
@@ -282,9 +286,9 @@ class CodeGenerator:
         value1 = condition[1]
         value2 = condition[3]
         
-        c_list.extend(self.value_to_acc(value1))
-        c_list.append(Code('STORE', 10))
         c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value1))
         c_list.append(Code('SUB', 10))
         c_list.append(Code('JPOS', 3))
         c_list.append(Code('SET', 0))
@@ -304,9 +308,9 @@ class CodeGenerator:
         value1 = condition[1]
         value2 = condition[3]
         
-        c_list.extend(self.value_to_acc(value1))
-        c_list.append(Code('STORE', 10))
         c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value1))
         c_list.append(Code('SUB', 10))
         c_list.append(Code('JNEG', 3))
         c_list.append(Code('SET', 0))
@@ -326,9 +330,9 @@ class CodeGenerator:
         value1 = condition[1]
         value2 = condition[3]
         
-        c_list.extend(self.value_to_acc(value1))
-        c_list.append(Code('STORE', 10))
         c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value1))
         c_list.append(Code('SUB', 10))
         c_list.append(Code('JNEG', 3))
         c_list.append(Code('SET', 1))
@@ -348,9 +352,9 @@ class CodeGenerator:
         value1 = condition[1]
         value2 = condition[3]
         
-        c_list.extend(self.value_to_acc(value1))
-        c_list.append(Code('STORE', 10))
         c_list.extend(self.value_to_acc(value2))
+        c_list.append(Code('STORE', 10))
+        c_list.extend(self.value_to_acc(value1))
         c_list.append(Code('SUB', 10))
         c_list.append(Code('JPOS', 3))
         c_list.append(Code('SET', 1))
