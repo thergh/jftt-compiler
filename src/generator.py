@@ -193,6 +193,9 @@ class CodeGenerator:
         elif tag == 'comm_IF':
             c_list.extend(self.gc_comm_IF(command))
             
+        elif tag == 'comm_IF_ELSE':
+            c_list.extend(self.gc_comm_IF_ELSE(command))
+            
         elif tag == 'comm_WHILE':
             c_list.extend(self.gc_comm_WHILE(command))
 
@@ -483,6 +486,32 @@ class CodeGenerator:
         # if condition value is 0, we skip the commands
         c_list.append(Code('JZERO', comms_code_length + 1))
         c_list.extend(comms_code)
+        
+        return c_list
+    
+    
+    def gc_comm_IF_ELSE(self, command):
+        """ Generates code for command IF """
+        
+        c_list = []
+        condition = command[1]
+        commands1 = command[2]
+        commands2 = command[3]
+        
+        comms1_list: list = self.comms_to_list(commands1)
+        comms1_code = self.gc_command_list(comms1_list)
+        comms1_code_length = len(comms1_code)
+        
+        comms2_list: list = self.comms_to_list(commands2)
+        comms2_code = self.gc_command_list(comms2_list)
+        comms2_code_length = len(comms2_code)
+        
+        c_list.extend(self.handle_condition(condition))
+        # if condition value is 0, we skip the commands and skip 'JUMP'
+        c_list.append(Code('JZERO', comms1_code_length + 2))
+        c_list.extend(comms1_code)
+        c_list.append(Code('JUMP', comms2_code_length + 1)) # skip com2
+        c_list.extend(comms2_code)
         
         return c_list
 

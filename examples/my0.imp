@@ -1,11 +1,13 @@
 PROGRAM IS
 	n
 BEGIN
-    n := 0;
+    n := -100;
 
-    WHILE n > -20 DO
-        n := n - 1;
-        WRITE n;
-    ENDWHILE
+    IF n > 0 THEN
+        WRITE 1;
+    ELSE
+        WRITE 0;
+    ENDIF
+
     
 END
