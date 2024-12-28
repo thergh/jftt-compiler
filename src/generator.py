@@ -192,6 +192,9 @@ class CodeGenerator:
             
         elif tag == 'comm_IF':
             c_list.extend(self.gc_comm_IF(command))
+            
+        elif tag == 'comm_WHILE':
+            c_list.extend(self.gc_comm_WHILE(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
@@ -200,35 +203,128 @@ class CodeGenerator:
         return c_list
     
     
-    def handle_condition(self, condition):
-        """ Puts evaluated condition in accumulator """
+    def gc_comm_READ(self, command):
+        """ Generates code for command READ """
         
-        cond_tag = condition[2]
+        c_list = []
+        identifier = command[1]
+        tag = identifier[0]
         
-        if cond_tag == "=":
-            return self.cond_EQ(condition)
+        c_list.extend(self.id_pos_to_acc(identifier))
+        c_list.append(Code('STORE', 1))
+        c_list.append(Code('GET', 0))
+        c_list.append(Code('STOREI', 1))
         
-        elif cond_tag == "!=":
-            return self.cond_NE(condition)
+        if self.debug:
+            print(f"gc_comm_READ(): ")
+            self.print_code_list(c_list)
+        return c_list
         
-        elif cond_tag == ">":
-            print("\ncond_G\n")
-            return self.cond_G(condition)
-        
-        elif cond_tag == "<":
-            print("\ncond_L\n")
-            return self.cond_L(condition)
-        
-        elif cond_tag == ">=":
-            return self.cond_GE(condition)
-        
-        elif cond_tag == "<=":
-            return self.cond_LE(condition)
 
-        else:
-            print(f"Error: Wrong tag: {cond_tag}")
-            return
+    def gc_comm_WRITE(self, command):
+        """ Generates code for command WRITE """
+        c_list = []
+        value = command[1]
+        
+        c_list.extend(self.value_to_acc(value))
+        c_list.append(Code('PUT', 0))
+                
+        if self.debug:
+            print(f"gc_comm_WRITE(): ")
+            self.print_code_list(c_list)
+            
+        return c_list
     
+    
+    def gc_comm_ASSIGN(self, command):
+        """ Generates code for command ASSIGN """
+        # TODO:
+        # for now only for single numbers,
+        # not complicated expressions
+        
+        c_list = []
+        identifier = command[1]
+        expression = command[2]
+        
+        if expression[0] == 'expr_VAL':
+            value = expression[1]
+            
+        else:
+            print("Error: Complicated expressions not yet implemented :(")
+            return
+
+        
+        c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
+        c_list.append(Code('STORE', 1)) # store id1_pos in reg1
+        
+        value_tag = value[0]
+        
+        if value_tag == 'val_NUM':
+            num_val = value[1]
+            c_list.append(Code('SET', num_val)) # put num_val in reg0
+            c_list.append(Code('STOREI', 1)) # set velue on position
+            
+        elif value_tag == 'val_ID':
+            identifier2 = value[1]
+            c_list.extend(self.id_pos_to_acc(identifier2)) # reg0: id2_pos
+            c_list.append(Code('LOADI', 0)) # load value of id2_pos to reg0
+            c_list.append(Code('STOREI', 1)) # set velue on position
+            
+        return c_list    
+    
+    
+    def value_to_acc(self, value):
+        """ Generates code that puts the number held
+        by 'value' into the accumulator """
+    
+        c_list = []
+        
+        value_tag = value[0]
+        
+        if value_tag == 'val_NUM':
+            number = value[1]
+            c_list.append(Code('SET', number))
+        
+        elif value_tag == 'val_ID':
+            identifier = value[1]
+            c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
+            c_list.append(Code('LOADI', 0)) # load value of id to reg0
+        
+        return c_list
+    
+    
+    def id_pos_to_acc(self, identifier):
+        """ Generates code that puts position
+        of id into accumulator. """
+
+        id_tag = identifier[0]
+        c_list = []
+        
+        if id_tag == 'id_PID':
+            id = identifier[1]
+            id_pos = self.table.get_symbol(id)['position']
+            c_list.append(Code('SET', id_pos))
+            
+        elif id_tag == 'id_ARRAY_NUM':
+            arr = identifier[1]
+            number = identifier[2]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            position = int(arr_pos) + int(number) - int(arr_offset)
+            c_list.append(Code('SET', position))
+            
+        elif id_tag == 'id_ARRAY_PID':
+            arr = identifier[1]
+            idx = identifier[2]
+            arr_pos = self.table.get_symbol(arr)['position']
+            arr_offset = self.table.get_symbol(arr)['start_idx']
+            idx_pos = self.table.get_symbol(idx)['position']
+            c_list.append(Code('LOADI', idx_pos)) # loads idx value to acc
+            c_list.append(Code('ADD', arr_pos))
+            c_list.append(Code('SUB', arr_offset)) # now id position is in acc
+            
+        return c_list
+
     
     def cond_EQ(self, condition):
         # OK
@@ -364,62 +460,39 @@ class CodeGenerator:
         return c_list
     
     
-    def value_to_acc(self, value):
-        """ Generates code that puts the number held
-        by 'value' into the accumulator """
-    
-        c_list = []
+    def handle_condition(self, condition):
+        """ Puts evaluated condition in accumulator """
         
-        value_tag = value[0]
+        cond_tag = condition[2]
         
-        if value_tag == 'val_NUM':
-            number = value[1]
-            c_list.append(Code('SET', number))
+        if cond_tag == "=":
+            return self.cond_EQ(condition)
         
-        elif value_tag == 'val_ID':
-            identifier = value[1]
-            c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
-            c_list.append(Code('LOADI', 0)) # load value of id to reg0
+        elif cond_tag == "!=":
+            return self.cond_NE(condition)
         
-        return c_list
-    
-    
-    def id_pos_to_acc(self, identifier):
-        """ Generates code that puts position
-        of id into accumulator. """
+        elif cond_tag == ">":
+            print("\ncond_G\n")
+            return self.cond_G(condition)
+        
+        elif cond_tag == "<":
+            print("\ncond_L\n")
+            return self.cond_L(condition)
+        
+        elif cond_tag == ">=":
+            return self.cond_GE(condition)
+        
+        elif cond_tag == "<=":
+            return self.cond_LE(condition)
 
-        id_tag = identifier[0]
-        c_list = []
+        else:
+            print(f"Error: Wrong tag: {cond_tag}")
+            return
         
-        if id_tag == 'id_PID':
-            id = identifier[1]
-            id_pos = self.table.get_symbol(id)['position']
-            c_list.append(Code('SET', id_pos))
-            
-        elif id_tag == 'id_ARRAY_NUM':
-            arr = identifier[1]
-            number = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            position = int(arr_pos) + int(number) - int(arr_offset)
-            c_list.append(Code('SET', position))
-            
-        elif id_tag == 'id_ARRAY_PID':
-            arr = identifier[1]
-            idx = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            idx_pos = self.table.get_symbol(idx)['position']
-            c_list.append(Code('LOADI', idx_pos)) # loads idx value to acc
-            c_list.append(Code('ADD', arr_pos))
-            c_list.append(Code('SUB', arr_offset)) # now id position is in acc
-            
-        return c_list
-    
-    
+        
     def gc_comm_IF(self, command):
         """ Generates code for command IF """
-        # TODO
+        
         c_list = []
         condition = command[1]
         commands = command[2]
@@ -429,80 +502,29 @@ class CodeGenerator:
         
         c_list.extend(self.handle_condition(condition))
         # if condition value is 0, we skip the commands
-        # TODO: BUGGED, idk if bug is here or in conditions
         c_list.append(Code('JZERO', comms_code_length + 1))
         c_list.extend(comms_code)
         
         return c_list
-        
-    
-    def gc_comm_ASSIGN(self, command):
-        """ Generates code for command ASSIGN """
-        # TODO:
-        # for now only for single numbers,
-        # not complicated expressions
-        
-        c_list = []
-        identifier = command[1]
-        expression = command[2]
-        
-        if expression[0] == 'expr_VAL':
-            value = expression[1]
-            
-        else:
-            print("Error: Complicated expressions not yet implemented :(")
-            return
 
-        
-        c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
-        c_list.append(Code('STORE', 1)) # store id1_pos in reg1
-        
-        value_tag = value[0]
-        
-        if value_tag == 'val_NUM':
-            num_val = value[1]
-            c_list.append(Code('SET', num_val)) # put num_val in reg0
-            c_list.append(Code('STOREI', 1)) # set velue on position
-            
-        elif value_tag == 'val_ID':
-            identifier2 = value[1]
-            c_list.extend(self.id_pos_to_acc(identifier2)) # reg0: id2_pos
-            c_list.append(Code('LOADI', 0)) # load value of id2_pos to reg0
-            c_list.append(Code('STOREI', 1)) # set velue on position
-            
-        return c_list    
     
+    def gc_comm_WHILE(self, command):
+        """ Generates code for command WHILE """
     
-    def gc_comm_READ(self, command):
-        """ Generates code for command READ """
-        
         c_list = []
-        identifier = command[1]
-        tag = identifier[0]
+        condition = command[1]
+        commands = command[2]
+        comms_list: list = self.comms_to_list(commands)
+        comms_code = self.gc_command_list(comms_list)
+        comms_code_length = len(comms_code)
+        cond_code = self.handle_condition(condition)
+        cond_code_length = len(cond_code)
         
-        c_list.extend(self.id_pos_to_acc(identifier))
-        c_list.append(Code('STORE', 1))
-        c_list.append(Code('GET', 0))
-        c_list.append(Code('STOREI', 1))
+        c_list.extend(self.handle_condition(condition))
+        c_list.append(Code('JZERO', comms_code_length + 2))
+        c_list.extend(comms_code)
+        c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1))
         
-        if self.debug:
-            print(f"gc_comm_READ(): ")
-            self.print_code_list(c_list)
-        return c_list
-        
-
-    def gc_comm_WRITE(self, command):
-        """ Generates code for command WRITE """
-        c_list = []
-        value = command[1]
-        
-        c_list.extend(self.value_to_acc(value))
-        c_list.append(Code('PUT', 0))
-                
-        if self.debug:
-            print(f"gc_comm_WRITE(): ")
-            self.print_code_list(c_list)
-            
         return c_list
 
 
