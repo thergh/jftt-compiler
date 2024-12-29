@@ -1,12 +1,11 @@
 PROGRAM IS
-	n
+	n, m
 BEGIN
     
-    n := 0;
+    n := 2;
+    m := 0;
 
-    REPEAT
-        WRITE n;
-        n := n + 1;
-    UNTIL n < 10;
-    
+    n := n * m;
+
+    WRITE n;    
 END
