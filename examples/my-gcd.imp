@@ -1,0 +1,18 @@
+PROGRAM IS
+	x, y
+BEGIN
+    READ x;
+    READ y;
+
+    WHILE y > 0 DO
+        IF  x >= y THEN
+            x := x - y;
+        ELSE
+            x := x + y;
+            y := x - y;
+            x := x - y;
+        ENDIF
+    ENDWHILE
+
+    WRITE x;
+END
