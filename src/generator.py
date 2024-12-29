@@ -593,7 +593,7 @@ class CodeGenerator:
             
             if operation_tag == '*':
                 # naive O(n); TODO: improve
-                
+
                 # initiate values to registers
                 c_list.extend(self.value_to_acc(value1))
                 c_list.append(Code('STORE', 30)) # multiplicand to r30
@@ -605,7 +605,21 @@ class CodeGenerator:
                 c_list.append(Code('SET', 1))
                 c_list.append(Code('STORE', 34)) # put "1" in r34 to use it to decrement counter
                 
-                # get out of loop when counter reaches 0; TODO: calc length of mult
+                # if multiplier is negative, perform special actions
+                c_list.append(Code('LOAD', 31))
+                c_list.append(Code('JPOS', 5)) # if positive, skip TODO: calc length
+                c_list.append(Code('JZERO', 4)) # if zero, also skip TODO: calc length
+                # subtract multiplier twice to make it positive
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('STORE', 32)) # put the value to r32 as a counter
+                # subtract multiplicand twice to change its sign xdd, so hacky i'm embarrassed XD
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('SUB', 30))
+                c_list.append(Code('SUB', 30))
+                c_list.append(Code('STORE', 30))
+                
+                # get out of loop when counter reaches 0
                 c_list.append(Code('LOAD', 32))
                 c_list.append(Code('JZERO', 8)) # 8 is hardcoded length of loop
                 
@@ -619,12 +633,11 @@ class CodeGenerator:
                 c_list.append(Code('SUB', 34))
                 c_list.append(Code('STORE', 32))
                 
-                # go back to the start of loop; TODO: calc length
+                # go back to the start of loop
                 c_list.append(Code('JUMP', -8)) # loop starts at -8, hardcoded
                 
                 # put result in acc
                 c_list.append(Code('LOAD', 33))
-                
             
             else:
                 print(f"Error: wrong operator: {operation_tag}")
