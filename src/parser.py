@@ -14,12 +14,12 @@ class MyParser(Parser):
     
     @_('procedures PROCEDURE proc_head IS declarations BEGIN commands END')
     def procedures(self, p):
-        return ('procs_REC',
+        return ('procs_LONG',
                 p[0], p[2], p[4], p[6])
     
     @_('procedures PROCEDURE proc_head IS BEGIN commands END')
     def procedures(self, p):
-        return ('procs_SINGLE',
+        return ('procs_SHORT',
                 p[0], p[2], p[5])
     
     @_('')

@@ -145,6 +145,21 @@ class CodeGenerator:
         else: 
             print("\nError: Wrong tag: ", tag)
             return
+        
+        
+    def procs_to_list(self, procs):
+        """ Changes procedures from
+        recursive form to a list """
+        
+        
+        if procs == 'procs_EMPTY': 
+            return [procs]
+        
+        else:
+            procs_list: list = self.procs_to_list(procs[1])
+            procs_list.append(procs)
+            return procs_list
+        
     
             
     def print_code_list(self, code_list):
@@ -158,6 +173,9 @@ class CodeGenerator:
             string_list.append(x.to_string())
             
         return string_list
+    
+    
+    
     
 
     ###################### code generation ######################
@@ -765,7 +783,6 @@ class CodeGenerator:
                 c_list.append(Code('JUMP', -7))
                 # endloop
 
-
                 c_list.append(Code('LOAD', 32))
                 c_list.append(Code('SUB', 32))
 
@@ -783,3 +800,34 @@ class CodeGenerator:
                 print(f"Error: wrong operator: {operation_tag}")
         
         return c_list
+
+
+
+if __name__ == '__main__':
+    lexer = MyLexer()
+    parser = MyParser()
+    
+    input = 'examples/my0.imp'
+    # input = 'examples/program1.imp'
+    output = 'output/my-out.mr'
+
+
+    with open(input, 'r') as file:
+        data = file.read()
+        
+    tokens = lexer.tokenize(data)
+    
+    parsed = parser.parse(tokens)
+    
+    gen = CodeGenerator(parsed, False)
+    
+    
+    procs_list = gen.procs_to_list(gen.procedures)
+    print(procs_list)
+    
+    # # print(gen.code_list_to_string())
+    # code = gen.generate_code()
+
+    # with open(output, 'w') as file:
+    #     for line in code:
+    #         file.write(line + '\n')
