@@ -708,6 +708,76 @@ class CodeGenerator:
                 
                 c_list.append(Code('LOAD', 32)) # load result to acc
                 
+            elif operation_tag == '%':
+                c_list.extend(self.value_to_acc(value1))
+                c_list.append(Code('STORE', 30)) # dividend to r30
+                c_list.append(Code('STORE', 33)) # current value to r33
+                c_list.extend(self.value_to_acc(value2))
+                c_list.append(Code('JZERO', 15)) # if divisor = 0 return 0
+                c_list.append(Code('STORE', 31)) # divisor to r31
+                c_list.append(Code('SET', 0))
+                c_list.append(Code('STORE', 32)) # counter to r32
+                c_list.append(Code('SET', 1))
+                c_list.append(Code('STORE', 34)) # positive constant to r34
+                c_list.append(Code('SET', -1))
+                c_list.append(Code('STORE', 35)) # negative constant to r35
+                c_list.append(Code('SET', 1))
+                c_list.append(Code('STORE', 36)) # sign flag to r36
+                
+                # handle negative dividend
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('JPOS', 9))
+                c_list.append(Code('JZERO', 8))
+                c_list.append(Code('SET', -1))
+                c_list.append(Code('STORE', 36)) # change flag to negative
+                # subtract dividend twice to make it positive
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('SUB', 30))
+                c_list.append(Code('SUB', 30))
+                c_list.append(Code('STORE', 30)) # positive dividend to r30
+                c_list.append(Code('STORE', 33))# positive current to 33
+                
+                # handle negative divisor
+                c_list.append(Code('LOAD', 31))
+                c_list.append(Code('JPOS', 10))
+                c_list.append(Code('JZERO', 9))
+                # swap sign of flag
+                c_list.append(Code('LOAD', 36))
+                c_list.append(Code('SUB', 36))
+                c_list.append(Code('SUB', 36))
+                c_list.append(Code('STORE', 36))
+                # subtract divisor twice to make it positive
+                c_list.append(Code('LOAD', 31))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('STORE', 31))
+
+                # loop:
+                c_list.append(Code('LOAD', 33))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('JNEG', 6)) # if negative, end loop
+                
+                # increment and go back    
+                c_list.append(Code('STORE', 33))
+                c_list.append(Code('LOAD', 32))
+                c_list.append(Code('ADD', 34))
+                c_list.append(Code('STORE', 32))
+                c_list.append(Code('JUMP', -7))
+                # endloop
+
+
+                c_list.append(Code('LOAD', 32))
+                c_list.append(Code('SUB', 32))
+
+                # if flag is negative, negate the result
+                c_list.append(Code('LOAD', 36))
+                c_list.append(Code('JPOS', 5))
+                c_list.append(Code('LOAD', 33))
+                c_list.append(Code('SUB', 33))
+                c_list.append(Code('SUB', 33))
+                c_list.append(Code('STORE', 33))
+                
+                c_list.append(Code('LOAD', 33)) # load result to acc
             
             else:
                 print(f"Error: wrong operator: {operation_tag}")
