@@ -607,8 +607,8 @@ class CodeGenerator:
                 
                 # if multiplier is negative, perform special actions
                 c_list.append(Code('LOAD', 31))
-                c_list.append(Code('JPOS', 5)) # if positive, skip TODO: calc length
-                c_list.append(Code('JZERO', 4)) # if zero, also skip TODO: calc length
+                c_list.append(Code('JPOS', 9)) # if positive, skip TODO: calc length
+                c_list.append(Code('JZERO', 8)) # if zero, also skip TODO: calc length
                 # subtract multiplier twice to make it positive
                 c_list.append(Code('SUB', 31))
                 c_list.append(Code('SUB', 31))
