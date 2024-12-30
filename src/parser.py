@@ -121,7 +121,7 @@ class MyParser(Parser):
     
     @_('args_decl "," "T" PID')
     def args_decl(self, p):
-        return ('ard_REC_T', p[0], p[3])    
+        return ('ard_REC_ARRAY', p[0], p[3])    
             
     @_('PID')
     def args_decl(self, p):
@@ -129,7 +129,7 @@ class MyParser(Parser):
     
     @_('"T" PID')
     def args_decl(self, p):
-        return ('ard_T', p[0], p.PID)
+        return ('ard_ARRAY', p.PID)
     
     
     @_('args "," PID')

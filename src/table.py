@@ -32,7 +32,7 @@ class SymbolTable:
             return
         
         if end_idx < start_idx:
-            print(f"Error: start_idx bigger than end_idx: {start_idx} > {end_idx}")
+            print(f"Error: start_idx: {start_idx} bigger than end_idx: {end_idx}")
             return
         
         length = int(end_idx) - int(start_idx)

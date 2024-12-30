@@ -220,7 +220,9 @@ class CodeGenerator:
         
     
     def args_decl_to_table(self, args_decl, proc_PID):
-        """ Writes arguments to the symbol table """
+        """ Writes arguments to the symbol table. They will
+        probably be treated as pointers to arguments passed by
+        reference. idk, TODO... """
         
         # print("args: ", args)
         self.scope = proc_PID + '__'

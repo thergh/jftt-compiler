@@ -1,20 +1,30 @@
-PROCEDURE check(n,d,p) IS
-  r, m, x
+PROCEDURE licz(T s, n) IS
+  j
 BEGIN
-    p:=0;
-    r:=n%d;
-    WHILE r=0 DO
-        n:=n/d;
-        p:=p+1;
-        r:=n%d;
-    ENDWHILE
+  FOR i FROM 2 TO n DO
+    s[i]:=1;
+  ENDFOR
+  FOR i FROM 2 TO n DO
+    IF s[i]>0 THEN 
+      j:=i+i;
+      WHILE j<=n DO
+        s[j]:=0;
+        j:=j+i;
+      ENDWHILE
+    ENDIF
+  ENDFOR
+END
+PROCEDURE wypisz(T s, n) IS
+BEGIN
+  FOR i FROM n DOWNTO 2 DO
+    IF s[i]>0 THEN
+      WRITE i;
+    ENDIF
+  ENDFOR
 END
 PROGRAM IS
-  a,b
+  n, sito[2:100]
 BEGIN
-  READ a;
-  READ b;
-  pd(a,b);
-  WRITE a;
-  WRITE b;
+  n:=100;
+
 END
