@@ -214,12 +214,12 @@ class CodeGenerator:
         proc_PID = self.get_phead_PID(phead)
         decs = self.get_proc_declarations(proc)
         
-        self.scope = proc_PID
+        self.scope = proc_PID + '__'
         self.decs_to_table(decs)
         self.scope = ''
         
         
-    def args_decl_to_table(self, args_decl):
+    # def args_decl_to_table(self, args_decl):
         
         
         
@@ -880,11 +880,10 @@ if __name__ == '__main__':
     procs_list = gen.procs_to_list(gen.procedures)
     # print(procs_list[0])
     proc_decs = gen.get_proc_declarations(procs_list[0])
-    proc_head = gen.get_proc_head(procs_list[0])
-    print(proc_decs)
-    print(proc_head)
+    # print(proc_decs)
+    gen.proc_decs_to_table(procs_list[0])
     # code = gen.generate_code()
-    # gen.table.display()
+    gen.table.display()
     
     # with open(output, 'w') as file:
     #     for line in code:
