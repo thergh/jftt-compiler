@@ -30,6 +30,7 @@ class CodeGenerator:
         self.main = program[2]
         self.table: SymbolTable = SymbolTable()
         self.code_list = []
+        self.scope = 'main__'
         
         if self.debug:
             print("CodeGenerator.procedures: ", self.procedures)
@@ -84,18 +85,18 @@ class CodeGenerator:
         tag = decs[0]
             
         if tag == 'decs_PID':
-            self.table.add_symbol(decs[1])
+            self.table.add_symbol(self.scope + decs[1])
 
         elif tag == 'decs_ARRAY':
-            self.table.add_array(decs[1], decs[2], decs[3])
+            self.table.add_array(self.scope + decs[1], decs[2], decs[3])
         
         elif tag == 'decs_REC_PID':
             self.decs_to_table(decs[1])
-            self.table.add_symbol(decs[2])
+            self.table.add_symbol(self.scope + decs[2])
 
         elif tag == 'decs_REC_ARRAY':
             self.decs_to_table(decs[1])
-            self.table.add_array(decs[2], decs[3], decs[4])
+            self.table.add_arrayself.scope + (decs[2], decs[3], decs[4])
             
         else:
             print("\nError: Wrong tag")
@@ -150,8 +151,7 @@ class CodeGenerator:
     def procs_to_list(self, procs):
         """ Changes procedures from
         recursive form to a list """
-        
-        
+
         if procs == 'procs_EMPTY': 
             return []
         
@@ -159,7 +159,6 @@ class CodeGenerator:
             procs_list: list = self.procs_to_list(procs[1])
             procs_list.append(procs)
             return procs_list
-        
     
             
     def print_code_list(self, code_list):
@@ -305,23 +304,23 @@ class CodeGenerator:
         
         if id_tag == 'id_PID':
             id = identifier[1]
-            id_pos = self.table.get_symbol(id)['position']
+            id_pos = self.table.get_symbol(self.scope + id)['position']
             c_list.append(Code('SET', id_pos))
             
         elif id_tag == 'id_ARRAY_NUM':
             arr = identifier[1]
             number = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
+            arr_pos = self.table.get_symbol(self.scope + arr)['position']
+            arr_offset = self.table.get_symbol(self.scope + arr)['start_idx']
             position = int(arr_pos) + int(number) - int(arr_offset)
             c_list.append(Code('SET', position))
             
         elif id_tag == 'id_ARRAY_PID':
             arr = identifier[1]
             idx = identifier[2]
-            arr_pos = self.table.get_symbol(arr)['position']
-            arr_offset = self.table.get_symbol(arr)['start_idx']
-            idx_pos = self.table.get_symbol(idx)['position']
+            arr_pos = self.table.get_symbol(self.scope + arr)['position']
+            arr_offset = self.table.get_symbol(self.scope + arr)['start_idx']
+            idx_pos = self.table.get_symbol(self.scope + idx)['position']
             c_list.append(Code('LOADI', idx_pos)) # loads idx value to acc
             c_list.append(Code('ADD', arr_pos))
             c_list.append(Code('SUB', arr_offset)) # now id position is in acc
@@ -822,12 +821,13 @@ if __name__ == '__main__':
     gen = CodeGenerator(parsed, False)
     
     
-    procs_list = gen.procs_to_list(gen.procedures)
-    print(procs_list)
+    # procs_list = gen.procs_to_list(gen.procedures)
+    # print(procs_list)
+    
     
     # # print(gen.code_list_to_string())
-    # code = gen.generate_code()
-
+    code = gen.generate_code()
+    gen.table.display()
     # with open(output, 'w') as file:
     #     for line in code:
     #         file.write(line + '\n')
