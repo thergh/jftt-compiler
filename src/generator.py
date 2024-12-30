@@ -96,7 +96,7 @@ class CodeGenerator:
 
         elif tag == 'decs_REC_ARRAY':
             self.decs_to_table(decs[1])
-            self.table.add_arrayself.scope + (decs[2], decs[3], decs[4])
+            self.table.add_array(self.scope + decs[2], decs[3], decs[4])
             
         else:
             print("\nError: Wrong tag")
@@ -218,19 +218,43 @@ class CodeGenerator:
         self.decs_to_table(decs)
         self.scope = ''
         
+    
+    def args_decl_to_table(self, args_decl, proc_PID):
+        """ Writes arguments to the symbol table """
         
-    # def args_decl_to_table(self, args_decl):
-        
-        
-        
-    def phead_args_to_table(self, proc):
-        phead = self.get_proc_head(proc)
-        proc_PID = self.get_phead_PID(phead)
-        phead_args = self.get_phead_args(phead)
-        
-        self.scope = proc_PID
+        # print("args: ", args)
+        self.scope = proc_PID + '__'
 
+        if args_decl is None:
+            print("\nError: Arguments type is 'None'")
+            self.scope = ''
+            return
+        
+        tag = args_decl[0]
+        # print(tag)
+            
+        if tag == 'ard_PID':
+            self.table.add_symbol(self.scope + args_decl[1])
+
+        elif tag == 'ard_ARRAY':
+            self.table.add_array(self.scope + args_decl[1], 0, 0)
+        
+        elif tag == 'ard_REC_PID':
+            self.args_decl_to_table(args_decl[1], proc_PID)
+            self.table.add_symbol(self.scope + args_decl[2])
+
+        elif tag == 'ard_REC_ARRAY':
+            self.args_decl_to_table(args_decl[1], proc_PID)
+            self.table.add_array(self.scope + args_decl[2], 0, 0)
+            
+        else:
+            print(f"\nError: Wrong tag: {tag}")
+            self.scope = ''
+            return
+        
         self.scope = ''
+        
+    
     
 
     ###################### code generation ######################
@@ -880,8 +904,11 @@ if __name__ == '__main__':
     procs_list = gen.procs_to_list(gen.procedures)
     # print(procs_list[0])
     proc_decs = gen.get_proc_declarations(procs_list[0])
-    # print(proc_decs)
+    proc_head = gen.get_proc_head(procs_list[0])
+    proc_PID = gen.get_phead_PID(proc_head)
+    args_decl = gen.get_phead_args(proc_head)
     gen.proc_decs_to_table(procs_list[0])
+    gen.args_decl_to_table(args_decl, proc_PID)
     # code = gen.generate_code()
     gen.table.display()
     
