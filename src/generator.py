@@ -161,6 +161,8 @@ class CodeGenerator:
         return string_list
     
     
+    ################## PROCEDURES ##################
+    
     def procs_to_list(self, procs):
         """ Changes procedures from
         recursive form to a list """
@@ -175,6 +177,7 @@ class CodeGenerator:
     
     
     def get_proc_declarations(self, proc):
+        """ Returns proc_head """
         tag = proc[0]
         
         if tag == 'procs_LONG':
@@ -186,6 +189,7 @@ class CodeGenerator:
         
     
     def get_proc_head(self, proc):
+        """ Returns process' proc_head """
         tag = proc[0]
         
         if tag == 'procs_LONG' or tag == 'procs_SHORT':
@@ -193,6 +197,40 @@ class CodeGenerator:
         else:
             print(f"Error: No proc_head. Tag: {tag}")
             return
+    
+    
+    def get_phead_PID(self, proc_head):
+        """ Returns process' PID """
+        return proc_head[1]
+    
+    
+    def get_phead_args(self, proc_head):
+        """ Returns process' arguments """
+        return proc_head[2]
+    
+    
+    def proc_decs_to_table(self, proc):
+        phead = self.get_proc_head(proc)
+        proc_PID = self.get_phead_PID(phead)
+        decs = self.get_proc_declarations(proc)
+        
+        self.scope = proc_PID
+        self.decs_to_table(decs)
+        self.scope = ''
+        
+        
+    def args_decl_to_table(self, args_decl):
+        
+        
+        
+    def phead_args_to_table(self, proc):
+        phead = self.get_proc_head(proc)
+        proc_PID = self.get_phead_PID(phead)
+        phead_args = self.get_phead_args(phead)
+        
+        self.scope = proc_PID
+
+        self.scope = ''
     
 
     ###################### code generation ######################

@@ -1,18 +1,20 @@
-PROGRAM IS
-	x, y
+PROCEDURE check(n,d,p) IS
+  r, m, x
 BEGIN
-    READ x;
-    READ y;
-
-    WHILE y > 0 DO
-        IF  x >= y THEN
-            x := x - y;
-        ELSE
-            x := x + y;
-            y := x - y;
-            x := x - y;
-        ENDIF
+    p:=0;
+    r:=n%d;
+    WHILE r=0 DO
+        n:=n/d;
+        p:=p+1;
+        r:=n%d;
     ENDWHILE
-
-    WRITE x;
+END
+PROGRAM IS
+  a,b
+BEGIN
+  READ a;
+  READ b;
+  pd(a,b);
+  WRITE a;
+  WRITE b;
 END
