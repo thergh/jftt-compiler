@@ -147,20 +147,7 @@ class CodeGenerator:
             print("\nError: Wrong tag: ", tag)
             return
         
-        
-    def procs_to_list(self, procs):
-        """ Changes procedures from
-        recursive form to a list """
-
-        if procs == 'procs_EMPTY': 
-            return []
-        
-        else:
-            procs_list: list = self.procs_to_list(procs[1])
-            procs_list.append(procs)
-            return procs_list
-    
-            
+             
     def print_code_list(self, code_list):
         for x in code_list:
             print(f"{x.name, x.value}")
@@ -174,7 +161,38 @@ class CodeGenerator:
         return string_list
     
     
+    def procs_to_list(self, procs):
+        """ Changes procedures from
+        recursive form to a list """
+
+        if procs == 'procs_EMPTY': 
+            return []
+        
+        else:
+            procs_list: list = self.procs_to_list(procs[1])
+            procs_list.append(procs)
+            return procs_list
     
+    
+    def get_proc_declarations(self, proc):
+        tag = proc[0]
+        
+        if tag == 'procs_LONG':
+            return proc[3]
+        
+        else:
+            print(f"Error: No procedure declarations. Tag: {tag}")
+            return
+        
+    
+    def get_proc_head(self, proc):
+        tag = proc[0]
+        
+        if tag == 'procs_LONG' or tag == 'procs_SHORT':
+            return proc[2]
+        else:
+            print(f"Error: No proc_head. Tag: {tag}")
+            return
     
 
     ###################### code generation ######################
@@ -821,13 +839,15 @@ if __name__ == '__main__':
     gen = CodeGenerator(parsed, False)
     
     
-    # procs_list = gen.procs_to_list(gen.procedures)
-    # print(procs_list)
+    procs_list = gen.procs_to_list(gen.procedures)
+    # print(procs_list[0])
+    proc_decs = gen.get_proc_declarations(procs_list[0])
+    proc_head = gen.get_proc_head(procs_list[0])
+    print(proc_decs)
+    print(proc_head)
+    # code = gen.generate_code()
+    # gen.table.display()
     
-    
-    # # print(gen.code_list_to_string())
-    code = gen.generate_code()
-    gen.table.display()
     # with open(output, 'w') as file:
     #     for line in code:
     #         file.write(line + '\n')
