@@ -153,7 +153,7 @@ class CodeGenerator:
         
         
         if procs == 'procs_EMPTY': 
-            return [procs]
+            return []
         
         else:
             procs_list: list = self.procs_to_list(procs[1])
