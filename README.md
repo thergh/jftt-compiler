@@ -36,7 +36,7 @@ make virtual-machine/Makefile
 
 ### USING THE COMPILER
 
-To compile your code, put its path as an argument to the compilator.
+To compile your code, put its path as an argument to the compiler.
 
 ```
 python3 src/compiler.py examples/my-gcd.imp output/my-gcd.mr
