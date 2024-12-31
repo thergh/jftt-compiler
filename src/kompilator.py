@@ -1,16 +1,21 @@
 from parser import MyParser
 from lexer import MyLexer
 from generator import CodeGenerator
-
+import sys
 
 
 if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
     
-    input = 'examples/my0.imp'
+    # input = 'examples/my0.imp'
     # input = 'examples/program1.imp'
-    output = 'output/my-out.mr'
+    # output = 'output/my-out.mr'
+
+    input = sys.argv[1]
+    
+    output = sys.argv[2]
+    
 
 
     with open(input, 'r') as file:
