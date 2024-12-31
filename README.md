@@ -6,10 +6,27 @@ Program compiles a procedural language to machine code that can by run using the
 ### FILES
 
 - **src/kompilator.py**: Compiler main file
-- **src/generator.py**: Code machine code generator for the compiler
+- **src/generator.py**: Machine code generator for the compiler
 - **src/table.py**: Symbol table for the compiler
 - **src/lexer.py**: Lexer
 - **src/table.py**: Parser
+
+### REQUIREMENTS
+
+To run the compiler, **python 3.6** and **sly** library are required.
+
+```
+apt install python3.6
+```
+
+```
+pip3 install sly
+```
+
+For instructions about the virtual machine,
+go to /virtual-machine/ReadMe.txt 
+
+libcln-dev 1.3.7
 
 ### VIRTUAL MACHINE COMPILATION
 
