@@ -26,8 +26,6 @@ pip3 install sly
 For instructions about the virtual machine,
 go to /virtual-machine/ReadMe.txt 
 
-libcln-dev 1.3.7
-
 ### VIRTUAL MACHINE COMPILATION
 
 To compile virtual machine, use make command:
