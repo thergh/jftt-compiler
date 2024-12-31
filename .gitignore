@@ -3,4 +3,8 @@
 /virtual-machine/lexer.o
 /virtual-machine/mw.o
 /virtual-machine/parser.o
-
+/virtual-machine/lexer.cc
+/virtual-machine/maszyna-wirtualna
+/virtual-machine/maszyna-wirtualna-cln
+/virtual-machine/parser.cc
+/virtual-machine/parser.hh
