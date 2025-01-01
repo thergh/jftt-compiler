@@ -83,3 +83,8 @@ class SymbolTable:
         }
         
         self.mem_pos += 1
+        
+    
+    def add_procedure(self, name):
+        self.add_symbol(name)
+        self.add_symbol(name + "_rtrn")

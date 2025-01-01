@@ -922,6 +922,12 @@ class CodeGenerator:
         # albo przynajmniej zignorowac te argumenty
         
         c_list = []
+        
+        
+    def add_proc_rtrn_address(self, procedure):
+        proc_head = self.get_proc_head(procedure)
+        proc_PID = self.get_phead_PID(proc_head)
+        self.table.add_symbol()
     
 
     def gc_proc(self, procedure):
@@ -929,8 +935,11 @@ class CodeGenerator:
         
         proc_head = self.get_proc_head(procedure)
         proc_PID = self.get_phead_PID(proc_head)
+        self.table.add_procedure(proc_PID)
         
         self.scope = proc_PID + '__'
+        
+        # generate function return address
         
         
         declarations = self.get_proc_declarations(procedure)
@@ -944,6 +953,8 @@ class CodeGenerator:
         
         c_list.append(Code('JUMP', code_length + 1)) # jump over the code of procedure
         c_list.extend(code_list)
+        # adding 1, because RTRN address is 1 after procedure declaration
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1))
         
         
         self.scope = ''
