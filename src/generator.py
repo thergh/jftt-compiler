@@ -38,6 +38,8 @@ class CodeGenerator:
         
     
     def generate_code(self):
+        # handle procedures     
+        
 
         # Handling initial declarations
         declarations = self.get_declarations()
@@ -160,104 +162,6 @@ class CodeGenerator:
             
         return string_list
     
-    
-    ################## PROCEDURES ##################
-    
-    def procs_to_list(self, procs):
-        """ Changes procedures from
-        recursive form to a list """
-
-        if procs == 'procs_EMPTY': 
-            return []
-        
-        else:
-            procs_list: list = self.procs_to_list(procs[1])
-            procs_list.append(procs)
-            return procs_list
-    
-    
-    def get_proc_declarations(self, proc):
-        """ Returns proc_head """
-        tag = proc[0]
-        
-        if tag == 'procs_LONG':
-            return proc[3]
-        
-        else:
-            print(f"Error: No procedure declarations. Tag: {tag}")
-            return
-        
-    
-    def get_proc_head(self, proc):
-        """ Returns process' proc_head """
-        tag = proc[0]
-        
-        if tag == 'procs_LONG' or tag == 'procs_SHORT':
-            return proc[2]
-        else:
-            print(f"Error: No proc_head. Tag: {tag}")
-            return
-    
-    
-    def get_phead_PID(self, proc_head):
-        """ Returns process' PID """
-        return proc_head[1]
-    
-    
-    def get_phead_args(self, proc_head):
-        """ Returns process' arguments """
-        return proc_head[2]
-    
-    
-    def proc_decs_to_table(self, proc):
-        phead = self.get_proc_head(proc)
-        proc_PID = self.get_phead_PID(phead)
-        decs = self.get_proc_declarations(proc)
-        
-        self.scope = proc_PID + '__'
-        self.decs_to_table(decs)
-        self.scope = ''
-        
-    
-    def args_decl_to_table(self, args_decl, proc_PID):
-        """ Writes arguments to the symbol table. They will
-        probably be treated as pointers to arguments passed by
-        reference. idk, TODO... """
-        
-        # print("args: ", args)
-        self.scope = proc_PID + '__'
-
-        if args_decl is None:
-            print("\nError: Arguments type is 'None'")
-            self.scope = ''
-            return
-        
-        tag = args_decl[0]
-        # print(tag)
-            
-        if tag == 'ard_PID':
-            self.table.add_symbol(self.scope + args_decl[1])
-
-        elif tag == 'ard_ARRAY':
-            self.table.add_array(self.scope + args_decl[1], 0, 0)
-        
-        elif tag == 'ard_REC_PID':
-            self.args_decl_to_table(args_decl[1], proc_PID)
-            self.table.add_symbol(self.scope + args_decl[2])
-
-        elif tag == 'ard_REC_ARRAY':
-            self.args_decl_to_table(args_decl[1], proc_PID)
-            self.table.add_array(self.scope + args_decl[2], 0, 0)
-            
-        else:
-            print(f"\nError: Wrong tag: {tag}")
-            self.scope = ''
-            return
-        
-        self.scope = ''
-        
-    
-    
 
     ###################### code generation ######################
     
@@ -300,6 +204,9 @@ class CodeGenerator:
             
         elif tag == 'comm_REPEAT':
             c_list.extend(self.gc_comm_REPEAT(command))
+            
+        elif tag == 'comm_CALL':
+            c_list.extend(self.gc_comm_CALL(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
@@ -894,6 +801,157 @@ class CodeGenerator:
                 print(f"Error: wrong operator: {operation_tag}")
         
         return c_list
+    
+    
+    ################## PROCEDURES ##################
+    
+    def procs_to_list(self, procs):
+        """ Changes procedures from
+        recursive form to a list """
+
+        if procs == 'procs_EMPTY': 
+            return []
+        
+        else:
+            procs_list: list = self.procs_to_list(procs[1])
+            procs_list.append(procs)
+            return procs_list
+    
+    
+    def get_proc_declarations(self, proc):
+        """ Returns proc_head """
+        tag = proc[0]
+        
+        if tag == 'procs_LONG':
+            return proc[3]
+        
+        else:
+            print(f"Error: No procedure declarations. Tag: {tag}")
+            return
+        
+    
+    def get_proc_head(self, proc):
+        """ Returns process' proc_head """
+        tag = proc[0]
+        
+        if tag == 'procs_LONG' or tag == 'procs_SHORT':
+            return proc[2]
+        else:
+            print(f"Error: No proc_head. Tag: {tag}")
+            return
+    
+    
+    def get_phead_PID(self, proc_head):
+        """ Returns process' PID """
+        return proc_head[1]
+    
+    
+    def get_phead_args(self, proc_head):
+        """ Returns process' arguments """
+        return proc_head[2]
+    
+    
+    def get_proc_commands(self, procedures):
+        tag = procedures[0]
+        
+        if tag == 'procs_SHORT':
+            commands = procedures[3]
+            
+        elif tag == 'procs_LONG':  
+            commands = procedures[4]
+        
+        return commands
+        
+           
+    def proc_decs_to_table(self, proc):
+        phead = self.get_proc_head(proc)
+        proc_PID = self.get_phead_PID(phead)
+        decs = self.get_proc_declarations(proc)
+        
+        self.decs_to_table(decs)
+        
+    
+    def args_decl_to_table(self, args_decl, proc_PID):
+        """ Writes arguments to the symbol table. They will
+        probably be treated as pointers to arguments passed by
+        reference. idk, TODO... """
+        
+        # print("args: ", args)
+
+        if args_decl is None:
+            print("\nError: Arguments type is 'None'")
+            self.scope = ''
+            return
+        
+        tag = args_decl[0]
+        # print(tag)
+            
+        if tag == 'ard_PID':
+            self.table.add_symbol(self.scope + args_decl[1])
+
+        elif tag == 'ard_ARRAY':
+            self.table.add_array(self.scope + args_decl[1], 0, 0)
+        
+        elif tag == 'ard_REC_PID':
+            self.args_decl_to_table(args_decl[1], proc_PID)
+            self.table.add_symbol(self.scope + args_decl[2])
+
+        elif tag == 'ard_REC_ARRAY':
+            self.args_decl_to_table(args_decl[1], proc_PID)
+            self.table.add_array(self.scope + args_decl[2], 0, 0)
+            
+        else:
+            print(f"\nError: Wrong tag: {tag}")
+            self.scope = ''
+            return
+        
+                
+        
+    def gc_comm_CALL(self, command):
+        
+        # co robi proc call?
+        # przekazuje argumenty przez referencje do proc
+        # odpala proc
+        # wraca do odpowiedniej pozycji w glownym programie
+        
+        proc_call = command[1]
+        proc_pid = proc_call[1]
+        proc_args = proc_call[2]
+        
+        # spróbuję zrobic procedury bez argumentow na poczatek
+        # albo przynajmniej zignorowac te argumenty
+        
+        c_list = []
+    
+
+    def gc_proc(self, procedure):
+        c_list = []
+        
+        proc_head = self.get_proc_head(procedure)
+        proc_PID = self.get_phead_PID(proc_head)
+        
+        self.scope = proc_PID + '__'
+        
+        
+        declarations = self.get_proc_declarations(procedure)
+        self.proc_decs_to_table(procedure)
+
+        # generate code for commands
+        commands = self.get_proc_commands(procedure)
+        comms_list = self.comms_to_list(commands)
+        code_list = self.gc_command_list(comms_list)
+        code_length = len(code_list)
+        
+        c_list.append(Code('JUMP', code_length + 1)) # jump over the code of procedure
+        c_list.extend(code_list)
+        
+        
+        self.scope = ''
+        
+        return c_list
+    
+    
+
 
 
 
@@ -901,7 +959,7 @@ if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()
     
-    input = 'examples/my0.imp'
+    input = 'examples/my-proc.imp'
     # input = 'examples/program1.imp'
     output = 'output/my-out.mr'
 
@@ -915,13 +973,17 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, False)
     
-    gen.table.add_symbol("a")
-    gen.table.add_symbol_ref("a_ref")
+    # gen.table.add_symbol("a")
+    # gen.table.add_symbol_ref("a_ref")
+    # gen.table.display()
+    
+    
+    procs_list = gen.procs_to_list(gen.procedures)
+    # print(procs_list[0])
+    proc_code_list = gen.gc_proc(procs_list[0])
+    print(proc_code_list[0].to_string())
     gen.table.display()
     
-    
-    # procs_list = gen.procs_to_list(gen.procedures)
-    # # print(procs_list[0])
     # proc_decs = gen.get_proc_declarations(procs_list[0])
     # proc_head = gen.get_proc_head(procs_list[0])
     # proc_PID = gen.get_phead_PID(proc_head)

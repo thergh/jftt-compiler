@@ -1,12 +1,11 @@
-PROCEDURE swap(a, b) IS
-  z
+PROCEDURE proc(a) IS
+  x
 BEGIN
-  z := a;
-  a := b;
-  b := x;
+    x := 0;
+  WRITE 10;
 END
 
 PROGRAM IS
 BEGIN
-    WRITE(1);
+    WRITE 1;
 END
