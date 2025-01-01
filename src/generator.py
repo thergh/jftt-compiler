@@ -357,26 +357,6 @@ class CodeGenerator:
         return c_list    
     
     
-    def value_to_acc(self, value):
-        """ Generates code that puts the number held
-        by 'value' into the accumulator """
-    
-        c_list = []
-        
-        value_tag = value[0]
-        
-        if value_tag == 'val_NUM':
-            number = value[1]
-            c_list.append(Code('SET', number))
-        
-        elif value_tag == 'val_ID':
-            identifier = value[1]
-            c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
-            c_list.append(Code('LOADI', 0)) # load value of id to reg0
-        
-        return c_list
-    
-    
     def id_pos_to_acc(self, identifier):
         """ Generates code that puts position
         of id into accumulator. """
@@ -407,6 +387,26 @@ class CodeGenerator:
             c_list.append(Code('ADD', arr_pos))
             c_list.append(Code('SUB', arr_offset)) # now id position is in acc
             
+        return c_list
+    
+    
+    def value_to_acc(self, value):
+        """ Generates code that puts the number held
+        by 'value' into the accumulator """
+    
+        c_list = []
+        
+        value_tag = value[0]
+        
+        if value_tag == 'val_NUM':
+            number = value[1]
+            c_list.append(Code('SET', number))
+        
+        elif value_tag == 'val_ID':
+            identifier = value[1]
+            c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
+            c_list.append(Code('LOADI', 0)) # load value of id to reg0
+        
         return c_list
 
     

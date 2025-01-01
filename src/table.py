@@ -20,7 +20,8 @@ class SymbolTable:
             'is_array': False,
             'start_idx': 0,
             'end_idx': 0,
-            'assigned': False
+            'assigned': False,
+            'is_reference': False
         }
         
         self.mem_pos += 1
@@ -42,7 +43,8 @@ class SymbolTable:
             'is_array': True,
             'start_idx': start_idx,
             'end_idx': end_idx,
-            'assigned': False
+            'assigned': False,
+            'is_reference': False
         }
         
         self.mem_pos += length + 1
@@ -64,3 +66,20 @@ class SymbolTable:
         for x in self.table:
             if self.table[x]['position'] == position:
                 return x
+            
+            
+    def add_symbol_ref(self, name):
+        if name in self.table:
+            print(f"Error: {name} already exists.")
+            return
+        
+        self.table[name] = {
+            'position': self.mem_pos,
+            'is_array': False,
+            'start_idx': 0,
+            'end_idx': 0,
+            'assigned': False,
+            'is_reference': True
+        }
+        
+        self.mem_pos += 1

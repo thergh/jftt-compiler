@@ -1,0 +1,12 @@
+PROCEDURE swap(a, b) IS
+  z
+BEGIN
+  z := a;
+  a := b;
+  b := x;
+END
+
+PROGRAM IS
+BEGIN
+    WRITE(1);
+END
