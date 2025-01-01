@@ -908,6 +908,8 @@ class CodeGenerator:
                 
         
     def gc_comm_CALL(self, command):
+        """ Uses registers 40
+        returns: code list for CALL command """
         
         # co robi proc call?
         # przekazuje argumenty przez referencje do proc
@@ -923,12 +925,14 @@ class CodeGenerator:
         
         c_list = []
         
+        k = len(self.code_list) # k is a current instruction counter
+        c_list.append(Code('SET', k + 4))
+        # setting return address for procedure
+        c_list.append(Code('STOREI', self.table.get_symbol(proc_pid)['position'] + 1))
+        c_list.append(Code('JUMP', self.table.get_symbol(proc_pid)['position']))
         
-    def add_proc_rtrn_address(self, procedure):
-        proc_head = self.get_proc_head(procedure)
-        proc_PID = self.get_phead_PID(proc_head)
-        self.table.add_symbol()
-    
+        return c_list
+        
 
     def gc_proc(self, procedure):
         c_list = []
@@ -985,18 +989,12 @@ if __name__ == '__main__':
     parsed = parser.parse(tokens)
     
     gen = CodeGenerator(parsed, False)
-    
-    # gen.table.add_symbol("a")
-    # gen.table.add_symbol_ref("a_ref")
-    # gen.table.display()
-    
-    
+
+
     procs_list = gen.procs_to_list(gen.procedures)
-    # print(procs_list[0])
     proc_code_list = gen.gc_proc(procs_list[0])
     gen.code_list.extend(proc_code_list)
     code_string = gen.code_list_to_string()
-    # print(proc_code_list[0].to_string())
     gen.table.display()
     print(code_string)
     

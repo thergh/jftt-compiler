@@ -6,6 +6,7 @@ BEGIN
 END
 
 PROGRAM IS
+z
 BEGIN
-    WRITE 1;
+    proc(z);
 END
