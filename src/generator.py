@@ -360,14 +360,26 @@ class CodeGenerator:
     def id_pos_to_acc(self, identifier):
         """ Generates code that puts position
         of id into accumulator. """
-
+        # TODO: reference arrays
+        
         id_tag = identifier[0]
         c_list = []
         
         if id_tag == 'id_PID':
             id = identifier[1]
-            id_pos = self.table.get_symbol(self.scope + id)['position']
-            c_list.append(Code('SET', id_pos))
+            # check if id is a reference
+            if(self.table.get_symbol(self.scope + id)['is_reference']):
+                ref_pos = self.table.get_symbol(self.scope + id)['position']
+                
+                # czyli mam teraz pozycję referencji. chcę dostać pozycję wartości
+                # pozycja wartości jest wartością referencji
+                # czyli chcę dostać wartość tego, co jest na pozycji referencji
+                
+                c_list.append(Code('LOAD', ref_pos))
+    
+            else: # normal case
+                id_pos = self.table.get_symbol(self.scope + id)['position']
+                c_list.append(Code('SET', id_pos))
             
         elif id_tag == 'id_ARRAY_NUM':
             arr = identifier[1]
@@ -404,6 +416,7 @@ class CodeGenerator:
         
         elif value_tag == 'val_ID':
             identifier = value[1]
+
             c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
             c_list.append(Code('LOADI', 0)) # load value of id to reg0
         
@@ -902,17 +915,21 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, False)
     
-    
-    procs_list = gen.procs_to_list(gen.procedures)
-    # print(procs_list[0])
-    proc_decs = gen.get_proc_declarations(procs_list[0])
-    proc_head = gen.get_proc_head(procs_list[0])
-    proc_PID = gen.get_phead_PID(proc_head)
-    args_decl = gen.get_phead_args(proc_head)
-    gen.proc_decs_to_table(procs_list[0])
-    gen.args_decl_to_table(args_decl, proc_PID)
-    # code = gen.generate_code()
+    gen.table.add_symbol("a")
+    gen.table.add_symbol_ref("a_ref")
     gen.table.display()
+    
+    
+    # procs_list = gen.procs_to_list(gen.procedures)
+    # # print(procs_list[0])
+    # proc_decs = gen.get_proc_declarations(procs_list[0])
+    # proc_head = gen.get_proc_head(procs_list[0])
+    # proc_PID = gen.get_phead_PID(proc_head)
+    # args_decl = gen.get_phead_args(proc_head)
+    # gen.proc_decs_to_table(procs_list[0])
+    # gen.args_decl_to_table(args_decl, proc_PID)
+    # # code = gen.generate_code()
+    # gen.table.display()
     
     # with open(output, 'w') as file:
     #     for line in code:
