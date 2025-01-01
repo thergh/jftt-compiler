@@ -1,12 +1,15 @@
 PROCEDURE proc(a) IS
   x
 BEGIN
-    x := 0;
-  WRITE 10;
+    WRITE 11111;
+    WRITE 22222;
+    WRITE 33333;
 END
 
 PROGRAM IS
 z
 BEGIN
+    proc(z);
+    proc(z);
     proc(z);
 END

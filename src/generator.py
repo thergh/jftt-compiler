@@ -39,8 +39,12 @@ class CodeGenerator:
     
     def generate_code(self):
         # handle procedures     
+        procs_list = self.procs_to_list(self.procedures)
+        # self.code_list.extend(procs_list)
         
-
+        for p in procs_list:
+            self.code_list.extend(self.gc_proc(p))
+        
         # Handling initial declarations
         declarations = self.get_declarations()
         
@@ -51,9 +55,8 @@ class CodeGenerator:
         main_comms = self.get_main_commands()
         main_comms_list = self.comms_to_list(main_comms)
         
-        # for x in main_comms_list:
-        #     self.gc_command(x)
-        self.code_list.extend(self.gc_command_list(main_comms_list))
+        for x in main_comms_list:
+            self.code_list.extend(self.gc_command(x))
 
         code_string = self.code_list_to_string()
         code_string.append("HALT")
@@ -926,10 +929,11 @@ class CodeGenerator:
         c_list = []
         
         k = len(self.code_list) # k is a current instruction counter
-        c_list.append(Code('SET', k + 4))
+        c_list.append(Code('SET', k + 3))
         # setting return address for procedure
-        c_list.append(Code('STOREI', self.table.get_symbol(proc_pid)['position'] + 1))
-        c_list.append(Code('JUMP', self.table.get_symbol(proc_pid)['position']))
+        c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
+        # RETURN to procedure and perform its code
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
         
         return c_list
         
@@ -954,14 +958,20 @@ class CodeGenerator:
         comms_list = self.comms_to_list(commands)
         code_list = self.gc_command_list(comms_list)
         code_length = len(code_list)
+
+        
+        # setting procedure position in table
+        k = len(self.code_list) # current instruction counter
+        c_list.append(Code('SET', k + 3))
+        c_list.append(Code('STORE', self.table.get_symbol(proc_PID)["position"]))
         
         # jump over the code of procedure
         # +1 for JUMP, +1 for RTRN
-        c_list.append(Code('JUMP', code_length + 2)) 
+        c_list.append(Code('JUMP', code_length + 2))
+        
         c_list.extend(code_list)
         # adding 1, because RTRN address is 1 after procedure declaration
         c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1))
-        
         
         self.scope = ''
         
@@ -990,13 +1000,17 @@ if __name__ == '__main__':
     
     gen = CodeGenerator(parsed, False)
 
-
-    procs_list = gen.procs_to_list(gen.procedures)
-    proc_code_list = gen.gc_proc(procs_list[0])
-    gen.code_list.extend(proc_code_list)
-    code_string = gen.code_list_to_string()
+    code = gen.generate_code()
+    
+    print(code)
     gen.table.display()
-    print(code_string)
+
+    # procs_list = gen.procs_to_list(gen.procedures)
+    # proc_code_list = gen.gc_proc(procs_list[0])
+    # gen.code_list.extend(proc_code_list)
+    # code_string = gen.code_list_to_string()
+    # gen.table.display()
+    # print(code_string)
     
     # proc_decs = gen.get_proc_declarations(procs_list[0])
     # proc_head = gen.get_proc_head(procs_list[0])
