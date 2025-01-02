@@ -1,4 +1,4 @@
-PROCEDURE proc(a) IS
+PROCEDURE proc(a, b) IS
   x
 BEGIN
     x := 2;
@@ -6,9 +6,7 @@ BEGIN
 END
 
 PROGRAM IS
-z
+z, y
 BEGIN
-    proc(z);
-    proc(z);
-    proc(z);
+    proc(x, y);
 END

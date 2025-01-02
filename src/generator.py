@@ -894,8 +894,7 @@ class CodeGenerator:
         elif tag == 'ar_REC':
             args_list = self.args_to_list(args[1])
             args_list.append(args[2])
-            return args_list
-            
+            return args_list         
 
 
     def gc_comm_CALL(self, command):
@@ -908,8 +907,19 @@ class CodeGenerator:
         proc_pid = proc_call[1]
         proc_args = proc_call[2] 
         
+        # these are thr arguments that were given when calling the procedure
         args_list = self.args_to_list(proc_args)
-        # print(f"proc args: {args_list}")
+        args_count = len(args_list)
+        
+        # these are argument references of a procedure
+        args_references = self.table.get_symbol(proc_pid)['arguments']
+        refs_count = len(args_references)
+        print(f"proc reference args: {args_references}")
+        
+        # if number of args != number of references, error
+        if args_count != refs_count:
+            print(f"Error: Number of arguments ({args_count}) does not match number of references ({refs_count}).")
+            return
         
         k = len(self.code_list) # k is a current instruction counter
         c_list.append(Code('SET', k + 3))
@@ -956,8 +966,7 @@ class CodeGenerator:
         of a precodure.
         Doesn't differentiate between arrays and normal variables.
         Adds procedure scope prefix to names of variables. """
-        
-        ard_list = []
+
         tag = args_decl[0]
         
         # non recursive case
@@ -966,6 +975,9 @@ class CodeGenerator:
         elif tag == 'ard_REC_PID' or tag == 'ard_REC_ARRAY':
             ard_list: list = self.args_decl_to_list(args_decl[1], proc_PID)
             ard_list.append(proc_PID + '__' + args_decl[2])
+            return ard_list
+        else:
+            print(f"Error: Wrong tag: {tag}")
         
         
     def args_decl_to_table(self, args_decl):
@@ -1015,6 +1027,7 @@ class CodeGenerator:
         self.args_decl_to_table(args_decl)
         
         # adding procedure to table
+        
         args_decl_list = self.args_decl_to_list(args_decl, proc_PID)
         self.table.add_procedure(proc_PID, args_decl_list)
 
