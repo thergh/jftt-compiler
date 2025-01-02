@@ -38,6 +38,9 @@ class CodeGenerator:
         
     
     def generate_code(self):
+        """ returns: String of machine code instructions
+        compiled from the input langage. """
+        
         # handle procedures     
         procs_list = self.procs_to_list(self.procedures)
         # self.code_list.extend(procs_list)
@@ -75,8 +78,8 @@ class CodeGenerator:
         
     
     def get_declarations(self):
-        """ Gets declarations from program
-        and returns them in a recursive form """
+        """ returns: Variable declarations from main program
+        in a recursive form. """
             
         if self.main[0] != 'mn_LONG': # program has no declarations
             print("Program has no declarations")
@@ -119,8 +122,8 @@ class CodeGenerator:
         
     
     def get_main_commands(self):
-        """ Gets main commands from the program
-        and returns them in a recursive form """
+        """ returns: Commands from main program
+        in a recursive form. """
         
         main_tag = self.main[0]
         
@@ -139,7 +142,7 @@ class CodeGenerator:
 
 
     def comms_to_list(self, comms):
-        """ Changes commands from
+        """ Changes main commands from
         recursive form to a list """
         
         if comms is None:
@@ -164,11 +167,13 @@ class CodeGenerator:
         
              
     def print_code_list(self, code_list):
+        """ Prints machine code from object form. """
         for x in code_list:
             print(f"{x.name, x.value}")
             
             
     def code_list_to_string(self):
+        """ returns: Machine codes in string form. """
         string_list = []
         for x in self.code_list:
             string_list.append(x.to_string())
@@ -180,7 +185,7 @@ class CodeGenerator:
     
     
     def gc_command_list(self, comm_list: list):
-        """ Generates code for a command list """
+        """ returns: Code for a command list """
         
         c_list = []
         
@@ -191,7 +196,7 @@ class CodeGenerator:
     
             
     def gc_command(self, command):
-        """ Generates code for a command """
+        """ returns: Code for a command. """
         
         tag = command[0]
         c_list = []
@@ -229,7 +234,7 @@ class CodeGenerator:
     
     
     def gc_comm_READ(self, command):
-        """ Generates code for command READ """
+        """ returns: Code for command READ """
         
         c_list = []
         identifier = command[1]
@@ -247,7 +252,7 @@ class CodeGenerator:
         
 
     def gc_comm_WRITE(self, command):
-        """ Generates code for command WRITE """
+        """ returns: Code for command WRITE """
         c_list = []
         value = command[1]
         
@@ -262,7 +267,7 @@ class CodeGenerator:
     
     
     def gc_comm_ASSIGN(self, command):
-        """ Generates code for command ASSIGN """
+        """ returns: Code for command ASSIGN """
  
         c_list = []
         identifier = command[1]
@@ -278,8 +283,8 @@ class CodeGenerator:
     
     
     def id_pos_to_acc(self, identifier):
-        """ Generates code that puts position
-        of id into accumulator. """
+        """ returns: Code that puts symbol table position
+        of PID into accumulator. """
         # TODO: reference arrays
         
         id_tag = identifier[0]
@@ -323,7 +328,7 @@ class CodeGenerator:
     
     
     def value_to_acc(self, value):
-        """ Generates code that puts the number held
+        """ returns: Code that puts the number held
         by 'value' into the accumulator """
     
         c_list = []
@@ -345,7 +350,8 @@ class CodeGenerator:
     
     def cond_EQ(self, condition):
         # OK
-        """ Puts evaluation of condition '=' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '=' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -368,7 +374,8 @@ class CodeGenerator:
     
     def cond_NE(self, condition):
         # OK
-        """ Puts evaluation of condition '!=' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '!=' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -390,7 +397,8 @@ class CodeGenerator:
     
     
     def cond_G(self, condition):
-        """ Puts evaluation of condition '>' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '>' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -412,7 +420,8 @@ class CodeGenerator:
     
     
     def cond_L(self, condition):
-        """ Puts evaluation of condition '<' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '<' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -434,7 +443,8 @@ class CodeGenerator:
     
     
     def cond_GE(self, condition):
-        """ Puts evaluation of condition '>=' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '>=' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -456,7 +466,8 @@ class CodeGenerator:
     
     
     def cond_LE(self, condition):
-        """ Puts evaluation of condition '<=' in accumulator. 
+        """ returns: Code that puts evaluation
+        of condition '<=' in the accumulator.
         True:   1
         False:  0
         Side effects in registers: 10 """
@@ -478,7 +489,8 @@ class CodeGenerator:
     
     
     def handle_condition(self, condition):
-        """ Puts evaluated condition in accumulator """
+        """ returns: Code that puts evaluation
+        of condition in the accumulator. """
         
         cond_tag = condition[2]
         
@@ -508,7 +520,7 @@ class CodeGenerator:
         
         
     def gc_comm_IF(self, command):
-        """ Generates code for command IF """
+        """ returns: Code for command IF """
         
         c_list = []
         condition = command[1]
@@ -526,7 +538,7 @@ class CodeGenerator:
     
     
     def gc_comm_IF_ELSE(self, command):
-        """ Generates code for command IF """
+        """ returns: Code for command IF """
         
         c_list = []
         condition = command[1]
@@ -552,7 +564,7 @@ class CodeGenerator:
 
     
     def gc_comm_WHILE(self, command):
-        """ Generates code for command WHILE """
+        """ returns: Code for command WHILE """
     
         c_list = []
         condition = command[1]
@@ -572,7 +584,7 @@ class CodeGenerator:
     
     
     def gc_comm_REPEAT(self, command):
-        """ Generates code for command REPEAT """
+        """ returns: Code for command REPEAT """
 
         c_list = []
         condition = command[2]
@@ -596,7 +608,8 @@ class CodeGenerator:
 
 
     def calculate_expression(self, expression):
-        """ Calculates expression and puts its value to acc.
+        """ returns: Code that calculates expression
+        and puts its value to acc.
         Uses registers 30, 31 """
         
         c_list = []
@@ -819,8 +832,7 @@ class CodeGenerator:
     ################## PROCEDURES ##################
     
     def procs_to_list(self, procs):
-        """ Changes procedures from
-        recursive form to a list """
+        """ returns: Procedures in form of a list """
 
         if procs == 'procs_EMPTY': 
             return []
@@ -832,7 +844,7 @@ class CodeGenerator:
     
     
     def get_proc_declarations(self, proc):
-        """ Returns proc_head """
+        """ returns: Procedure's declarations"""
         tag = proc[0]
         
         if tag == 'procs_LONG':
@@ -844,7 +856,7 @@ class CodeGenerator:
         
     
     def get_proc_head(self, proc):
-        """ Returns process' proc_head """
+        """ returns: Procedure's proc_head """
         tag = proc[0]
         
         if tag == 'procs_LONG' or tag == 'procs_SHORT':
@@ -855,12 +867,12 @@ class CodeGenerator:
     
     
     def get_phead_PID(self, proc_head):
-        """ Returns process' PID """
+        """ returns: Procedure's PID """
         return proc_head[1]
     
     
     def get_phead_args(self, proc_head):
-        """ Returns process' arguments """
+        """ returns: Procedure's arguments """
         return proc_head[2]
     
     
@@ -877,6 +889,7 @@ class CodeGenerator:
         
            
     def proc_decs_to_table(self, proc):
+        """ Puts procedure's declarations in the symbol table. """
         phead = self.get_proc_head(proc)
         proc_PID = self.get_phead_PID(phead)
         decs = self.get_proc_declarations(proc)
@@ -885,7 +898,7 @@ class CodeGenerator:
  
 
     def args_to_list(self, args):
-        
+        """ returns: Arguments in the list form. """
         tag = args[0]
         
         if tag == 'ar_PID':
@@ -898,8 +911,8 @@ class CodeGenerator:
 
 
     def gc_comm_CALL(self, command):
-        """ Uses registers 40
-        returns: code list for CALL command """
+        """ returns: Code for CALL command
+        Uses registers 40 """
 
         c_list = []
         
@@ -929,37 +942,7 @@ class CodeGenerator:
         c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
         
         return c_list
-    
-    
-    def args_to_table(self, args):
-        """ Writes argument declarations of a procedure
-        to the symbol table as references """
-        
-        if args is None:
-            print("\nError: declarations type is 'None'")
-            return
-        
-        tag = args[0]
-            
-        if tag == 'ard_PID':
-            # self.table.add_symbol(self.scope + decs[1])
-            self.table.add_symbol_ref(self.scope + args[1])
-
-        # elif tag == 'decs_ARRAY':
-        #     self.table.add_array(self.scope + decs[1], decs[2], decs[3])
-        
-        elif tag == 'ard_REC_PID':
-            self.args_to_table(args[1])
-            self.table.add_symbol_ref(self.scope + args[2])
-
-        # elif tag == 'decs_REC_ARRAY':
-        #     self.decs_to_table(decs[1])
-        #     self.table.add_array(self.scope + decs[2], decs[3], decs[4])
-            
-        else:
-            print(f"\nError: Wrong tag: {tag}")
-            return
-        
+         
         
     def refs_to_list(self, args_decl, proc_PID):
         """ returns: A list of argument declarations (references / refs)
@@ -1009,6 +992,8 @@ class CodeGenerator:
         
 
     def gc_proc(self, procedure):
+        """ returns: Code for procedure declaration. """
+        
         c_list = []
         
         proc_head = self.get_proc_head(procedure)
