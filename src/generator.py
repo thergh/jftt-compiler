@@ -883,24 +883,33 @@ class CodeGenerator:
         
         self.decs_to_table(decs)
  
- 
+
+    def args_to_list(self, args):
+        
+        tag = args[0]
+        
+        if tag == 'ar_PID':
+            return [args[1]]
+        
+        elif tag == 'ar_REC':
+            args_list = self.args_to_list(args[1])
+            args_list.append(args[2])
+            return args_list
+            
+
+
     def gc_comm_CALL(self, command):
         """ Uses registers 40
         returns: code list for CALL command """
-        
-        # co robi proc call?
-        # przekazuje argumenty przez referencje do proc
-        # odpala proc
-        # wraca do odpowiedniej pozycji w glownym programie
+
+        c_list = []
         
         proc_call = command[1]
         proc_pid = proc_call[1]
-        proc_args = proc_call[2]
+        proc_args = proc_call[2] 
         
-        # spróbuję zrobic procedury bez argumentow na poczatek
-        # albo przynajmniej zignorowac te argumenty
-        
-        c_list = []
+        args_list = self.args_to_list(proc_args)
+        # print(f"proc args: {args_list}")
         
         k = len(self.code_list) # k is a current instruction counter
         c_list.append(Code('SET', k + 3))
