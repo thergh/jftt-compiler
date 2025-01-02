@@ -8,5 +8,5 @@ END
 PROGRAM IS
 z, y
 BEGIN
-    proc(x, y);
+    proc(z, y);
 END

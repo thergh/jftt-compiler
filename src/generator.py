@@ -324,6 +324,10 @@ class CodeGenerator:
             c_list.append(Code('ADD', arr_pos))
             c_list.append(Code('SUB', arr_offset)) # now id position is in acc
             
+        else:
+            print(f"Error: wrong tag: {id_tag}")
+            return
+            
         return c_list
     
     
@@ -925,17 +929,29 @@ class CodeGenerator:
         args_count = len(args_list)
         
         # these are argument references of a procedure
-        args_references = self.table.get_symbol(proc_pid)['arguments']
-        refs_count = len(args_references)
-        print(f"proc reference args: {args_references}")
+        refs_list = self.table.get_symbol(proc_pid)['arguments']
+        refs_count = len(refs_list)
+        print(f"refs_list: {refs_list}")
+        # print(f"refs_list[0]: {refs_list[0]}")
         
         # if number of args != number of references, error
         if args_count != refs_count:
             print(f"Error: Number of arguments ({args_count}) does not match number of references ({refs_count}).")
             return
         
+        # put argument positions into refs
+        refs_assign_code = []
+        for i in range(refs_count):
+            # set acc to position of ref
+            refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
+            refs_assign_code.append(Code('STORE', 40)) # ref position to r41
+            refs_assign_code.append(Code('SET', self.table.get_symbol(args_list[i])["position"]))
+            refs_assign_code.append(Code('STOREI', 40))
+        refs_assign_code_len = len(refs_assign_code)
+        c_list.extend(refs_assign_code)
+        
         k = len(self.code_list) # k is a current instruction counter
-        c_list.append(Code('SET', k + 3))
+        c_list.append(Code('SET', k + refs_assign_code_len + 3))
         # setting return address for procedure
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
         # RETURN to procedure and perform its code
@@ -1062,24 +1078,6 @@ if __name__ == '__main__':
 
     code = gen.generate_code()
     
-    print(code)
-    gen.table.display()
-
-    # procs_list = gen.procs_to_list(gen.procedures)
-    # proc_code_list = gen.gc_proc(procs_list[0])
-    # gen.code_list.extend(proc_code_list)
-    # code_string = gen.code_list_to_string()
-    # gen.table.display()
-    # print(code_string)
-    
-    # proc_decs = gen.get_proc_declarations(procs_list[0])
-    # proc_head = gen.get_proc_head(procs_list[0])
-    # proc_PID = gen.get_phead_PID(proc_head)
-    # args_decl = gen.get_phead_args(proc_head)
-    # gen.proc_decs_to_table(procs_list[0])
-    # gen.args_decl_to_table(args_decl, proc_PID)
-    # # code = gen.generate_code()
-    # gen.table.display()
     
     # with open(output, 'w') as file:
     #     for line in code:
