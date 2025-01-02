@@ -951,6 +951,23 @@ class CodeGenerator:
             return
         
         
+    def args_decl_to_list(self, args_decl, proc_PID):
+        """ returns: A list of argument declarations
+        of a precodure.
+        Doesn't differentiate between arrays and normal variables.
+        Adds procedure scope prefix to names of variables. """
+        
+        ard_list = []
+        tag = args_decl[0]
+        
+        # non recursive case
+        if tag == 'ard_ARRAY' or tag == 'ard_PID':
+            return [proc_PID + '__' + args_decl[1]]
+        elif tag == 'ard_REC_PID' or tag == 'ard_REC_ARRAY':
+            ard_list: list = self.args_decl_to_list(args_decl[1], proc_PID)
+            ard_list.append(proc_PID + '__' + args_decl[2])
+        
+        
     def args_decl_to_table(self, args_decl):
         """ Writes arguments to the symbol table. They will
         probably be treated as pointers to arguments passed by
@@ -986,7 +1003,7 @@ class CodeGenerator:
         
         proc_head = self.get_proc_head(procedure)
         proc_PID = self.get_phead_PID(proc_head)
-        self.table.add_procedure(proc_PID)
+        
         
         self.scope = proc_PID + '__'
         
@@ -996,6 +1013,10 @@ class CodeGenerator:
         # add arguments to table as referances
         args_decl = self.get_phead_args(proc_head)
         self.args_decl_to_table(args_decl)
+        
+        # adding procedure to table
+        args_decl_list = self.args_decl_to_list(args_decl, proc_PID)
+        self.table.add_procedure(proc_PID, args_decl_list)
 
         # generate code for commands
         commands = self.get_proc_commands(procedure)

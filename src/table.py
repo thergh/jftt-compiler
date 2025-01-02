@@ -102,6 +102,24 @@ class SymbolTable:
         self.mem_pos += 1
         
     
-    def add_procedure(self, name):
-        self.add_symbol(name)
+    def add_procedure(self, name, arguments):
+        
+        # procedure
+        
+        if name in self.table:
+            print(f"Error: {name} already exists.")
+            return
+        
+        self.table[name] = {
+            'position': self.mem_pos,
+            'is_array': False,
+            'start_idx': 0,
+            'end_idx': 0,
+            'assigned': False,
+            'is_reference': False,
+            'arguments': arguments
+        }
+        
+        self.mem_pos += 1
+
         self.add_symbol(name + "_rtrn")
