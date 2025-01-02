@@ -961,8 +961,8 @@ class CodeGenerator:
             return
         
         
-    def args_decl_to_list(self, args_decl, proc_PID):
-        """ returns: A list of argument declarations
+    def refs_to_list(self, args_decl, proc_PID):
+        """ returns: A list of argument declarations (references / refs)
         of a precodure.
         Doesn't differentiate between arrays and normal variables.
         Adds procedure scope prefix to names of variables. """
@@ -973,17 +973,15 @@ class CodeGenerator:
         if tag == 'ard_ARRAY' or tag == 'ard_PID':
             return [proc_PID + '__' + args_decl[1]]
         elif tag == 'ard_REC_PID' or tag == 'ard_REC_ARRAY':
-            ard_list: list = self.args_decl_to_list(args_decl[1], proc_PID)
+            ard_list: list = self.refs_to_list(args_decl[1], proc_PID)
             ard_list.append(proc_PID + '__' + args_decl[2])
             return ard_list
         else:
             print(f"Error: Wrong tag: {tag}")
         
         
-    def args_decl_to_table(self, args_decl):
-        """ Writes arguments to the symbol table. They will
-        probably be treated as pointers to arguments passed by
-        reference. idk, TODO... """
+    def refs_to_table(self, args_decl):
+        """ Writes argument declarations (references / refs) to the symbol table. """
         
         if args_decl is None:
             print("\nError: Arguments type is 'None'")
@@ -998,11 +996,11 @@ class CodeGenerator:
             self.table.add_array(self.scope + args_decl[1], 0, 0)
         
         elif tag == 'ard_REC_PID':
-            self.args_decl_to_table(args_decl[1])
+            self.refs_to_table(args_decl[1])
             self.table.add_symbol_ref(self.scope + args_decl[2])
 
         elif tag == 'ard_REC_ARRAY':
-            self.args_decl_to_table(args_decl[1])
+            self.refs_to_table(args_decl[1])
             self.table.add_array(self.scope + args_decl[2], 0, 0)
             
         else:
@@ -1024,12 +1022,12 @@ class CodeGenerator:
         
         # add arguments to table as referances
         args_decl = self.get_phead_args(proc_head)
-        self.args_decl_to_table(args_decl)
+        self.refs_to_table(args_decl)
         
         # adding procedure to table
         
-        args_decl_list = self.args_decl_to_list(args_decl, proc_PID)
-        self.table.add_procedure(proc_PID, args_decl_list)
+        refs_list = self.refs_to_list(args_decl, proc_PID)
+        self.table.add_procedure(proc_PID, refs_list)
 
         # generate code for commands
         commands = self.get_proc_commands(procedure)
