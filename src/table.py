@@ -84,6 +84,23 @@ class SymbolTable:
         
         self.mem_pos += 1
         
+        
+    def add_array_ref(self, name):
+        if name in self.table:
+            print(f"Error: {name} already exists.")
+            return
+
+        self.table[name] = {
+            'position': self.mem_pos,
+            'is_array': True,
+            'start_idx': 0,
+            'end_idx': 0,
+            'assigned': False,
+            'is_reference': True
+        }
+        
+        self.mem_pos += 1
+        
     
     def add_procedure(self, name):
         self.add_symbol(name)

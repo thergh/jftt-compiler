@@ -32,9 +32,9 @@ class CodeGenerator:
         self.code_list = []
         self.scope = 'main__'
         
-        if self.debug:
-            print("CodeGenerator.procedures: ", self.procedures)
-            print("CodeGenerator.main: ", self.main)
+        # if self.debug:
+        #     print("CodeGenerator.procedures: ", self.procedures)
+        #     print("CodeGenerator.main: ", self.main)
         
     
     def generate_code(self):
@@ -60,6 +60,16 @@ class CodeGenerator:
 
         code_string = self.code_list_to_string()
         code_string.append("HALT")
+        
+        
+        if self.debug:
+            print("SYMBOL TABLE:\n")
+            self.table.display()
+            print()
+            print("CODE:\n")
+            for c in code_string:
+                print(c)
+            
         return code_string
             
         
@@ -74,14 +84,14 @@ class CodeGenerator:
         
         declarations = self.main[1]   
          
-        if self.debug:
-            print("get_declarations(): ", declarations)
+        # if self.debug:
+        #     print("get_declarations(): ", declarations)
             
         return declarations
     
     
     def decs_to_table(self, decs):
-        """ Writes declarations to the sumbl table """
+        """ Writes declarations to the symbol table """
         
         if decs is None:
             print("\nError: declarations type is 'None'")
@@ -122,8 +132,8 @@ class CodeGenerator:
             print("\nError: Wrong tag: ", main_tag)
             return
         
-        if self.debug:
-            print("get_main_commands(): ", commands)
+        # if self.debug:
+        #     print("get_main_commands(): ", commands)
         
         return commands
 
@@ -230,9 +240,9 @@ class CodeGenerator:
         c_list.append(Code('GET', 0))
         c_list.append(Code('STOREI', 1))
         
-        if self.debug:
-            print(f"gc_comm_READ(): ")
-            self.print_code_list(c_list)
+        # if self.debug:
+        #     print(f"gc_comm_READ(): ")
+        #     self.print_code_list(c_list)
         return c_list
         
 
@@ -244,9 +254,9 @@ class CodeGenerator:
         c_list.extend(self.value_to_acc(value))
         c_list.append(Code('PUT', 0))
                 
-        if self.debug:
-            print(f"gc_comm_WRITE(): ")
-            self.print_code_list(c_list)
+        # if self.debug:
+        #     print(f"gc_comm_WRITE(): ")
+        #     self.print_code_list(c_list)
             
         return c_list
     
@@ -872,44 +882,8 @@ class CodeGenerator:
         decs = self.get_proc_declarations(proc)
         
         self.decs_to_table(decs)
-        
-    
-    def args_decl_to_table(self, args_decl, proc_PID):
-        """ Writes arguments to the symbol table. They will
-        probably be treated as pointers to arguments passed by
-        reference. idk, TODO... """
-        
-        # print("args: ", args)
-
-        if args_decl is None:
-            print("\nError: Arguments type is 'None'")
-            self.scope = ''
-            return
-        
-        tag = args_decl[0]
-        # print(tag)
-            
-        if tag == 'ard_PID':
-            self.table.add_symbol(self.scope + args_decl[1])
-
-        elif tag == 'ard_ARRAY':
-            self.table.add_array(self.scope + args_decl[1], 0, 0)
-        
-        elif tag == 'ard_REC_PID':
-            self.args_decl_to_table(args_decl[1], proc_PID)
-            self.table.add_symbol(self.scope + args_decl[2])
-
-        elif tag == 'ard_REC_ARRAY':
-            self.args_decl_to_table(args_decl[1], proc_PID)
-            self.table.add_array(self.scope + args_decl[2], 0, 0)
-            
-        else:
-            print(f"\nError: Wrong tag: {tag}")
-            self.scope = ''
-            return
-        
-                
-        
+ 
+ 
     def gc_comm_CALL(self, command):
         """ Uses registers 40
         returns: code list for CALL command """
@@ -936,6 +910,66 @@ class CodeGenerator:
         c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
         
         return c_list
+    
+    
+    def args_to_table(self, args):
+        """ Writes argument declarations of a procedure
+        to the symbol table as references """
+        
+        if args is None:
+            print("\nError: declarations type is 'None'")
+            return
+        
+        tag = args[0]
+            
+        if tag == 'ard_PID':
+            # self.table.add_symbol(self.scope + decs[1])
+            self.table.add_symbol_ref(self.scope + args[1])
+
+        # elif tag == 'decs_ARRAY':
+        #     self.table.add_array(self.scope + decs[1], decs[2], decs[3])
+        
+        elif tag == 'ard_REC_PID':
+            self.args_to_table(args[1])
+            self.table.add_symbol_ref(self.scope + args[2])
+
+        # elif tag == 'decs_REC_ARRAY':
+        #     self.decs_to_table(decs[1])
+        #     self.table.add_array(self.scope + decs[2], decs[3], decs[4])
+            
+        else:
+            print(f"\nError: Wrong tag: {tag}")
+            return
+        
+        
+    def args_decl_to_table(self, args_decl):
+        """ Writes arguments to the symbol table. They will
+        probably be treated as pointers to arguments passed by
+        reference. idk, TODO... """
+        
+        if args_decl is None:
+            print("\nError: Arguments type is 'None'")
+            return
+        
+        tag = args_decl[0]
+            
+        if tag == 'ard_PID':
+            self.table.add_symbol_ref(self.scope + args_decl[1])
+
+        elif tag == 'ard_ARRAY':
+            self.table.add_array(self.scope + args_decl[1], 0, 0)
+        
+        elif tag == 'ard_REC_PID':
+            self.args_decl_to_table(args_decl[1])
+            self.table.add_symbol_ref(self.scope + args_decl[2])
+
+        elif tag == 'ard_REC_ARRAY':
+            self.args_decl_to_table(args_decl[1])
+            self.table.add_array(self.scope + args_decl[2], 0, 0)
+            
+        else:
+            print(f"\nError: Wrong tag: {tag}")
+            return
         
 
     def gc_proc(self, procedure):
@@ -947,18 +981,18 @@ class CodeGenerator:
         
         self.scope = proc_PID + '__'
         
-        # generate function return address
-        
-        
-        declarations = self.get_proc_declarations(procedure)
+        # add declarations to table
         self.proc_decs_to_table(procedure)
+        
+        # add arguments to table as referances
+        args_decl = self.get_phead_args(proc_head)
+        self.args_decl_to_table(args_decl)
 
         # generate code for commands
         commands = self.get_proc_commands(procedure)
         comms_list = self.comms_to_list(commands)
         code_list = self.gc_command_list(comms_list)
         code_length = len(code_list)
-
         
         # setting procedure position in table
         k = len(self.code_list) # current instruction counter

@@ -1,9 +1,8 @@
 PROCEDURE proc(a) IS
   x
 BEGIN
-    WRITE 11111;
-    WRITE 22222;
-    WRITE 33333;
+    x := 2;
+    WRITE x;
 END
 
 PROGRAM IS
