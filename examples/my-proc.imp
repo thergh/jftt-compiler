@@ -1,12 +1,17 @@
-PROCEDURE proc(a, b) IS
+PROCEDURE swap(a, b) IS
   x
 BEGIN
-    x := 2;
-    WRITE x;
+    x := a;
+    a := b;
+    b := x;
 END
 
 PROGRAM IS
 z, y
 BEGIN
-    proc(z, y);
+    z := 10;
+    y := 20;
+    swap(z, y);
+    WRITE z;
+    WRITE y;
 END
