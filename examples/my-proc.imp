@@ -12,6 +12,8 @@ BEGIN
     z := 10;
     y := 20;
     swap(z, y);
+    swap(z, y);
+    swap(z, y);
     WRITE z;
     WRITE y;
 END
