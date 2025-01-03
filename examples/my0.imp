@@ -19,6 +19,5 @@ END
 PROGRAM IS
   x
 BEGIN
-
     procb(x);
 END
