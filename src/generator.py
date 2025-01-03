@@ -922,7 +922,7 @@ class CodeGenerator:
             return [args[1]]
         
         elif tag == 'ar_REC':
-            args_list = self.args_to_list(args[1])
+            args_list: list = self.args_to_list(args[1])
             args_list.append(args[2])
             return args_list         
 
@@ -937,8 +937,9 @@ class CodeGenerator:
         proc_pid = proc_call[1]
         proc_args = proc_call[2] 
         
-        # these are thr arguments that were given when calling the procedure
+        # these are the arguments that were given when calling the procedure
         args_list = self.args_to_list(proc_args)
+        print("args list: ", args_list)
         args_count = len(args_list)
         
         # these are argument references of a procedure
@@ -952,18 +953,23 @@ class CodeGenerator:
             print(f"Error: Number of arguments ({args_count}) does not match number of references ({refs_count}).")
             return
         
+
         # put argument positions into refs
         refs_assign_code = []
         for i in range(refs_count):
             # set acc to position of ref
             refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
             refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-            refs_assign_code.append(Code('SET', self.table.get_symbol(args_list[i])["position"]))
+            print("111")
+            refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
+            print("222")
             refs_assign_code.append(Code('STOREI', 40))
         refs_assign_code_len = len(refs_assign_code)
         c_list.extend(refs_assign_code)
         
+        
         k = len(self.code_list) # k is a current instruction counter
+        # Error: błędny adres powrotu, za mały
         c_list.append(Code('SET', k + refs_assign_code_len + 3))
         # setting return address for procedure
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
@@ -1024,11 +1030,9 @@ class CodeGenerator:
         """ returns: Code for procedure declaration. """
         
         c_list = []
-        
         tag = procedure[0]
         proc_head = self.get_proc_head(procedure)
         proc_PID = self.get_phead_PID(proc_head)
-        
         
         self.scope = proc_PID + '__'
         
@@ -1044,17 +1048,17 @@ class CodeGenerator:
         
         refs_list = self.refs_to_list(args_decl, proc_PID)
         self.table.add_procedure(proc_PID, refs_list)
-
-        # generate code for commands
-        commands = self.get_proc_commands(procedure)
-        comms_list = self.comms_to_list(commands)
-        code_list = self.gc_command_list(comms_list)
-        code_length = len(code_list)
         
         # setting procedure position in table
         k = len(self.code_list) # current instruction counter
         c_list.append(Code('SET', k + 3))
         c_list.append(Code('STORE', self.table.get_symbol(proc_PID)["position"]))
+        
+        # generate code for commands
+        commands = self.get_proc_commands(procedure)
+        comms_list = self.comms_to_list(commands)
+        code_list = self.gc_command_list(comms_list)
+        code_length = len(code_list)
         
         # jump over the code of procedure
         # +1 for JUMP, +1 for RTRN
