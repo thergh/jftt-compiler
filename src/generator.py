@@ -902,9 +902,14 @@ class CodeGenerator:
            
     def proc_decs_to_table(self, proc):
         """ Puts procedure's declarations in the symbol table. """
+        tag = proc[0]
         phead = self.get_proc_head(proc)
         proc_PID = self.get_phead_PID(phead)
-        decs = self.get_proc_declarations(proc)
+        
+        if tag == 'procs_LONG':
+            decs = self.get_proc_declarations(proc)
+        else:
+            print(f"Error: no declarations. Tag: {tag}")
         
         self.decs_to_table(decs)
  
@@ -1020,14 +1025,16 @@ class CodeGenerator:
         
         c_list = []
         
+        tag = procedure[0]
         proc_head = self.get_proc_head(procedure)
         proc_PID = self.get_phead_PID(proc_head)
         
         
         self.scope = proc_PID + '__'
         
-        # add declarations to table
-        self.proc_decs_to_table(procedure)
+        # add declarations to table if there are any
+        if tag == 'procs_LONG':
+            self.proc_decs_to_table(procedure)
         
         # add arguments to table as referances
         args_decl = self.get_phead_args(proc_head)
