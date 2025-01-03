@@ -598,8 +598,8 @@ class CodeGenerator:
         """ returns: Code for command REPEAT """
 
         c_list = []
-        condition = command[2]
         commands = command[1]
+        condition = command[2]
         comms_list: list = self.comms_to_list(commands)
         comms_code = self.gc_command_list(comms_list)
         comms_code_length = len(comms_code)
@@ -613,7 +613,8 @@ class CodeGenerator:
         
         c_list.extend(comms_code)
         c_list.extend(self.handle_condition(condition))
-        c_list.append(Code('JPOS', - comms_code_length - cond_code_length))
+        # if condition is false (0), repeat the loop
+        c_list.append(Code('JZERO', - comms_code_length - cond_code_length))
         
         return c_list
 
