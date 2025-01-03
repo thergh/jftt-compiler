@@ -229,6 +229,9 @@ class CodeGenerator:
             
         elif tag == 'comm_FOR':
             c_list.extend(self.gc_comm_FOR(command))
+            
+        elif tag == 'comm_FOR_DOWN':
+            c_list.extend(self.gc_comm_FOR_DOWN(command))
 
         else:
             print(f"Error: wrong command tag: {tag}")
@@ -1090,8 +1093,7 @@ class CodeGenerator:
         
         # only now, when vriables are set in table, can we generate the code
         comms_code = self.gc_command_list(comms_list)
-        comms_code_length = len(comms_code)
-        
+        comms_code_length = len(comms_code)   
         
         # load 1 to r50 for incrementation
         c_list.append(Code('SET', 1))
@@ -1122,6 +1124,71 @@ class CodeGenerator:
         c_list.append(Code('JUMP', - comms_code_length - 6))
         
         return c_list
+    
+    
+    def gc_comm_FOR_DOWN(self, command):
+            """ returns: Code for command FOR
+            Uses registers: 50 """
+            
+            c_list = []
+            iterator_PID = command[1]
+            start_value = command[2]
+            end_value = command[3]
+            commands = command[4]
+            comms_list: list = self.comms_to_list(commands)
+            
+            
+            # creating a loop iterator and adding it to the symbol table
+            for_prefix = '__FOR' + str(self.for_counter) + '_'
+            self.for_counter += 1
+            # iterator_name = for_prefix + iterator_PID
+            iterator_name = iterator_PID # scope error!!!
+            
+            self.table.add_symbol(self.scope + iterator_name)    
+            
+            iterator_pos = self.table.get_symbol(self.scope + iterator_name)["position"]
+            
+            # adding start and end to symbol table
+            start_name = for_prefix + 'start'
+            self.table.add_symbol(start_name)
+            start_pos = self.table.get_symbol(start_name)["position"]
+            end_name = for_prefix + 'end'
+            self.table.add_symbol(end_name)
+            end_pos = self.table.get_symbol(end_name)["position"]
+            
+            # only now, when vriables are set in table, can we generate the code
+            comms_code = self.gc_command_list(comms_list)
+            comms_code_length = len(comms_code)   
+            
+            # load 1 to r50 for incrementation
+            c_list.append(Code('SET', 1))
+            c_list.append(Code('STORE', 50))
+            
+            # initial loop setup
+            # load start and end loop values to start_pos and end_pos
+            c_list.extend(self.value_to_acc(start_value))
+            c_list.append(Code('STORE', start_pos))
+            c_list.extend(self.value_to_acc(end_value))
+            c_list.append(Code('STORE', end_pos))
+            # set value of iterator to start
+            c_list.append(Code('LOAD', start_pos))
+            c_list.append(Code('STORE', iterator_pos))
+            
+            # start loop
+            # check condition
+            c_list.append(Code('LOAD', end_pos))
+            c_list.append(Code('SUB', iterator_pos))
+            # exit loop when iterator > end
+            c_list.append(Code('JPOS', comms_code_length + 5)) 
+            c_list.extend(comms_code)
+            # increment iterator
+            c_list.append(Code('LOAD', iterator_pos))
+            c_list.append(Code('SUB', 50))
+            c_list.append(Code('STORE', iterator_pos))
+            # jump back to start of the loop
+            c_list.append(Code('JUMP', - comms_code_length - 6))
+            
+            return c_list
         
         
     

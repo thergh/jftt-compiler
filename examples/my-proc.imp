@@ -1,8 +1,15 @@
+PROCEDURE petla(a) IS
+  x,y
+BEGIN
+    FOR i FROM 10 DOWNTO 1 DO
+        WRITE i;
+    ENDFOR
+END
+
+
 
 PROGRAM IS
     a, b
 BEGIN
-    FOR i FROM 1 TO 10 DO
-        WRITE i;
-    ENDFOR
+    petla(a);
 END
