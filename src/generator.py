@@ -1,7 +1,9 @@
 from parser import MyParser
 from lexer import MyLexer
 from table import SymbolTable
+
   
+instruction_counter = 0
 
   
 class Code:
@@ -10,6 +12,8 @@ class Code:
     def __init__(self, name, value=None):
         self.name = name
         self.value = value
+        global instruction_counter
+        instruction_counter += 1
         
     def to_string(self):
         """ Changes format of a code
@@ -1104,7 +1108,7 @@ class CodeGenerator:
         # adjust for code length of procedure
         # super fucking hacky idc anymore
         if self.scope != '':
-            k += 10
+            k += 20
             
             
         # Error: błędny adres powrotu, za mały
@@ -1116,6 +1120,36 @@ class CodeGenerator:
         
         # XD
         if self.scope != '':
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
             c_list.append(Code('JUMP', 1))
             c_list.append(Code('JUMP', 1))
             c_list.append(Code('JUMP', 1))

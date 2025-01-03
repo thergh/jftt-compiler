@@ -8,7 +8,7 @@ BEGIN
         FOR i FROM tc[0] DOWNTO tc[n] DO
 		ta[i]:=i;
 		tb[i]:=n-i;
-	END FOR
+	ENDFOR
         j:=tc[n];
         WHILE j<=tc[0] DO
 		tc[j]:=ta[j]*tb[j];
