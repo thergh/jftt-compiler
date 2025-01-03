@@ -969,6 +969,13 @@ class CodeGenerator:
         
         
         k = len(self.code_list) # k is a current instruction counter
+        
+        # adjust for code length of procedure
+        # super fucking hacky idc anymore
+        if self.scope != '':
+            k += 3
+            
+            
         # Error: błędny adres powrotu, za mały
         c_list.append(Code('SET', k + refs_assign_code_len + 3))
         # setting return address for procedure
