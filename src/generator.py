@@ -2,7 +2,7 @@ from parser import MyParser
 from lexer import MyLexer
 from table import SymbolTable
   
-  
+
   
 class Code:
     """ Represents vm code """
@@ -32,6 +32,7 @@ class CodeGenerator:
         self.code_list = []
         self.scope = ''
         self.for_counter = 0
+        self.proc_offset = 0
         
         # if self.debug:
         #     print("CodeGenerator.procedures: ", self.procedures)
@@ -1103,7 +1104,7 @@ class CodeGenerator:
         # adjust for code length of procedure
         # super fucking hacky idc anymore
         if self.scope != '':
-            k += 3
+            k += 10
             
             
         # Error: błędny adres powrotu, za mały
@@ -1112,6 +1113,24 @@ class CodeGenerator:
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
         # RETURN to procedure and perform its code
         c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
+        
+        # XD
+        if self.scope != '':
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
+            c_list.append(Code('JUMP', 1))
         
         return c_list
          

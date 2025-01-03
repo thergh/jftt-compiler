@@ -10,6 +10,7 @@ END
 
 PROCEDURE procb(b) IS
 BEGIN
+    WRITE 999;
     proca(b);
 END
 
