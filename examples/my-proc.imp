@@ -1,19 +1,8 @@
-PROCEDURE swap(a, b) IS
-  x
-BEGIN
-    x := a;
-    a := b;
-    b := x;
-END
 
 PROGRAM IS
-z, y
+    a, b
 BEGIN
-    z := 10;
-    y := 20;
-    swap(z, y);
-    swap(z, y);
-    swap(z, y);
-    WRITE z;
-    WRITE y;
+    FOR i FROM 1 TO 10 DO
+        WRITE 99;
+    ENDFOR
 END
