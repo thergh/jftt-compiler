@@ -1088,24 +1088,34 @@ class CodeGenerator:
 
         # put argument positions into refs
         refs_assign_code = []
-        for i in range(refs_count):
-            # set acc to position of ref
-            refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
-            refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-            refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
-            refs_assign_code.append(Code('STOREI', 40))
+        
+        if self.scope == '':
+            for i in range(refs_count):
+                # set acc to position of ref
+                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
+                refs_assign_code.append(Code('STORE', 40)) # ref position to r41
+                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
+                refs_assign_code.append(Code('STOREI', 40))
+        else:
+            for i in range(refs_count):
+                # set acc to position of ref
+                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
+                refs_assign_code.append(Code('STORE', 40)) # ref position to r41
+                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
+                refs_assign_code.append(Code('LOADI', 0)) # IDK why it must be here ¯\_(ツ)_/¯
+                refs_assign_code.append(Code('STOREI', 40))    
+        
         refs_assign_code_len = len(refs_assign_code)
         c_list.extend(refs_assign_code)
         
         k = len(self.code_list) # k is a current instruction counter
         
-        print("SCOPE LENGTH: ", self.scope_length)
         # adjust for code length of procedure
-        # super fucking hacky idc anymore
+        # super fucking hacky, I let God take the wheel
+        print("SCOPE LENGTH: ", self.scope_length)
         if self.scope != '':
             k += 3 + self.scope_length
             
-        # Error: błędny adres powrotu, za mały
         c_list.append(Code('SET', k + refs_assign_code_len + 3))
         # setting return address for procedure
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))

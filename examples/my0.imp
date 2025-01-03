@@ -5,23 +5,37 @@
 
 PROCEDURE pa(a,b) IS
 BEGIN
-  WRITE 11;
-  WRITE 22;
+  a:=a+b;
+  b:=a-b;
 END
 
 PROCEDURE pb(a,b) IS
 BEGIN
     pa(a,b);
     pa(a,b);
-    pa(a,b);
-    pa(a,b);
-    pa(a,b);
-    pa(a,b);
 END
 
-
-PROGRAM IS
-  a,b
+PROCEDURE pc(a,b) IS
 BEGIN
   pb(a,b);
+  pb(a,b);
+  pb(a,b);
+END
+
+PROCEDURE pd(a,b) IS
+BEGIN
+  pc(a,b);
+  pc(a,b);
+  pc(a,b);
+  pc(a,b);
+END
+
+PROGRAM IS
+  x,y
+BEGIN
+    x:=0;
+    y:=1;
+  pd(x,y);
+  WRITE x;
+  WRITE y;
 END
