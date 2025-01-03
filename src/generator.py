@@ -1,10 +1,8 @@
 from parser import MyParser
 from lexer import MyLexer
 from table import SymbolTable
-
   
-instruction_counter = 0
-
+  
   
 class Code:
     """ Represents vm code """
@@ -12,8 +10,6 @@ class Code:
     def __init__(self, name, value=None):
         self.name = name
         self.value = value
-        global instruction_counter
-        instruction_counter += 1
         
     def to_string(self):
         """ Changes format of a code
@@ -36,7 +32,7 @@ class CodeGenerator:
         self.code_list = []
         self.scope = ''
         self.for_counter = 0
-        self.proc_offset = 0
+        self.scope_length = 0
         
         # if self.debug:
         #     print("CodeGenerator.procedures: ", self.procedures)
@@ -207,7 +203,6 @@ class CodeGenerator:
         tag = command[0]
         c_list = []
         
-        # TODO: add other commands
         if tag == 'comm_WRITE':
             c_list.extend(self.gc_comm_WRITE(command))
             
@@ -241,6 +236,9 @@ class CodeGenerator:
         else:
             print(f"Error: wrong command tag: {tag}")
             return
+            
+        length = len(c_list)
+        self.scope_length += length
             
         return c_list
     
@@ -1087,7 +1085,6 @@ class CodeGenerator:
         if args_count != refs_count:
             print(f"Error: Number of arguments ({args_count}) does not match number of references ({refs_count}).")
             return
-        
 
         # put argument positions into refs
         refs_assign_code = []
@@ -1095,21 +1092,18 @@ class CodeGenerator:
             # set acc to position of ref
             refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
             refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-            print("111")
             refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
-            print("222")
             refs_assign_code.append(Code('STOREI', 40))
         refs_assign_code_len = len(refs_assign_code)
         c_list.extend(refs_assign_code)
         
-        
         k = len(self.code_list) # k is a current instruction counter
         
+        print("SCOPE LENGTH: ", self.scope_length)
         # adjust for code length of procedure
         # super fucking hacky idc anymore
         if self.scope != '':
-            k += 20
-            
+            k += 3 + self.scope_length
             
         # Error: błędny adres powrotu, za mały
         c_list.append(Code('SET', k + refs_assign_code_len + 3))
@@ -1117,54 +1111,6 @@ class CodeGenerator:
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
         # RETURN to procedure and perform its code
         c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
-        
-        # XD
-        if self.scope != '':
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
-            c_list.append(Code('JUMP', 1))
         
         return c_list
          
@@ -1225,6 +1171,7 @@ class CodeGenerator:
         proc_PID = self.get_phead_PID(proc_head)
         
         self.scope = proc_PID + '__'
+        self.scope_length = 0
         
         # add declarations to table if there are any
         if tag == 'procs_LONG':
@@ -1259,6 +1206,7 @@ class CodeGenerator:
         c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1))
         
         self.scope = ''
+        self.scope_length = 0
         
         return c_list
     
