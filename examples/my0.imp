@@ -3,19 +3,21 @@
 # > 46368
 # > 28657
 
+PROCEDURE proc(T tab) IS
+BEGIN
+    WRITE tab[2];
+END
+
 
 PROGRAM IS
-    x,tab[1:20]
+    x,tab[0:20]
 BEGIN
-    tab[1] := 10;
-    tab[2] := 20;
-    tab[3] := 30;
-    tab[4] := 40;
-    tab[5] := 50;
 
-
-    FOR i FROM 1 TO 10 DO
+    FOR i FROM 0 TO 10 DO
+        tab[i] := 10 - i;
         WRITE tab[i];
     ENDFOR
+
+    proc(tab);
 
 END

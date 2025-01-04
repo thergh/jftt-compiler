@@ -297,7 +297,8 @@ class CodeGenerator:
     
     def id_pos_to_acc(self, identifier):
         """ returns: Code that puts symbol table position
-        of PID into accumulator. """
+        of PID into accumulator.
+        Uses r60 """
         # TODO: reference arrays
         
         id_tag = identifier[0]
@@ -320,12 +321,31 @@ class CodeGenerator:
                 c_list.append(Code('SET', id_pos))
             
         elif id_tag == 'id_ARRAY_NUM':
-            arr = identifier[1]
-            number = identifier[2]
-            arr_pos = self.table.get_symbol(self.scope + arr)['position']
-            arr_offset = self.table.get_symbol(self.scope + arr)['start_idx']
-            position = int(arr_pos) + int(number) - int(arr_offset)
-            c_list.append(Code('SET', position))
+            arr_PID = identifier[1]
+            
+            if self.table.get_symbol(self.scope + arr_PID)['is_reference']:
+                print("################################################")
+                arr_PID = identifier[1]
+                number = identifier[2]
+                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                # position = int(arr_pos) + int(number) - int(arr_offset)
+                # c_list.append(Code('SET', position))
+                
+                # TODO: include offset
+                c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
+                c_list.append(Code('STORE ', 60))
+                c_list.append(Code('SET ', number))
+                c_list.append(Code('ADD ', 60))
+            
+            else:
+                arr_PID = identifier[1]
+                number = identifier[2]
+                arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+                arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                position = int(arr_pos) + int(number) - int(arr_offset)
+                c_list.append(Code('SET', position))
+                
             
         elif id_tag == 'id_ARRAY_PID':
             arr_PID = identifier[1]
@@ -1160,7 +1180,7 @@ class CodeGenerator:
             self.table.add_symbol_ref(self.scope + args_decl[1])
 
         elif tag == 'ard_ARRAY':
-            self.table.add_array(self.scope + args_decl[1], 0, 0)
+            self.table.add_array_ref(self.scope + args_decl[1])
         
         elif tag == 'ard_REC_PID':
             self.refs_to_table(args_decl[1])
@@ -1168,7 +1188,7 @@ class CodeGenerator:
 
         elif tag == 'ard_REC_ARRAY':
             self.refs_to_table(args_decl[1])
-            self.table.add_array(self.scope + args_decl[2], 0, 0)
+            self.table.add_array_ref(self.scope + args_decl[2])
             
         else:
             print(f"\nError: Wrong tag: {tag}")
