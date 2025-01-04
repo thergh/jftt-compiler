@@ -324,14 +324,10 @@ class CodeGenerator:
             arr_PID = identifier[1]
             
             if self.table.get_symbol(self.scope + arr_PID)['is_reference']:
-                print("################################################")
                 arr_PID = identifier[1]
                 number = identifier[2]
                 arr_ref_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
-                # position = int(arr_pos) + int(number) - int(arr_offset)
-                # c_list.append(Code('SET', position))
-                
+
                 # TODO: include offset
                 c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
                 c_list.append(Code('STORE ', 60))
@@ -350,18 +346,36 @@ class CodeGenerator:
             
         elif id_tag == 'id_ARRAY_PID':
             arr_PID = identifier[1]
-            idx_PID = identifier[2]
-            arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-            idx_pos = self.table.get_symbol(self.scope + idx_PID)['position']
-            # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
-            arr_offset = 0
+            
+            if self.table.get_symbol(self.scope + arr_PID)['is_reference']:
+                idx_PID = identifier[2]
+                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+                idx_ref_pos = self.table.get_symbol(self.scope + idx_PID)['position']
 
-            # load idx to acc
-            c_list.append(Code('LOAD', idx_pos))
-            c_list.append(Code('STORE', 60))
-            # add array position and subtract offset
-            c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
-            c_list.append(Code('ADD', 60))
+                # load idx to acc
+                # c_list.append(Code('LOAD', idx_pos))
+                # c_list.append(Code('STORE', 60))
+                # # add array position and subtract offset
+                # c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
+                # c_list.append(Code('ADD', 60))
+                c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
+                c_list.append(Code('STORE ', 60))
+                c_list.append(Code('LOAD', idx_ref_pos, "DEBUG: ładuję idx_ref_pos")) # load position of array
+                c_list.append(Code('ADD ', 60))
+                
+            else:
+                idx_PID = identifier[2]
+                arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+                idx_pos = self.table.get_symbol(self.scope + idx_PID)['position']
+                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                arr_offset = 0
+
+                # load idx to acc
+                c_list.append(Code('LOAD', idx_pos))
+                c_list.append(Code('STORE', 60))
+                # add array position and subtract offset
+                c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
+                c_list.append(Code('ADD', 60))
             
         else:
             print(f"Error: wrong tag: {id_tag}")
