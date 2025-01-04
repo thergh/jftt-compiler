@@ -7,9 +7,10 @@ from table import SymbolTable
 class Code:
     """ Represents vm code """
     
-    def __init__(self, name, value=None):
+    def __init__(self, name, value=None, comment=None):
         self.name = name
         self.value = value
+        self.comment = comment
         
     def to_string(self):
         """ Changes format of a code
@@ -19,8 +20,10 @@ class Code:
             return f"{self.name}"
         
         else:
-            return f"{self.name} {self.value}"    
-
+            if self.comment is None:
+                return f"{self.name} {self.value}"    
+            else:
+                return f"{self.name} {self.value} \t# {self.comment}"    
   
 class CodeGenerator:
     def __init__(self, program, debug=False):
@@ -592,7 +595,7 @@ class CodeGenerator:
         c_list.extend(self.handle_condition(condition))
         c_list.append(Code('JZERO', comms_code_length + 2))
         c_list.extend(comms_code)
-        c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1))
+        c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1, "WHILE jump back"))
         
         return c_list
     
@@ -608,16 +611,11 @@ class CodeGenerator:
         comms_code_length = len(comms_code)
         cond_code = self.handle_condition(condition)
         cond_code_length = len(cond_code)
-        
-        # c_list.extend(self.handle_condition(condition))
-        # c_list.append(Code('JZERO', comms_code_length + 2))
-        # c_list.extend(comms_code)
-        # c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1))
-        
+
         c_list.extend(comms_code)
         c_list.extend(self.handle_condition(condition))
         # if condition is false (0), repeat the loop
-        c_list.append(Code('JZERO', - comms_code_length - cond_code_length))
+        c_list.append(Code('JZERO', - comms_code_length - cond_code_length, "REPEAT jump back"))
         
         return c_list
     
@@ -657,7 +655,7 @@ class CodeGenerator:
         comms_code_length = len(comms_code)   
         
         # load 1 to r50 for incrementation
-        c_list.append(Code('SET', 1))
+        c_list.append(Code('SET', 1, "FOR start"))
         c_list.append(Code('STORE', 50))
         
         # initial loop setup
@@ -672,7 +670,7 @@ class CodeGenerator:
         
         # start loop
         # check condition
-        c_list.append(Code('LOAD', end_pos))
+        c_list.append(Code('LOAD', end_pos, "FOR loop condition"))
         c_list.append(Code('SUB', iterator_pos))
         # exit loop when iterator > end
         c_list.append(Code('JNEG', comms_code_length + 5)) 
@@ -682,7 +680,7 @@ class CodeGenerator:
         c_list.append(Code('ADD', 50))
         c_list.append(Code('STORE', iterator_pos))
         # jump back to start of the loop
-        c_list.append(Code('JUMP', - comms_code_length - 6))
+        c_list.append(Code('JUMP', - comms_code_length - 6, "FOR jump back"))
         
         return c_list
     
@@ -722,7 +720,7 @@ class CodeGenerator:
             comms_code_length = len(comms_code)   
             
             # load 1 to r50 for incrementation
-            c_list.append(Code('SET', 1))
+            c_list.append(Code('SET', 1, "FOR_DOWN start"))
             c_list.append(Code('STORE', 50))
             
             # initial loop setup
@@ -747,7 +745,7 @@ class CodeGenerator:
             c_list.append(Code('SUB', 50))
             c_list.append(Code('STORE', iterator_pos))
             # jump back to start of the loop
-            c_list.append(Code('JUMP', - comms_code_length - 6))
+            c_list.append(Code('JUMP', - comms_code_length - 6, "FOR_DOWN jump back"))
             
             return c_list
 
@@ -1112,15 +1110,16 @@ class CodeGenerator:
         
         # adjust for code length of procedure
         # super fucking hacky, I let God take the wheel
-        print("SCOPE LENGTH: ", self.scope_length)
+        # print("SCOPE LENGTH: ", self.scope_length)
         if self.scope != '':
             k += 3 + self.scope_length
             
-        c_list.append(Code('SET', k + refs_assign_code_len + 3))
+        c_list.append(Code('SET', k + refs_assign_code_len + 3, "CALL: set return position"))
         # setting return address for procedure
         c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
         # RETURN to procedure and perform its code
-        c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position']))
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position'],
+                           "CALL: go to " + proc_pid + " procedure"))
         
         return c_list
          
@@ -1198,7 +1197,7 @@ class CodeGenerator:
         
         # setting procedure position in table
         k = len(self.code_list) # current instruction counter
-        c_list.append(Code('SET', k + 3))
+        c_list.append(Code('SET', k + 3, proc_PID + ": set procedure position"))
         c_list.append(Code('STORE', self.table.get_symbol(proc_PID)["position"]))
         
         # generate code for commands
@@ -1209,23 +1208,17 @@ class CodeGenerator:
         
         # jump over the code of procedure
         # +1 for JUMP, +1 for RTRN
-        c_list.append(Code('JUMP', code_length + 2))
+        c_list.append(Code('JUMP', code_length + 2, proc_PID + ": jump over procedure code"))
         
         c_list.extend(code_list)
         # adding 1, because RTRN address is 1 after procedure declaration
-        c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1))
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1,
+                           proc_PID + ": procedure return"))
         
         self.scope = ''
         self.scope_length = 0
         
         return c_list
-    
-    
-
-        
-        
-    
-
 
 
 
