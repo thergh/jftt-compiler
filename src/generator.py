@@ -342,7 +342,8 @@ class CodeGenerator:
                 arr_PID = identifier[1]
                 number = identifier[2]
                 arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-                arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                arr_offset = 0
                 position = int(arr_pos) + int(number) - int(arr_offset)
                 c_list.append(Code('SET', position))
                 
@@ -352,7 +353,8 @@ class CodeGenerator:
             idx_PID = identifier[2]
             arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
             idx_pos = self.table.get_symbol(self.scope + idx_PID)['position']
-            arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+            # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+            arr_offset = 0
 
             # load idx to acc
             c_list.append(Code('LOAD', idx_pos))
