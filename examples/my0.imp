@@ -3,39 +3,19 @@
 # > 46368
 # > 28657
 
-PROCEDURE pa(a,b) IS
-BEGIN
-  a:=a+b;
-  b:=a-b;
-END
-
-PROCEDURE pb(a,b) IS
-BEGIN
-    pa(a,b);
-    pa(a,b);
-END
-
-PROCEDURE pc(a,b) IS
-BEGIN
-  pb(a,b);
-  pb(a,b);
-  pb(a,b);
-END
-
-PROCEDURE pd(a,b) IS
-BEGIN
-  pc(a,b);
-  pc(a,b);
-  pc(a,b);
-  pc(a,b);
-END
 
 PROGRAM IS
-  x,y
+    x,tab[1:20]
 BEGIN
-    x:=0;
-    y:=1;
-  pd(x,y);
-  WRITE x;
-  WRITE y;
+    tab[1] := 10;
+    tab[2] := 20;
+    tab[3] := 30;
+    tab[4] := 40;
+    tab[5] := 50;
+
+
+    FOR i FROM 1 TO 10 DO
+        WRITE tab[i];
+    ENDFOR
+
 END

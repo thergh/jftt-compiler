@@ -328,14 +328,18 @@ class CodeGenerator:
             c_list.append(Code('SET', position))
             
         elif id_tag == 'id_ARRAY_PID':
-            arr = identifier[1]
-            idx = identifier[2]
-            arr_pos = self.table.get_symbol(self.scope + arr)['position']
-            arr_offset = self.table.get_symbol(self.scope + arr)['start_idx']
-            idx_pos = self.table.get_symbol(self.scope + idx)['position']
-            c_list.append(Code('LOADI', idx_pos)) # loads idx value to acc
-            c_list.append(Code('ADD', arr_pos))
-            c_list.append(Code('SUB', arr_offset)) # now id position is in acc
+            arr_PID = identifier[1]
+            idx_PID = identifier[2]
+            arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+            idx_pos = self.table.get_symbol(self.scope + idx_PID)['position']
+            arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+
+            # load idx to acc
+            c_list.append(Code('LOAD', idx_pos))
+            c_list.append(Code('STORE', 60))
+            # add array position and subtract offset
+            c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
+            c_list.append(Code('ADD', 60))
             
         else:
             print(f"Error: wrong tag: {id_tag}")
