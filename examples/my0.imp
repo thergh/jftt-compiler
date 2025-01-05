@@ -1,28 +1,31 @@
-# ? 0
-# ? 1
-# > 46368
-# > 28657
-
-PROCEDURE proc(T tab, start, end, multi) IS
-BEGIN
-    FOR i FROM start TO end DO
-        tab[i] := tab[i] * multi;
-        WRITE tab[i];
-    ENDFOR
-END
-
-
 PROGRAM IS
-    tab[0:20], start, end, multi
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 BEGIN
-    start := 0;
-    end := 20;
-    multi := 10;
-
-    FOR i FROM 0 TO 20 DO
-        tab[i] := i;
-    ENDFOR
-
-    proc(tab, start, end, multi);
-
+  READ a;
+  b := a;
+  c := b + a;
+  d := c + b;
+  e := d + c;
+  f := e + d;
+  g := f + e;
+  h := g + f;
+  i := h + g;
+  j := i + h;
+  k := j + i;
+  l := k + j;
+  m := l + k;
+  n := m + l;
+  o := n + m;
+  p := o + n;
+  q := p + o;
+  r := q + p;
+  s := r + q;
+  t := s + r;
+  u := t + s;
+  v := u + t;
+  w := v + u;
+  x := w + v;
+  y := x + w;
+  z := y + x;
+  WRITE z;
 END

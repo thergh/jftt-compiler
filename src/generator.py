@@ -36,6 +36,7 @@ class CodeGenerator:
         self.scope = ''
         self.for_counter = 0
         self.scope_length = 0
+        self.line_number = 0
         
         # if self.debug:
         #     print("CodeGenerator.procedures: ", self.procedures)
@@ -54,10 +55,15 @@ class CodeGenerator:
             self.code_list.extend(self.gc_proc(p))
         
         # Handling initial declarations
+        self.line_number += 1 # PROGRAM IS
+        
         declarations = self.get_declarations()
         
         if declarations is not None:
             self.decs_to_table(declarations)
+            
+        self.line_number += 1 # declarations
+        self.line_number += 1 # BEGIN
             
         # Handling initial commands
         main_comms = self.get_main_commands()
@@ -69,6 +75,8 @@ class CodeGenerator:
         code_string = self.code_list_to_string()
         code_string.append("HALT")
         
+        self.line_number += 1 # END
+        
         
         if self.debug:
             print("SYMBOL TABLE:\n")
@@ -77,6 +85,7 @@ class CodeGenerator:
             print("CODE:\n")
             for c in code_string:
                 print(c)
+            print(f"line number after generating: {self.line_number}")
             
         return code_string
             
@@ -258,9 +267,7 @@ class CodeGenerator:
         c_list.append(Code('GET', 0))
         c_list.append(Code('STOREI', 1))
         
-        # if self.debug:
-        #     print(f"gc_comm_READ(): ")
-        #     self.print_code_list(c_list)
+        self.line_number += 1
         return c_list
         
 
@@ -271,11 +278,8 @@ class CodeGenerator:
         
         c_list.extend(self.value_to_acc(value))
         c_list.append(Code('PUT', 0))
-                
-        # if self.debug:
-        #     print(f"gc_comm_WRITE(): ")
-        #     self.print_code_list(c_list)
-            
+        
+        self.line_number += 1
         return c_list
     
     
@@ -292,6 +296,7 @@ class CodeGenerator:
         c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
         c_list.append(Code('STOREI', 1)) # set velue on position
 
+        self.line_number += 1
         return c_list    
     
     
@@ -589,8 +594,11 @@ class CodeGenerator:
         c_list.extend(self.handle_condition(condition))
         # if condition value is 0, we skip the commands
         c_list.append(Code('JZERO', comms_code_length + 1))
+        self.line_number += 1 # IF condition
+        
         c_list.extend(comms_code)
         
+        self.line_number += 1 # IF ENDIF
         return c_list
     
     
@@ -602,21 +610,25 @@ class CodeGenerator:
         commands1 = command[2]
         commands2 = command[3]
         
+        self.line_number += 1 # IF condition
         comms1_list: list = self.comms_to_list(commands1)
         comms1_code = self.gc_command_list(comms1_list)
         comms1_code_length = len(comms1_code)
         
+        self.line_number += 1 # ELSE
         comms2_list: list = self.comms_to_list(commands2)
         comms2_code = self.gc_command_list(comms2_list)
         comms2_code_length = len(comms2_code)
         
         c_list.extend(self.handle_condition(condition))
+        
         # if condition value is 0, we skip the commands and skip 'JUMP'
         c_list.append(Code('JZERO', comms1_code_length + 2))
         c_list.extend(comms1_code)
         c_list.append(Code('JUMP', comms2_code_length + 1)) # skip com2
         c_list.extend(comms2_code)
         
+        self.line_number += 1 # ENDIF
         return c_list
 
     
@@ -633,16 +645,20 @@ class CodeGenerator:
         cond_code_length = len(cond_code)
         
         c_list.extend(self.handle_condition(condition))
+        self.line_number += 1 # WHILE
         c_list.append(Code('JZERO', comms_code_length + 2))
         c_list.extend(comms_code)
         c_list.append(Code('JUMP', - comms_code_length - 1 - cond_code_length - 1, "WHILE jump back"))
         
+        self.line_number += 1 # ENDWHILE
         return c_list
     
     
     def gc_comm_REPEAT(self, command):
         """ returns: Code for command REPEAT """
-
+        
+        self.line_number += 1 # REPEAT
+        
         c_list = []
         commands = command[1]
         condition = command[2]
@@ -657,6 +673,7 @@ class CodeGenerator:
         # if condition is false (0), repeat the loop
         c_list.append(Code('JZERO', - comms_code_length - cond_code_length, "REPEAT jump back"))
         
+        self.line_number += 1 # UNTIL
         return c_list
     
     
@@ -690,6 +707,8 @@ class CodeGenerator:
         self.table.add_symbol(end_name)
         end_pos = self.table.get_symbol(end_name)["position"]
         
+        self.line_number += 1 # FOR
+        
         # only now, when vriables are set in table, can we generate the code
         comms_code = self.gc_command_list(comms_list)
         comms_code_length = len(comms_code)   
@@ -722,6 +741,7 @@ class CodeGenerator:
         # jump back to start of the loop
         c_list.append(Code('JUMP', - comms_code_length - 6, "FOR jump back"))
         
+        self.line_number += 1 # ENDFOR
         return c_list
     
     
@@ -755,6 +775,8 @@ class CodeGenerator:
             self.table.add_symbol(end_name)
             end_pos = self.table.get_symbol(end_name)["position"]
             
+            self.line_number += 1 # FOR
+            
             # only now, when vriables are set in table, can we generate the code
             comms_code = self.gc_command_list(comms_list)
             comms_code_length = len(comms_code)   
@@ -787,6 +809,7 @@ class CodeGenerator:
             # jump back to start of the loop
             c_list.append(Code('JUMP', - comms_code_length - 6, "FOR_DOWN jump back"))
             
+            self.line_number += 1 # ENDFOR
             return c_list
 
 
@@ -1161,6 +1184,7 @@ class CodeGenerator:
         c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position'],
                            "CALL: go to " + proc_pid + " procedure"))
         
+        self.line_number += 1
         return c_list
          
         
@@ -1222,13 +1246,18 @@ class CodeGenerator:
         self.scope = proc_PID + '__'
         self.scope_length = 0
         
-        # add declarations to table if there are any
-        if tag == 'procs_LONG':
-            self.proc_decs_to_table(procedure)
-        
         # add arguments to table as referances
         args_decl = self.get_phead_args(proc_head)
         self.refs_to_table(args_decl)
+        self.line_number += 1 # PROCEDURE
+        
+        # add declarations to table if there are any
+        if tag == 'procs_LONG':
+            self.proc_decs_to_table(procedure)
+            self.line_number += 1 # proc declarations
+            
+        self.line_number += 1 # proc BEGIN
+
         
         # adding procedure to table
         
@@ -1257,6 +1286,7 @@ class CodeGenerator:
         
         self.scope = ''
         self.scope_length = 0
+        self.line_number += 1 # proc END
         
         return c_list
 
@@ -1281,6 +1311,7 @@ if __name__ == '__main__':
     gen = CodeGenerator(parsed, False)
 
     code = gen.generate_code()
+    
     
     
     # with open(output, 'w') as file:
