@@ -50,9 +50,9 @@ class SymbolTable:
         self.mem_pos += length + 1
         
     
-    def get_symbol(self, name):
+    def get_symbol(self, name, line_number=-1):
         if name not in self.table:
-            print(f"\nError: {name} not in table.")
+            print(f"\nError in line {line_number}: {name} not declared.\n")
             return      
         return self.table[name]  
         
@@ -68,9 +68,9 @@ class SymbolTable:
                 return x
             
             
-    def add_symbol_ref(self, name):
+    def add_symbol_ref(self, name, line_number=-1):
         if name in self.table:
-            print(f"Error: {name} already exists.")
+            print(f"\nError in line {line_number}: {name} redeclaration.\n")
             return
         
         self.table[name] = {
@@ -85,9 +85,9 @@ class SymbolTable:
         self.mem_pos += 1
         
         
-    def add_array_ref(self, name):
+    def add_array_ref(self, name, line_number=-1):
         if name in self.table:
-            print(f"Error: {name} already exists.")
+            print(f"\nError in line {line_number}: {name} redeclaration.\n")
             return
 
         self.table[name] = {
@@ -102,12 +102,9 @@ class SymbolTable:
         self.mem_pos += 1
         
     
-    def add_procedure(self, name, arguments):
-        
-        # procedure
-        
+    def add_procedure(self, name, arguments, line_number=-1):
         if name in self.table:
-            print(f"Error: {name} already exists.")
+            print(f"\nError in line {line_number}: {name} redeclaration.\n")
             return
         
         self.table[name] = {
