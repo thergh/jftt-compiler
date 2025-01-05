@@ -553,11 +553,9 @@ class CodeGenerator:
             return self.cond_NE(condition)
         
         elif cond_tag == ">":
-            print("\ncond_G\n")
             return self.cond_G(condition)
         
         elif cond_tag == "<":
-            print("\ncond_L\n")
             return self.cond_L(condition)
         
         elif cond_tag == ">=":
@@ -1021,6 +1019,7 @@ class CodeGenerator:
             
             else:
                 print(f"Error: wrong operator: {operation_tag}")
+                # return
         
         return c_list
     
@@ -1119,18 +1118,16 @@ class CodeGenerator:
         
         proc_call = command[1]
         proc_pid = proc_call[1]
-        proc_args = proc_call[2] 
+        proc_args = proc_call[2]
+        call_lineno = proc_call[3]
         
         # these are the arguments that were given when calling the procedure
         args_list = self.args_to_list(proc_args)
-        print("args list: ", args_list)
         args_count = len(args_list)
         
         # these are argument references of a procedure
-        refs_list = self.table.get_symbol(proc_pid)['arguments']
+        refs_list = self.table.get_symbol(proc_pid, call_lineno)['arguments']
         refs_count = len(refs_list)
-        print(f"refs_list: {refs_list}")
-        # print(f"refs_list[0]: {refs_list[0]}")
         
         # if number of args != number of references, error
         if args_count != refs_count:
@@ -1143,16 +1140,16 @@ class CodeGenerator:
         if self.scope == '':
             for i in range(refs_count):
                 # set acc to position of ref
-                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
+                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i], call_lineno)["position"]))
                 refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
+                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i], call_lineno)["position"]))
                 refs_assign_code.append(Code('STOREI', 40))
         else:
             for i in range(refs_count):
                 # set acc to position of ref
-                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i])["position"]))
+                refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i], call_lineno)["position"]))
                 refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i])["position"]))
+                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i], call_lineno)["position"]))
                 refs_assign_code.append(Code('LOADI', 0)) # IDK why it must be here ¯\_(ツ)_/¯
                 refs_assign_code.append(Code('STOREI', 40))    
         
@@ -1163,15 +1160,14 @@ class CodeGenerator:
         
         # adjust for code length of procedure
         # super fucking hacky, I let God take the wheel
-        # print("SCOPE LENGTH: ", self.scope_length)
         if self.scope != '':
             k += 3 + self.scope_length
             
         c_list.append(Code('SET', k + refs_assign_code_len + 3, "CALL: set return position"))
         # setting return address for procedure
-        c_list.append(Code('STORE', self.table.get_symbol(proc_pid)['position'] + 1))
+        c_list.append(Code('STORE', self.table.get_symbol(proc_pid, call_lineno)['position'] + 1))
         # RETURN to procedure and perform its code
-        c_list.append(Code('RTRN', self.table.get_symbol(proc_pid)['position'],
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_pid, call_lineno)['position'],
                            "CALL: go to " + proc_pid + " procedure"))
         
         self.line_number += 1
@@ -1201,27 +1197,28 @@ class CodeGenerator:
         """ Writes argument declarations (references / refs) to the symbol table. """
         
         if args_decl is None:
-            print("\nError: Arguments type is 'None'")
+            print("\nError: Argument's type is 'None'")
             return
         
         tag = args_decl[0]
+        args_lineno = [3]
             
         if tag == 'ard_PID':
-            self.table.add_symbol_ref(self.scope + args_decl[1])
+            self.table.add_symbol_ref(self.scope + args_decl[1], args_lineno)
 
         elif tag == 'ard_ARRAY':
-            self.table.add_array_ref(self.scope + args_decl[1])
+            self.table.add_array_ref(self.scope + args_decl[1], args_lineno)
         
         elif tag == 'ard_REC_PID':
             self.refs_to_table(args_decl[1])
-            self.table.add_symbol_ref(self.scope + args_decl[2])
+            self.table.add_symbol_ref(self.scope + args_decl[2], args_lineno)
 
         elif tag == 'ard_REC_ARRAY':
             self.refs_to_table(args_decl[1])
-            self.table.add_array_ref(self.scope + args_decl[2])
+            self.table.add_array_ref(self.scope + args_decl[2], args_lineno)
             
         else:
-            print(f"\nError: Wrong tag: {tag}")
+            print(f"\nError in line {args_lineno}: wrong tag: {tag}")
             return
         
 
@@ -1232,6 +1229,7 @@ class CodeGenerator:
         tag = procedure[0]
         proc_head = self.get_proc_head(procedure)
         proc_PID = self.get_phead_PID(proc_head)
+        proc_head_lineno = proc_head[3]
         
         self.scope = proc_PID + '__'
         self.scope_length = 0
@@ -1257,7 +1255,7 @@ class CodeGenerator:
         # setting procedure position in table
         k = len(self.code_list) # current instruction counter
         c_list.append(Code('SET', k + 3, proc_PID + ": set procedure position"))
-        c_list.append(Code('STORE', self.table.get_symbol(proc_PID)["position"]))
+        c_list.append(Code('STORE', self.table.get_symbol(proc_PID, proc_head_lineno)["position"]))
         
         # generate code for commands
         commands = self.get_proc_commands(procedure)
@@ -1271,7 +1269,7 @@ class CodeGenerator:
         
         c_list.extend(code_list)
         # adding 1, because RTRN address is 1 after procedure declaration
-        c_list.append(Code('RTRN', self.table.get_symbol(proc_PID)["position"] + 1,
+        c_list.append(Code('RTRN', self.table.get_symbol(proc_PID, proc_head_lineno)["position"] + 1,
                            proc_PID + ": procedure return"))
         
         self.scope = ''
