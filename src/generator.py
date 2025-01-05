@@ -677,7 +677,7 @@ class CodeGenerator:
         end_value = command[3]
         commands = command[4]
         comms_list: list = self.comms_to_list(commands)
-        for_lineno = command[4]     
+        for_lineno = command[5]     
         
         # creating a loop iterator and adding it to the symbol table
         for_prefix = '__FOR' + str(self.for_counter) + '_'
@@ -745,8 +745,7 @@ class CodeGenerator:
             end_value = command[3]
             commands = command[4]
             comms_list: list = self.comms_to_list(commands)
-            
-            
+            for_lineno = command[5]
             # creating a loop iterator and adding it to the symbol table
             for_prefix = '__FOR' + str(self.for_counter) + '_'
             self.for_counter += 1
