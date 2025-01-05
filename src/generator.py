@@ -341,8 +341,7 @@ class CodeGenerator:
                 arr_PID = identifier[1]
                 number = identifier[2]
                 arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
-                arr_offset = 0
-                position = int(arr_pos) + int(number) - int(arr_offset)
+                position = int(arr_pos) + int(number)
                 c_list.append(Code('SET', position))
                 
             
@@ -365,14 +364,12 @@ class CodeGenerator:
                 idx_PID = identifier[2]
                 arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
                 idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
-                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
-                arr_offset = 0
 
                 # load idx to acc
                 c_list.append(Code('LOAD', idx_pos))
                 c_list.append(Code('STORE', 60))
                 # add array position and subtract offset
-                c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
+                c_list.append(Code('SET', int(arr_pos)))
                 c_list.append(Code('ADD', 60))
             
         else:
@@ -680,25 +677,25 @@ class CodeGenerator:
         end_value = command[3]
         commands = command[4]
         comms_list: list = self.comms_to_list(commands)
-        
+        for_lineno = command[4]     
         
         # creating a loop iterator and adding it to the symbol table
         for_prefix = '__FOR' + str(self.for_counter) + '_'
         self.for_counter += 1
         # iterator_name = for_prefix + iterator_PID
-        iterator_name = iterator_PID # scope error!!!
+        iterator_name = iterator_PID # scope error!!! TODO ??? i don't remember anymore XD
         
-        self.table.add_symbol(self.scope + iterator_name)    
+        self.table.add_symbol(self.scope + iterator_name, for_lineno)    
         
-        iterator_pos = self.table.get_symbol(self.scope + iterator_name)["position"]
+        iterator_pos = self.table.get_symbol(self.scope + iterator_name, for_lineno)["position"]
         
         # adding start and end to symbol table
         start_name = for_prefix + 'start'
         self.table.add_symbol(start_name)
-        start_pos = self.table.get_symbol(start_name)["position"]
+        start_pos = self.table.get_symbol(start_name, for_lineno)["position"]
         end_name = for_prefix + 'end'
         self.table.add_symbol(end_name)
-        end_pos = self.table.get_symbol(end_name)["position"]
+        end_pos = self.table.get_symbol(end_name, for_lineno)["position"]
         
         self.line_number += 1 # FOR
         
