@@ -311,14 +311,11 @@ class CodeGenerator:
         
         if id_tag == 'id_PID':
             id = identifier[1]
+            id_lineno = identifier[2]
+            
             # check if id is a reference
-            if(self.table.get_symbol(self.scope + id)['is_reference']):
-                ref_pos = self.table.get_symbol(self.scope + id)['position']
-                
-                # czyli mam teraz pozycję referencji. chcę dostać pozycję wartości
-                # pozycja wartości jest wartością referencji
-                # czyli chcę dostać wartość tego, co jest na pozycji referencji
-                
+            if(self.table.get_symbol(self.scope + id, id_lineno)['is_reference']):
+                ref_pos = self.table.get_symbol(self.scope + id, id_lineno)['position']
                 c_list.append(Code('LOAD', ref_pos))
     
             else: # normal case
@@ -327,11 +324,12 @@ class CodeGenerator:
             
         elif id_tag == 'id_ARRAY_NUM':
             arr_PID = identifier[1]
+            arr_lineno = identifier[3]
             
-            if self.table.get_symbol(self.scope + arr_PID)['is_reference']:
+            if self.table.get_symbol(self.scope + arr_PID, arr_lineno)['is_reference']:
                 arr_PID = identifier[1]
                 number = identifier[2]
-                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID)['position']
+                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
 
                 # TODO: include offset
                 c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
@@ -342,8 +340,7 @@ class CodeGenerator:
             else:
                 arr_PID = identifier[1]
                 number = identifier[2]
-                arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-                # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
+                arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
                 arr_offset = 0
                 position = int(arr_pos) + int(number) - int(arr_offset)
                 c_list.append(Code('SET', position))
@@ -351,18 +348,14 @@ class CodeGenerator:
             
         elif id_tag == 'id_ARRAY_PID':
             arr_PID = identifier[1]
+            arr_lineno = identifier[3]
             
-            if self.table.get_symbol(self.scope + arr_PID)['is_reference']:
+            if self.table.get_symbol(self.scope + arr_PID, arr_lineno)['is_reference']:
                 idx_PID = identifier[2]
-                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-                idx_ref_pos = self.table.get_symbol(self.scope + idx_PID)['position']
+                arr_ref_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
+                idx_ref_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
 
                 # load idx to acc
-                # c_list.append(Code('LOAD', idx_pos))
-                # c_list.append(Code('STORE', 60))
-                # # add array position and subtract offset
-                # c_list.append(Code('SET', int(arr_pos) - int(arr_offset)))
-                # c_list.append(Code('ADD', 60))
                 c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
                 c_list.append(Code('STORE ', 60))
                 c_list.append(Code('LOAD', idx_ref_pos, "DEBUG: ładuję idx_ref_pos")) # load position of array
@@ -370,8 +363,8 @@ class CodeGenerator:
                 
             else:
                 idx_PID = identifier[2]
-                arr_pos = self.table.get_symbol(self.scope + arr_PID)['position']
-                idx_pos = self.table.get_symbol(self.scope + idx_PID)['position']
+                arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
+                idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
                 # arr_offset = self.table.get_symbol(self.scope + arr_PID)['start_idx']
                 arr_offset = 0
 
