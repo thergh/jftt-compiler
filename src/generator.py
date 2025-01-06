@@ -844,19 +844,17 @@ class CodeGenerator:
             value2 = expression[3]
             operation_tag = expression[2]
             expr_lineno = expression[4]
-            
-            
-            
+
             # check if values are assigned
             if value1[0] == 'val_ID':
                 id = value1[1]
-                if self.table.get_symbol(id, self.scope + expr_lineno)["assigned"] != True:
-                    print(f"Error in line {expr_lineno}: {id} not assigned.")
+                if self.table.get_symbol(self.scope + id[1], expr_lineno)["assigned"] != True:
+                    print(f"Error in line {expr_lineno}: {id[1]} not assigned.")
                     return
             if value2[0] == 'val_ID':
                 id = value2[1]
-                if self.table.get_symbol(id, self.scope + expr_lineno)["assigned"] != True:
-                    print(f"Error in line {expr_lineno}: {id} not assigned.")
+                if self.table.get_symbol(self.scope + id[1], expr_lineno)["assigned"] != True:
+                    print(f"Error in line {expr_lineno}: {id[1]} not assigned.")
                     return
             
             if operation_tag == "+":
