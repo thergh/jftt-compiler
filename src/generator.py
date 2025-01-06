@@ -378,6 +378,8 @@ class CodeGenerator:
         identifier = command[1]
         tag = identifier[0]
         
+        self.table.mark_assigned(identifier[1])
+        
         c_list.extend(self.id_pos_to_acc(identifier))
         c_list.append(Code('STORE', 1))
         c_list.append(Code('GET', 0))

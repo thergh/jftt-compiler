@@ -2,10 +2,8 @@
 PROGRAM IS
  a,b
 BEGIN
-  #READ a;
-  #READ b;
-a:=1;
-b:=1;
+  READ a;
+  READ b;
   FOR i FROM a TO b DO
     i:=1;
   ENDFOR
