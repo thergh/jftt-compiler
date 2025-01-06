@@ -407,6 +407,14 @@ class CodeGenerator:
             id_lineno = identifier[2]
         elif id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
             id_lineno = identifier[3]
+            
+        # check if not normal variable identifier as array
+        if id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
+            arr_PID = identifier[1]
+            id_lineno = identifier[3]
+            if self.table.get_symbol(self.scope + arr_PID, id_lineno)["is_array"] != True:
+                print(f"\nError in line {id_lineno}: incorrect usage of array {arr_PID}.\n")
+                return
         
         # mark identifier as assigned
         self.table.mark_assigned(self.scope + identifier[1], id_lineno)
