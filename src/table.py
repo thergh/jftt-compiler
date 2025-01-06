@@ -49,25 +49,7 @@ class SymbolTable:
         
         self.mem_pos += length + 1
         
-    
-    def get_symbol(self, name, line_number=-1):
-        if name not in self.table:
-            print(f"\nError in line {line_number}: {name} not declared.\n")
-            return      
-        return self.table[name]  
         
-        
-    def display(self):
-        for x in self.table:
-            print(f"{x}: {self.table[x]}")
-        
-        
-    def find_name(self, position):
-        for x in self.table:
-            if self.table[x]['position'] == position:
-                return x
-            
-            
     def add_symbol_ref(self, name, line_number=-1):
         if name in self.table:
             print(f"\nError in line {line_number}: {name} redeclaration.\n")
@@ -121,6 +103,42 @@ class SymbolTable:
 
         self.add_symbol(name + "_rtrn")
         
+        
+    def add_iterator(self, name, lineno=-1):
+        if name in self.table:
+            print(f"\nError in line {lineno}: {name} redeclaration.\n")
+            return
+        
+        self.table[name] = {
+            'position': self.mem_pos,
+            'is_array': False,
+            'start_idx': 0,
+            'end_idx': 0,
+            'assigned': False,
+            'is_reference': False,
+            'is_iterator': True
+        }
+        
+        self.mem_pos += 1
+        
+    
+    def get_symbol(self, name, line_number=-1):
+        if name not in self.table:
+            print(f"\nError in line {line_number}: {name} not declared.\n")
+            return      
+        return self.table[name]  
+        
+        
+    def display(self):
+        for x in self.table:
+            print(f"{x}: {self.table[x]}")
+        
+        
+    def find_name(self, position):
+        for x in self.table:
+            if self.table[x]['position'] == position:
+                return x
+ 
         
     def mark_assigned(self, name, line_number=-1):
         self.table[name]["assigned"] = True

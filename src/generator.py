@@ -117,7 +117,7 @@ class CodeGenerator:
         tag = decs[0]
             
         if tag == 'decs_PID':
-            decs_lineno = decs[3]
+            decs_lineno = decs[2]
             self.table.add_symbol(self.scope + decs[1], decs_lineno)
 
         elif tag == 'decs_ARRAY':

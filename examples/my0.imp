@@ -1,16 +1,29 @@
-# błąd: niezdefiniowana procedura pa w linii 6
-PROCEDURE pa(T a, b) IS
- c[0:5],d
+PROCEDURE gcd(a,b,c) IS
+  x,y
 BEGIN
-  d:=b;
-  pa(c,d);
-  a[d]:=c[d]+a[b];
+  x:=a;
+  y:=b;
+  WHILE y>0 DO
+    IF x>=y THEN 
+      x:=x-y;
+    ELSE 
+      x:=x+y;
+      y:=x-y;
+      x:=x-y;    
+    ENDIF
+  ENDWHILE
+  c:=x;
 END
 
 PROGRAM IS
- a[1:10],b
+  a,b,c,d,x,y,z
 BEGIN
+  READ a;
   READ b;
-  pa(a,b);
-  WRITE a[b];
+  READ c;
+  READ d;
+  gcd(a,b,x);
+  gcd(c,d,y);
+  gcd(x,y,z);
+  WRITE z;
 END
