@@ -253,63 +253,8 @@ class CodeGenerator:
         self.scope_length += length
             
         return c_list
-    
-    
-    def gc_comm_READ(self, command):
-        """ returns: Code for command READ """
-        
-        c_list = []
-        identifier = command[1]
-        tag = identifier[0]
-        
-        c_list.extend(self.id_pos_to_acc(identifier))
-        c_list.append(Code('STORE', 1))
-        c_list.append(Code('GET', 0))
-        c_list.append(Code('STOREI', 1))
-        
-        self.line_number += 1
-        return c_list
-        
 
-    def gc_comm_WRITE(self, command):
-        """ returns: Code for command WRITE """
-        c_list = []
-        value = command[1]
-        
-        c_list.extend(self.value_to_acc(value))
-        c_list.append(Code('PUT', 0))
-        
-        self.line_number += 1
-        return c_list
-    
-    
-    def gc_comm_ASSIGN(self, command):
-        """ returns: Code for command ASSIGN """
- 
-        c_list = []
-        identifier = command[1]
-        expression = command[2]
-        
-        id_tag = identifier[0]
-        if id_tag == 'id_PID':
-            id_lineno = identifier[2]
-        elif id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
-            id_lineno = identifier[3]
-        
-        # mark identifier as assigned
-        self.table.mark_assigned(self.scope + identifier[1], id_lineno)
-    
-        c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
-        c_list.append(Code('STORE', 1)) # store id1_pos in reg1
-        
-        c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
-        c_list.append(Code('STOREI', 1)) # set velue on position
-        
 
-        self.line_number += 1
-        return c_list    
-    
-    
     def id_pos_to_acc(self, identifier):
         """ returns: Code that puts symbol table position
         of PID into accumulator.
@@ -411,7 +356,7 @@ class CodeGenerator:
             
             # if identifier is not assigned, return error
             if self.table.get_symbol(self.scope + identifier[1], val_lineno)["assigned"] != True:
-                print(f"Error in line {val_lineno}: {identifier[1]} not assigned.")
+                print(f"\nError in line {val_lineno}: {identifier[1]} not assigned.\n")
                 return
             
             # if value is an array indexed by an identifier, check if it's assigned
@@ -420,7 +365,62 @@ class CodeGenerator:
             c_list.append(Code('LOADI', 0)) # load value of id to reg0
         
         return c_list
+    
+    
+    def gc_comm_READ(self, command):
+        """ returns: Code for command READ """
+        
+        c_list = []
+        identifier = command[1]
+        tag = identifier[0]
+        
+        c_list.extend(self.id_pos_to_acc(identifier))
+        c_list.append(Code('STORE', 1))
+        c_list.append(Code('GET', 0))
+        c_list.append(Code('STOREI', 1))
+        
+        self.line_number += 1
+        return c_list
+        
 
+    def gc_comm_WRITE(self, command):
+        """ returns: Code for command WRITE """
+        c_list = []
+        value = command[1]
+        
+        c_list.extend(self.value_to_acc(value))
+        c_list.append(Code('PUT', 0))
+        
+        self.line_number += 1
+        return c_list
+    
+    
+    def gc_comm_ASSIGN(self, command):
+        """ returns: Code for command ASSIGN """
+ 
+        c_list = []
+        identifier = command[1]
+        expression = command[2]
+        
+        id_tag = identifier[0]
+        if id_tag == 'id_PID':
+            id_lineno = identifier[2]
+        elif id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
+            id_lineno = identifier[3]
+        
+        # mark identifier as assigned
+        self.table.mark_assigned(self.scope + identifier[1], id_lineno)
+    
+        c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
+        c_list.append(Code('STORE', 1)) # store id1_pos in reg1
+        
+        c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
+        c_list.append(Code('STOREI', 1)) # set velue on position
+        
+
+        self.line_number += 1
+        return c_list    
+    
     
     def cond_EQ(self, condition):
         # OK
@@ -855,12 +855,12 @@ class CodeGenerator:
             if value1[0] == 'val_ID':
                 id = value1[1]
                 if self.table.get_symbol(self.scope + id[1], expr_lineno)["assigned"] != True:
-                    print(f"Error in line {expr_lineno}: {id[1]} not assigned.")
+                    print(f"\nError in line {expr_lineno}: {id[1]} not assigned.\n")
                     return
             if value2[0] == 'val_ID':
                 id = value2[1]
                 if self.table.get_symbol(self.scope + id[1], expr_lineno)["assigned"] != True:
-                    print(f"Error in line {expr_lineno}: {id[1]} not assigned.")
+                    print(f"\nError in line {expr_lineno}: {id[1]} not assigned.\n")
                     return
             
             if operation_tag == "+":

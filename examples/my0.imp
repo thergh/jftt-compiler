@@ -1,9 +1,9 @@
-# błąd: niewłaściwe użycie tablicy w linii 5 (i 6)
+# błąd: niewłaściwe użycie zmiennej w linii 5
 PROCEDURE pa(T a, b) IS
  c[0:5],d
 BEGIN
-  c:=a;
-  a:=c+d;
+  d[b]:=b;
+  a[d]:=c[d]+a[b];
 END
 
 PROGRAM IS
