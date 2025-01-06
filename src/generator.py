@@ -403,7 +403,13 @@ class CodeGenerator:
         
         elif value_tag == 'val_ID':
             identifier = value[1]
-
+            val_lineno = value[2]
+            
+            # if identifier is not assigned, return error
+            if self.table.get_symbol(self.scope + identifier[1])["assigned"] != True:
+                print(f"Error in line {val_lineno}: {identifier[1]} not assigned.")
+                return
+            
             c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
             c_list.append(Code('LOADI', 0)) # load value of id to reg0
         

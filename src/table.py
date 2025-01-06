@@ -78,7 +78,7 @@ class SymbolTable:
             'is_array': False,
             'start_idx': 0,
             'end_idx': 0,
-            'assigned': False,
+            'assigned': True, # i treat references as assigned
             'is_reference': True
         }
         
@@ -95,7 +95,7 @@ class SymbolTable:
             'is_array': True,
             'start_idx': 0,
             'end_idx': 0,
-            'assigned': False,
+            'assigned': True, # i treat references as assigned
             'is_reference': True
         }
         
