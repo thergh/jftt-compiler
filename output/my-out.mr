@@ -1,10 +1,41 @@
 SET 3 	# pa: set procedure position
 STORE 109
-JUMP 7 	# pa: jump over procedure code
+JUMP 38 	# pa: jump over procedure code
 SET 108
 STORE 1
 LOAD 101
 LOADI 0
+STOREI 1
+SET 100
+STORE 40
+SET 102
+LOADI 0
+STOREI 40
+SET 101
+STORE 40
+SET 108
+LOADI 0
+STOREI 40
+SET 21 	# CALL: set return position
+STORE 110
+RTRN 109 	# CALL: go to pa procedure
+LOAD 100 	# DEBUG: ładuję arr_ref_pos
+STORE  60
+LOAD 108 	# DEBUG: ładuję idx_ref_pos
+ADD  60
+STORE 1
+LOAD 100 	# DEBUG: ładuję arr_ref_pos
+STORE  60
+LOAD 101 	# DEBUG: ładuję idx_ref_pos
+ADD  60
+LOADI 0
+STORE 30
+LOAD 108
+STORE 60
+SET 102
+ADD 60
+LOADI 0
+ADD 30
 STOREI 1
 RTRN 110 	# pa: procedure return
 SET 121
@@ -19,7 +50,7 @@ SET 101
 STORE 40
 SET 121
 STOREI 40
-SET 24 	# CALL: set return position
+SET 55 	# CALL: set return position
 STORE 110
 RTRN 109 	# CALL: go to pa procedure
 LOAD 121

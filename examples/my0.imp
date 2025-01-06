@@ -1,8 +1,9 @@
-# błąd: powtórne użycie identyfikatora a w linii 2
+# błąd: niezdefiniowana procedura pa w linii 6
 PROCEDURE pa(T a, b) IS
- c[0:5], a
+ c[0:5],d
 BEGIN
   d:=b;
+  pa(c,d);
   a[d]:=c[d]+a[b];
 END
 

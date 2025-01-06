@@ -1178,6 +1178,12 @@ class CodeGenerator:
         proc_args = proc_call[2]
         call_lineno = proc_call[3]
         
+        # check if not recursive call
+        if self.scope != '':
+            if proc_pid == self.scope[:-2]:
+                print(f"\nError in line {call_lineno}: recursive call of {proc_pid} not allowed.\n")
+                return
+    
         # these are the arguments that were given when calling the procedure
         args_list = self.args_to_list(proc_args)
         args_count = len(args_list)
