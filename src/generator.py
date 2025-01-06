@@ -407,8 +407,8 @@ class CodeGenerator:
         c_list = []
         identifier = command[1]
         expression = command[2]
-        
         id_tag = identifier[0]
+        
         if id_tag == 'id_PID':
             id_lineno = identifier[2]
         elif id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
@@ -424,15 +424,11 @@ class CodeGenerator:
             
         # check if trying to change iterator
         id_PID = identifier[1]
-        if self.table.get_symbol(id_PID)["is_iterator"]:
-            if id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
-                id_lineno = identifier[3]
-            else:
-                id_lineno = identifier[2]
-            
+        if self.table.get_symbol(self.scope + id_PID, id_lineno)["is_iterator"]:
             print(f"\nError in line {id_lineno}: modifying iterator {id_PID} is not allowed.\n")
             return
         
+                
         # mark identifier as assigned
         self.table.mark_assigned(self.scope + identifier[1], id_lineno)
     
@@ -441,7 +437,6 @@ class CodeGenerator:
         
         c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
         c_list.append(Code('STOREI', 1)) # set velue on position
-        
 
         self.line_number += 1
         return c_list    
@@ -1333,7 +1328,6 @@ class CodeGenerator:
         self.line_number += 1 # proc BEGIN
         
         # adding procedure to table
-        
         refs_list = self.refs_to_list(args_decl, proc_PID)
         self.table.add_procedure(proc_PID, refs_list)
         
