@@ -112,7 +112,7 @@ class SymbolTable:
             'is_array': False,
             'start_idx': 0,
             'end_idx': 0,
-            'assigned': False,
+            'assigned': True,
             'is_reference': False,
             'arguments': arguments
         }
