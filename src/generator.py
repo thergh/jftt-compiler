@@ -82,10 +82,10 @@ class CodeGenerator:
             print("SYMBOL TABLE:\n")
             self.table.display()
             print()
-            print("CODE:\n")
-            for c in code_string:
-                print(c)
-            print(f"line number after generating: {self.line_number}")
+            # print("CODE:\n")
+            # for c in code_string:
+            #     print(c)
+            # print(f"line number after generating: {self.line_number}")
             
         return code_string
             
@@ -406,7 +406,7 @@ class CodeGenerator:
             val_lineno = value[2]
             
             # if identifier is not assigned, return error
-            if self.table.get_symbol(self.scope + identifier[1])["assigned"] != True:
+            if self.table.get_symbol(self.scope + identifier[1], val_lineno)["assigned"] != True:
                 print(f"Error in line {val_lineno}: {identifier[1]} not assigned.")
                 return
             
@@ -824,15 +824,34 @@ class CodeGenerator:
         
         c_list = []
         tag = expression[0]
+    
+        print(f"calculating expression, tag: {tag}")
         
         if tag == 'expr_VAL':
+            
             value = expression[1]
             c_list.extend(self.value_to_acc(value))
         
         elif tag == 'expr_OP':
+            
             value1 = expression[1]
             value2 = expression[3]
             operation_tag = expression[2]
+            expr_lineno = expression[4]
+            
+            
+            
+            # check if values are assigned
+            if value1[0] == 'val_ID':
+                id = value1[1]
+                if self.table.get_symbol(id, self.scope + expr_lineno)["assigned"] != True:
+                    print(f"Error in line {expr_lineno}: {id} not assigned.")
+                    return
+            if value2[0] == 'val_ID':
+                id = value2[1]
+                if self.table.get_symbol(id, self.scope + expr_lineno)["assigned"] != True:
+                    print(f"Error in line {expr_lineno}: {id} not assigned.")
+                    return
             
             if operation_tag == "+":
                 c_list.extend(self.value_to_acc(value2))

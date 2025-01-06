@@ -1,9 +1,9 @@
-# błąd: niezainicjowana zmienna d w linii 6
+# błąd: niezadeklarowana zmienna e w linii 5
 PROCEDURE pa(T a, b) IS
  c[0:5],d
 BEGIN
-  c[b]:=b;
-  a[d]:=c[d];
+  c:=e;
+  a:=c+d;
 END
 
 PROGRAM IS
