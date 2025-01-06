@@ -117,18 +117,22 @@ class CodeGenerator:
         tag = decs[0]
             
         if tag == 'decs_PID':
-            self.table.add_symbol(self.scope + decs[1])
+            decs_lineno = decs[3]
+            self.table.add_symbol(self.scope + decs[1], decs_lineno)
 
         elif tag == 'decs_ARRAY':
-            self.table.add_array(self.scope + decs[1], decs[2], decs[3])
+            decs_lineno = decs[4]
+            self.table.add_array(self.scope + decs[1], decs[2], decs[3], decs_lineno)
         
         elif tag == 'decs_REC_PID':
             self.decs_to_table(decs[1])
-            self.table.add_symbol(self.scope + decs[2])
+            decs_lineno = decs[3]
+            self.table.add_symbol(self.scope + decs[2], decs_lineno)
 
         elif tag == 'decs_REC_ARRAY':
             self.decs_to_table(decs[1])
-            self.table.add_array(self.scope + decs[2], decs[3], decs[4])
+            decs_lineno = decs[5]
+            self.table.add_array(self.scope + decs[2], decs[3], decs[4], decs_lineno)
             
         else:
             print("\nError: Wrong tag")
@@ -719,10 +723,10 @@ class CodeGenerator:
         
         # adding start and end to symbol table
         start_name = for_prefix + 'start'
-        self.table.add_symbol(start_name)
+        self.table.add_symbol(start_name, for_lineno)
         start_pos = self.table.get_symbol(start_name, for_lineno)["position"]
         end_name = for_prefix + 'end'
-        self.table.add_symbol(end_name)
+        self.table.add_symbol(end_name, for_lineno)
         end_pos = self.table.get_symbol(end_name, for_lineno)["position"]
         
         self.line_number += 1 # FOR
@@ -787,10 +791,10 @@ class CodeGenerator:
             
             # adding start and end to symbol table
             start_name = for_prefix + 'start'
-            self.table.add_symbol(start_name)
+            self.table.add_symbol(start_name, for_lineno)
             start_pos = self.table.get_symbol(start_name, for_lineno)["position"]
             end_name = for_prefix + 'end'
-            self.table.add_symbol(end_name)
+            self.table.add_symbol(end_name, for_lineno)
             end_pos = self.table.get_symbol(end_name, for_lineno)["position"]
             
             self.line_number += 1 # FOR

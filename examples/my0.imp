@@ -1,15 +1,15 @@
-# błąd: niewłaściwy parametr procedury pa w linii 13
+# błąd: powtórne użycie identyfikatora a w linii 2
 PROCEDURE pa(T a, b) IS
- c[0:5],d
+ c[0:5], a
 BEGIN
   d:=b;
-  #a[d]:=c[d]+a[b];
+  a[d]:=c[d]+a[b];
 END
 
 PROGRAM IS
  a[1:10],b
 BEGIN
   READ b;
-  pa(b,a);
+  pa(a,b);
   WRITE a[b];
 END

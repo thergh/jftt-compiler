@@ -10,9 +10,9 @@ class SymbolTable:
         # 100+ memory
     
     
-    def add_symbol(self, name):
+    def add_symbol(self, name, lineno=-1):
         if name in self.table:
-            print(f"Error: {name} already exists.")
+            print(f"\nError in line {lineno}: {name} redeclaration.\n")
             return
         
         self.table[name] = {
@@ -27,13 +27,13 @@ class SymbolTable:
         self.mem_pos += 1
         
         
-    def add_array(self, name, start_idx, end_idx):
+    def add_array(self, name, start_idx, end_idx, lineno=-1):
         if name in self.table:
-            print(f"Error: {name} already exists.")
+            print(f"\nError in line {lineno}: {name} redeclaration.\n")
             return
         
         if end_idx < start_idx:
-            print(f"Error: start_idx: {start_idx} bigger than end_idx: {end_idx}")
+            print(f"\nError in line {lineno}: start_idx ({start_idx}) bigger than end_idx ({end_idx})\n")
             return
         
         length = int(end_idx) - int(start_idx)
