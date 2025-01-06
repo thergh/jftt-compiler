@@ -830,12 +830,18 @@ class CodeGenerator:
         
         c_list = []
         tag = expression[0]
-    
-        print(f"calculating expression, tag: {tag}")
-        
-        if tag == 'expr_VAL':
             
+        if tag == 'expr_VAL':
             value = expression[1]
+            expr_lineno = value[2]
+            
+            # check if trying to use array as value
+            if value[0] == 'val_ID':
+                id = value[1]
+                if id[0] == 'id_PID' and self.table.get_symbol(self.scope + id[1], expr_lineno)["is_array"]:
+                    print(f"\nError in line {expr_lineno}: incorrect usage of array {id[1]}.\n")
+                    return
+            
             c_list.extend(self.value_to_acc(value))
         
         elif tag == 'expr_OP':

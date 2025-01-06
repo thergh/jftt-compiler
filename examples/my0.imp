@@ -1,9 +1,9 @@
-# błąd: niezainicjowana zmienna d w linii 6
+# błąd: niewłaściwe użycie tablicy w linii 5 (i 6)
 PROCEDURE pa(T a, b) IS
  c[0:5],d
 BEGIN
-  c[b]:=b;
-  a[d]:=c[d];
+  c:=a;
+  a:=c+d;
 END
 
 PROGRAM IS
