@@ -1194,6 +1194,12 @@ class CodeGenerator:
         # put argument positions into refs
         refs_assign_code = []
         
+        # check if args and refs are matching ("is_array")
+        for i in range(refs_count):
+            if self.table.get_symbol(self.scope + args_list[i])["is_array"] != self.table.get_symbol(refs_list[i])["is_array"]:
+                print(f"Error in line {call_lineno}: procedure parameter {self.scope + args_list[i]} type mismatch.")
+                return
+        
         if self.scope == '':
             for i in range(refs_count):
                 # set acc to position of ref
@@ -1302,7 +1308,6 @@ class CodeGenerator:
             self.line_number += 1 # proc declarations
             
         self.line_number += 1 # proc BEGIN
-
         
         # adding procedure to table
         
