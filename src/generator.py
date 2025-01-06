@@ -359,8 +359,13 @@ class CodeGenerator:
             arr_PID = identifier[1]
             arr_lineno = identifier[3]
             
+            # check if index identifier is assigned
+            idx_PID = identifier[2]
+            if self.table.get_symbol(self.scope + idx_PID, arr_lineno)["assigned"] != True:
+                print(f"\nError in line {arr_lineno}: {idx_PID} not assigned.\n")
+                return
+            
             if self.table.get_symbol(self.scope + arr_PID, arr_lineno)['is_reference']:
-                idx_PID = identifier[2]
                 arr_ref_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
                 idx_ref_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
 
@@ -371,7 +376,6 @@ class CodeGenerator:
                 c_list.append(Code('ADD ', 60))
                 
             else:
-                idx_PID = identifier[2]
                 arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
                 idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
 
@@ -409,6 +413,8 @@ class CodeGenerator:
             if self.table.get_symbol(self.scope + identifier[1], val_lineno)["assigned"] != True:
                 print(f"Error in line {val_lineno}: {identifier[1]} not assigned.")
                 return
+            
+            # if value is an array indexed by an identifier, check if it's assigned
             
             c_list.extend(self.id_pos_to_acc(identifier)) # puts id_pos into acc
             c_list.append(Code('LOADI', 0)) # load value of id to reg0
