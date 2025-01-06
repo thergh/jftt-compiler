@@ -21,7 +21,8 @@ class SymbolTable:
             'start_idx': 0,
             'end_idx': 0,
             'assigned': False,
-            'is_reference': False
+            'is_reference': False,
+            'is_iterator': False
         }
         
         self.mem_pos += 1
@@ -44,7 +45,8 @@ class SymbolTable:
             'start_idx': start_idx,
             'end_idx': end_idx,
             'assigned': False,
-            'is_reference': False
+            'is_reference': False,
+            'is_iterator': False
         }
         
         self.mem_pos += length + 1
@@ -61,7 +63,8 @@ class SymbolTable:
             'start_idx': 0,
             'end_idx': 0,
             'assigned': True, # i treat references as assigned
-            'is_reference': True
+            'is_reference': True,
+            'is_iterator': False
         }
         
         self.mem_pos += 1
@@ -78,7 +81,8 @@ class SymbolTable:
             'start_idx': 0,
             'end_idx': 0,
             'assigned': True, # i treat references as assigned
-            'is_reference': True
+            'is_reference': True,
+            'is_iterator': False
         }
         
         self.mem_pos += 1
@@ -96,7 +100,8 @@ class SymbolTable:
             'end_idx': 0,
             'assigned': True,
             'is_reference': False,
-            'arguments': arguments
+            'arguments': arguments,
+            'is_iterator': False
         }
         
         self.mem_pos += 1

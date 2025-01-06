@@ -1,29 +1,12 @@
-PROCEDURE gcd(a,b,c) IS
-  x,y
-BEGIN
-  x:=a;
-  y:=b;
-  WHILE y>0 DO
-    IF x>=y THEN 
-      x:=x-y;
-    ELSE 
-      x:=x+y;
-      y:=x-y;
-      x:=x-y;    
-    ENDIF
-  ENDWHILE
-  c:=x;
-END
-
+# błąd: próba modyfikacji iteratora pętli FOR w linii 8
 PROGRAM IS
-  a,b,c,d,x,y,z
+ a,b
 BEGIN
-  READ a;
-  READ b;
-  READ c;
-  READ d;
-  gcd(a,b,x);
-  gcd(c,d,y);
-  gcd(x,y,z);
-  WRITE z;
+  #READ a;
+  #READ b;
+a:=1;
+b:=1;
+  FOR i FROM a TO b DO
+    i:=1;
+  ENDFOR
 END

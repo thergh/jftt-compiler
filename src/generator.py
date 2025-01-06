@@ -419,6 +419,17 @@ class CodeGenerator:
             if self.table.get_symbol(self.scope + arr_PID, id_lineno)["is_array"] != True:
                 print(f"\nError in line {id_lineno}: incorrect usage of array {arr_PID}.\n")
                 return
+            
+        # check if trying to change iterator
+        id_PID = identifier[1]
+        if self.table.get_symbol(id_PID)["is_iterator"]:
+            if id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
+                id_lineno = identifier[3]
+            else:
+                id_lineno = identifier[2]
+            
+            print(f"\nError in line {id_lineno}: modifying iterator {id_PID} is not allowed.\n")
+            return
         
         # mark identifier as assigned
         self.table.mark_assigned(self.scope + identifier[1], id_lineno)
@@ -717,7 +728,7 @@ class CodeGenerator:
         # iterator_name = for_prefix + iterator_PID
         iterator_name = iterator_PID # scope error!!! TODO ??? i don't remember anymore XD
         
-        self.table.add_symbol(self.scope + iterator_name, for_lineno)    
+        self.table.add_iterator(self.scope + iterator_name, for_lineno)    
         
         iterator_pos = self.table.get_symbol(self.scope + iterator_name, for_lineno)["position"]
         
@@ -785,7 +796,7 @@ class CodeGenerator:
             # iterator_name = for_prefix + iterator_PID
             iterator_name = iterator_PID # scope error!!!
             
-            self.table.add_symbol(self.scope + iterator_name, for_lineno)    
+            self.table.add_iterator(self.scope + iterator_name, for_lineno)    
             
             iterator_pos = self.table.get_symbol(self.scope + iterator_name, for_lineno)["position"]
             
