@@ -1141,13 +1141,17 @@ class CodeGenerator:
         args_list = self.args_to_list(proc_args)
         args_count = len(args_list)
         
+        # mark arguments as assigned
+        for a in args_list:
+            self.table.mark_assigned(self.scope + a, call_lineno)
+        
         # these are argument references of a procedure
         refs_list = self.table.get_symbol(proc_pid, call_lineno)['arguments']
         refs_count = len(refs_list)
         
         # if number of args != number of references, error
         if args_count != refs_count:
-            print(f"Error: Number of arguments ({args_count}) does not match number of references ({refs_count}).")
+            print(f"\nError in line {call_lineno}: number of arguments ({args_count}) does not match number of references ({refs_count}).\n")
             return
 
         # put argument positions into refs
