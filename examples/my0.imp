@@ -1,31 +1,33 @@
-PROCEDURE licz(T s, n) IS
-  j
+# Kombinacje 2
+# ? 20
+# ? 9
+# > 167960
+
+PROCEDURE factorial(T s,n) IS
+  p
 BEGIN
-  FOR i FROM 2 TO n DO
-    s[i]:=1;
-  ENDFOR
-  FOR i FROM 2 TO n DO
-    IF s[i]>0 THEN 
-      j:=i+i;
-      WHILE j<=n DO
-        s[j]:=0;
-        j:=j+i;
-      ENDWHILE
-    ENDIF
+  s[0]:=1;
+  p:=s[0];
+  FOR i FROM 1 TO n DO
+    s[i]:=p*i;
+    p:=s[i];
   ENDFOR
 END
-PROCEDURE wypisz(T s, n) IS
+
+PROCEDURE bc(n,k,m) IS
+  s[0:100],p
 BEGIN
-  FOR i FROM n DOWNTO 2 DO
-    IF s[i]>0 THEN
-      WRITE i;
-    ENDIF
-  ENDFOR
+  factorial(s,n);
+  p:=n-k;
+  m:=s[n]/s[k];
+  m:=m/s[p];
 END
+
 PROGRAM IS
-  n, sito[2:100]
+    n,k,w
 BEGIN
-  n:=100;
-  licz(sito,n);
-  wypisz(sito,n);
+    READ n;
+    READ k;
+    bc(n,k,w);
+    WRITE w;
 END

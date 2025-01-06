@@ -111,7 +111,8 @@ class SymbolTable:
         
     def add_iterator(self, name, lineno=-1):
         if name in self.table:
-            print(f"\nError in line {lineno}: {name} redeclaration.\n")
+            # I allow iterator redeclaration,
+            # it will jsut overwrite the previous one
             return
         
         self.table[name] = {
