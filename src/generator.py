@@ -289,12 +289,22 @@ class CodeGenerator:
         c_list = []
         identifier = command[1]
         expression = command[2]
+        
+        id_tag = identifier[0]
+        if id_tag == 'id_PID':
+            id_lineno = identifier[2]
+        elif id_tag == 'id_ARRAY_PID' or id_tag == 'id_ARRAY_NUM':
+            id_lineno = identifier[3]
+        
+        # mark identifier as assigned
+        self.table.mark_assigned(self.scope + identifier[1], id_lineno)
     
         c_list.extend(self.id_pos_to_acc(identifier)) # reg0: id1_pos
         c_list.append(Code('STORE', 1)) # store id1_pos in reg1
         
         c_list.extend(self.calculate_expression(expression)) # calculate value of expression and put into acc
         c_list.append(Code('STOREI', 1)) # set velue on position
+        
 
         self.line_number += 1
         return c_list    

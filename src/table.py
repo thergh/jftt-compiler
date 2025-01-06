@@ -120,3 +120,7 @@ class SymbolTable:
         self.mem_pos += 1
 
         self.add_symbol(name + "_rtrn")
+        
+        
+    def mark_assigned(self, name, line_number=-1):
+        self.table[name]["assigned"] = True
