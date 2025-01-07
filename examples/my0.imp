@@ -3,7 +3,7 @@ PROGRAM IS
     a, b, c
 BEGIN
     a := -11;
-    b := -3;
+    b := -11111111111;
     c := a * b;
     WRITE c;
 END

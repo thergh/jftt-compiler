@@ -938,6 +938,23 @@ class CodeGenerator:
                 c_list.append(Code('SUB', 31)) 
                 c_list.append(Code('STORE', 31))
                 
+                # if multiplicand < multiplier: swap them
+                c_list.append(Code('LOAD', 30)) 
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('JPOS', 10))
+                # a = a + b
+                # b = a - b
+                # a = a - b
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('ADD', 31))
+                c_list.append(Code('STORE', 30))
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('STORE', 31))
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('SUB', 31))
+                c_list.append(Code('STORE', 30))
+                
                 # BEGIN WHILE
                 # while multiplier > 0:
                 c_list.append(Code('LOAD', 31))
