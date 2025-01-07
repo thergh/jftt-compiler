@@ -113,6 +113,7 @@ class SymbolTable:
         if name in self.table:
             # I allow iterator redeclaration,
             # it will jsut overwrite the previous one
+            self.table[name]["assigned"] = True
             return
         
         self.table[name] = {

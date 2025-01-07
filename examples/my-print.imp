@@ -1,7 +1,27 @@
-# Binarna postać liczby 
-PROGRAM IS
-	n
+# Rozkład na czynniki pierwsze
+PROCEDURE check(n,d,p) IS
+  r
 BEGIN
-    READ n;
-    WRITE n;
+    p:=0;
+    r:=n%d;
+    WHILE r=0 DO
+        n:=n/d;
+        p:=p+1;
+        r:=n%d;
+    ENDWHILE
+END
+
+PROCEDURE print(x) IS
+BEGIN
+    x:= x + 1000000;
+    WRITE x;
+END
+
+PROGRAM IS
+    a, b, c
+BEGIN
+    READ a;
+    READ b;
+    check(a, b, c);
+    print(c);
 END
