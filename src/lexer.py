@@ -7,6 +7,12 @@ class MyLexer(Lexer):
               WHILE, DO, ENDWHILE, REPEAT, UNTIL, FOR, FROM, TO, ENDFOR,
               READ, WRITE, PID, NUM, T, NE, GE, LE, ASSIGN, DOWNTO}
     
+    # @_(r'\d+')
+    # def NUM(self, p):
+    #     p.value = int(p.value)
+    #     return p
+    NUM = r'0|[1-9]+[0-9]*|-[1-9]+[0-9]*'
+    
     literals = {'+', '-', '*', '/', '%', '=', '>', '<', '(', ')',
                 '[', ']', ',', ';', ':'}
     
@@ -33,16 +39,13 @@ class MyLexer(Lexer):
     END = r'END'
     T = r'T'    
     PID = r'[_a-z]+'
-    # NUM = r'0|[1-9]+[0-9]*|-[1-9]+[0-9]*'
+    
     NE = r'!='
     GE = r'>='
     LE = r'<='
     ASSIGN = r':='
     
-    @_(r'\d+')
-    def NUM(self, p):
-        p.value = int(p.value)
-        return p
+
 
     
     
