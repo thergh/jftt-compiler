@@ -951,6 +951,7 @@ class CodeGenerator:
                 # r34:  temp divisor - D
                 # r35:  1
                 # r36:  multiple - M
+                # r37:  negative flag
 
                 # setup
                 c_list.extend(self.value_to_acc(value1)) # dividend to r30
@@ -963,6 +964,38 @@ class CodeGenerator:
                 c_list.append(Code('STORE', 33))
                 c_list.append(Code('SET', 1)) # 1 to r35
                 c_list.append(Code('STORE', 35)) 
+                c_list.append(Code('SET', 0)) # negative flag to r37
+                c_list.append(Code('STORE', 37))
+                
+                # if divisor == 0; return TODO
+                c_list.append(Code('LOAD', 31)) 
+                c_list.append(Code('JZERO', 51))
+
+                # # dividend flag setup
+                c_list.append(Code('LOAD', 30)) 
+                c_list.append(Code('JPOS', 9)) 
+                c_list.append(Code('JZERO', 8))
+                c_list.append(Code('LOAD', 37)) 
+                c_list.append(Code('SUB', 35)) 
+                c_list.append(Code('STORE', 37))
+                # make dividend pos
+                c_list.append(Code('LOAD', 30))
+                c_list.append(Code('LOAD', 30)) 
+                c_list.append(Code('LOAD', 30)) 
+                c_list.append(Code('STORE', 30)) 
+                
+                # # divisor flag setup
+                c_list.append(Code('LOAD', 31)) 
+                c_list.append(Code('JPOS', 9)) 
+                c_list.append(Code('JZERO', 8))
+                c_list.append(Code('LOAD', 37)) 
+                c_list.append(Code('SUB', 35)) 
+                c_list.append(Code('STORE', 37))
+                # make dividend pos
+                c_list.append(Code('LOAD', 31))
+                c_list.append(Code('LOAD', 31)) 
+                c_list.append(Code('LOAD', 31)) 
+                c_list.append(Code('STORE', 31)) 
                 
                 # BEGIN WHILE_2
                 # while divisor <= remainder:
@@ -1013,9 +1046,15 @@ class CodeGenerator:
                 c_list.append(Code('JUMP', -24))
                 # END WHILE_2
                 
+                # if flag < 0; change result sign
+                c_list.append(Code('LOAD', 37))
+                c_list.append(Code('JZERO', 4))
+                c_list.append(Code('LOAD', 32))
+                c_list.append(Code('SUB', 32))
+                c_list.append(Code('SUB', 32))
+                
                 # return quotient
                 c_list.append(Code('LOAD', 32))
-                
                 
             elif operation_tag == '%':
                 c_list.extend(self.value_to_acc(value1))

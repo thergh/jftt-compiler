@@ -2,8 +2,8 @@
 PROGRAM IS
     a, b, c
 BEGIN
-    a := 100000010000001000;
-    b := 2;
+    a := 123413;
+    b := 345;
     c := a / b;
     WRITE c;
 END
