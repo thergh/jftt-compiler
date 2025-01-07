@@ -2,7 +2,7 @@
 PROGRAM IS
     a, b, c
 BEGIN
-    a := 10;
+    a := 100000010000001000;
     b := 2;
     c := a / b;
     WRITE c;
