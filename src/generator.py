@@ -1142,12 +1142,12 @@ class CodeGenerator:
                 
                 # # dividend flag setup
                 c_list.append(Code('LOAD', 30)) 
-                c_list.append(Code('JPOS', 10)) 
-                c_list.append(Code('JZERO', 9))
-                c_list.append(Code('LOAD', 37)) 
-                c_list.append(Code('SUB', 37))
-                c_list.append(Code('SUB', 37)) 
-                c_list.append(Code('STORE', 37))
+                c_list.append(Code('JPOS', 6)) 
+                c_list.append(Code('JZERO', 5))
+                # c_list.append(Code('LOAD', 37)) 
+                # c_list.append(Code('SUB', 37))
+                # c_list.append(Code('SUB', 37)) 
+                # c_list.append(Code('STORE', 37))
                 # make dividend pos
                 c_list.append(Code('LOAD', 30))
                 c_list.append(Code('SUB', 30)) 
