@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     parsed = parser.parse(tokens)
     
-    gen = CodeGenerator(parsed, False)
+    gen = CodeGenerator(parsed, True)
     
     code = gen.generate_code()
 

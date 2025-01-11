@@ -1386,9 +1386,17 @@ class CodeGenerator:
                 # set acc to position of ref
                 refs_assign_code.append(Code('SET', self.table.get_symbol(refs_list[i], call_lineno)["position"]))
                 refs_assign_code.append(Code('STORE', 40)) # ref position to r41
-                refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i], call_lineno)["position"]))
-                refs_assign_code.append(Code('LOADI', 0)) # IDK why it must be here ¯\_(ツ)_/¯
-                refs_assign_code.append(Code('STOREI', 40))    
+                # i don't check if the argument is a reference, or not
+                # if it is, it works
+                # otherwise, it doesnt
+                if self.table.get_symbol(self.scope + args_list[i], call_lineno)["is_reference"]:
+                    refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i], call_lineno)["position"]))
+                    refs_assign_code.append(Code('LOADI', 0)) # IDK why it must be here ¯\_(ツ)_/¯
+                    refs_assign_code.append(Code('STOREI', 40))
+                else:
+                    refs_assign_code.append(Code('SET', self.table.get_symbol(self.scope + args_list[i], call_lineno)["position"]))
+                    refs_assign_code.append(Code('LOAD', 0))
+                    refs_assign_code.append(Code('STOREI', 40))
         
         refs_assign_code_len = len(refs_assign_code)
         c_list.extend(refs_assign_code)
