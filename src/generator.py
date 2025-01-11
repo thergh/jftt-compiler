@@ -325,15 +325,24 @@ class CodeGenerator:
                 c_list.append(Code('ADD ', 60))
                 
             else:
-                arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
-                idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
-
-                # load idx to acc
-                c_list.append(Code('LOAD', idx_pos))
-                c_list.append(Code('STORE', 60))
-                # add array position and subtract offset
-                c_list.append(Code('SET', int(arr_pos)))
-                c_list.append(Code('ADD', 60))
+                if self.table.get_symbol(self.scope + idx_PID, arr_lineno)['is_reference']:
+                    arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
+                    idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
+                    # load idx to acc
+                    c_list.append(Code('LOADI', idx_pos))
+                    c_list.append(Code('STORE', 60))
+                    # add array position and subtract offset
+                    c_list.append(Code('SET', int(arr_pos)))
+                    c_list.append(Code('ADD', 60))
+                else:
+                    arr_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
+                    idx_pos = self.table.get_symbol(self.scope + idx_PID, arr_lineno)['position']
+                    # load idx to acc
+                    c_list.append(Code('LOAD', idx_pos))
+                    c_list.append(Code('STORE', 60))
+                    # add array position and subtract offset
+                    c_list.append(Code('SET', int(arr_pos)))
+                    c_list.append(Code('ADD', 60))
             
         else:
             print(f"Error: wrong tag: {id_tag}")
