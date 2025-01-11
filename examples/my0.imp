@@ -2,8 +2,8 @@
 PROGRAM IS
     a, b, c
 BEGIN
-    a :=  -11;
-    b := -2;
-    c := a % b;
+    a :=-11;
+    b :=-2;
+    c := a - b;
     WRITE c;
 END

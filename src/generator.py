@@ -883,19 +883,19 @@ class CodeGenerator:
                     print(f"\nError in line {expr_lineno}: {id[1]} not assigned.\n")
                     return
             
-            if operation_tag == "+":
+            if operation_tag == '+':
                 c_list.extend(self.value_to_acc(value2))
                 c_list.append(Code('STORE', 30))
                 c_list.extend(self.value_to_acc(value1))
                 c_list.append(Code('ADD', 30))
             
-            if operation_tag == "-":
+            elif operation_tag == '-':
                 c_list.extend(self.value_to_acc(value2))
                 c_list.append(Code('STORE', 30))
                 c_list.extend(self.value_to_acc(value1))
                 c_list.append(Code('SUB', 30))
             
-            if operation_tag == '*':
+            elif operation_tag == '*':
                 # r30:  multiplicand
                 # r31:  multiplier
                 # r32:  result
