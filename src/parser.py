@@ -6,6 +6,13 @@ class MyParser(Parser):
     
     tokens = MyLexer.tokens
     
+    precedence = (
+    ('right', 'UMINUS'),
+    ('left', '+', '-'),
+    ('left', '*', '/', '%'),
+    )
+    
+    
     
     @_('procedures main')
     def program_all(self, p):
@@ -141,6 +148,10 @@ class MyParser(Parser):
         return ('ar_PID', p[0], p.lineno)
     
     
+    @_('"-" value %prec UMINUS')
+    def expression(self, p):
+        return ('expr_UMINUS', p[1], p.lineno)
+
     @_('value')
     def expression(self, p):
         return ('expr_VAL', p[0])
