@@ -1,27 +1,34 @@
-# Rozkład na czynniki pierwsze
-PROCEDURE check(n,d,p) IS
-  r
-BEGIN
-    p:=0;
-    r:=n%d;
-    WHILE r=0 DO
-        n:=n/d;
-        p:=p+1;
-        r:=n%d;
-    ENDWHILE
-END
-
-PROCEDURE print(x) IS
-BEGIN
-    x:= x + 1000000;
-    WRITE x;
-END
-
 PROGRAM IS
-    a, b, c
+	n, j, ta[0:24], tb[0:24], tc[0:24]
 BEGIN
-    READ a;
-    READ b;
-    check(a, b, c);
-    print(c);
+	n:=24;
+	tc[0]:=n;
+	tc[n]:=n-tc[0];
+        j:=tc[0]+1;
+        FOR i FROM tc[0] DOWNTO tc[n] DO
+		ta[i]:=i;
+		tb[i]:=n-i;
+	ENDFOR
+        j:=tc[n];
+
+        WRITE tc[0];
+        WRITE tc[n];
+        WRITE j;
+        WRITE 10000000000000000;
+
+        WHILE j<=tc[0] DO
+            WRITE ta[j];
+            WRITE tb[j];
+            WRITE tc[j];
+		    tc[j]:=ta[j]*tb[j];
+            WRITE ta[j];
+            WRITE tb[j];
+            WRITE tc[j];
+            j:=j+1;
+            WRITE 1111111111111;
+	    ENDWHILE
+    WRITE 99999999999;
+        FOR i FROM 0 TO n DO
+		WRITE tc[i];
+	ENDFOR
 END
