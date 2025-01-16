@@ -26,28 +26,12 @@ pip3 install sly
 For instructions about the virtual machine,
 go to /virtual-machine/ReadMe.txt 
 
-### VIRTUAL MACHINE COMPILATION
-
-To compile virtual machine, use make command:
-
-```
-make virtual-machine/Makefile
-```
-
 ### USING THE COMPILER
 
 To compile your code, put its path as an argument to the compiler.
 
 ```
 python3 src/compiler.py examples/my-gcd.imp output/my-gcd.mr
-```
-
-### RUNNING GENERATED CODE
-
-To run generated machine code, use the provided virtual machine. Put path to the code as an argument to the machine.
-
-```
-virtual-machine/maszyna-wirtualna output/my-gcd.mr
 ```
 
 
