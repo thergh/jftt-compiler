@@ -33,13 +33,17 @@ class SymbolTable:
             print(f"\nError in line {lineno}: {name} redeclaration.\n")
             return
         
+        start_idx = int(start_idx)
+        end_idx = int(end_idx)
+        
+        
         if end_idx < start_idx:
             print(f"\nError in line {lineno}: start_idx ({start_idx}) bigger than end_idx ({end_idx})\n")
             return
         
         # length = int(end_idx) - int(start_idx)
         
-        if start_idx < 0 or end_idx < 0:
+        if int(start_idx) < 0 or int(end_idx) < 0:
             length = abs(int(start_idx)) + abs(int(end_idx)) + 1
         else:
             length = end_idx + 1
