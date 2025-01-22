@@ -37,17 +37,35 @@ class SymbolTable:
             print(f"\nError in line {lineno}: start_idx ({start_idx}) bigger than end_idx ({end_idx})\n")
             return
         
-        length = int(end_idx) - int(start_idx)
+        # length = int(end_idx) - int(start_idx)
         
-        self.table[name] = {
-            'position': self.mem_pos,
-            'is_array': True,
-            'start_idx': start_idx,
-            'end_idx': end_idx,
-            'assigned': False,
-            'is_reference': False,
-            'is_iterator': False
-        }
+        if start_idx < 0 or end_idx < 0:
+            length = abs(int(start_idx)) + abs(int(end_idx)) + 1
+        else:
+            length = end_idx + 1
+        
+        
+        if start_idx < 0:
+            self.table[name] = {
+                'position': self.mem_pos + abs(start_idx),
+                'is_array': True,
+                'start_idx': start_idx,
+                'end_idx': end_idx,
+                'assigned': False,
+                'is_reference': False,
+                'is_iterator': False
+            }
+            
+        else:
+            self.table[name] = {
+                'position': self.mem_pos,
+                'is_array': True,
+                'start_idx': start_idx,
+                'end_idx': end_idx,
+                'assigned': False,
+                'is_reference': False,
+                'is_iterator': False
+            }
         
         self.mem_pos += length + 1
         
