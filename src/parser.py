@@ -5,6 +5,14 @@ from lexer import MyLexer
 class MyParser(Parser):
     
     tokens = MyLexer.tokens
+    
+    precedence = (
+        ('left', '+', '-'),
+        ('left', '*', '/', '%'),
+        ('right', 'UMINUS')
+    )
+    
+    
 
     
     @_('procedures main')
@@ -106,6 +114,14 @@ class MyParser(Parser):
     def declarations(self, p):
         return ('decs_REC_ARRAY', p[0], p.PID, p[4], p[6], p.lineno)
     
+    @_('declarations "," PID "[" "-" NUM ":" NUM "]" %prec UMINUS')
+    def declarations(self, p):
+        return ('decs_REC_ARRAY', p[0], p.PID, 0 - p[5], p[7], p.lineno)
+    
+    @_('declarations "," PID "[" "-" NUM ":" "-" NUM "]" %prec UMINUS')
+    def declarations(self, p):
+        return ('decs_REC_ARRAY', p[0], p.PID, 0 - p[5], 0 - p[8], p.lineno)
+    
     @_('PID')
     def declarations(self, p):
         return ('decs_PID', p.PID, p.lineno)
@@ -113,6 +129,14 @@ class MyParser(Parser):
     @_('PID "[" NUM ":" NUM "]"')
     def declarations(self, p):
         return ('decs_ARRAY', p.PID, p[2], p[4], p.lineno)    
+    
+    @_('PID "[" "-" NUM ":" NUM "]" %prec UMINUS')
+    def declarations(self, p):
+        return ('decs_ARRAY', p.PID, 0 - p[3], p[5], p.lineno)   
+    
+    @_('PID "[" "-" NUM ":" "-" NUM "]" %prec UMINUS')
+    def declarations(self, p):
+        return ('decs_ARRAY', p.PID, 0 - p[3], 0 - p[6], p.lineno) 
         
     
     @_('args_decl "," PID')
@@ -173,6 +197,10 @@ class MyParser(Parser):
     def value(self, p):
         return('val_ID', p[0], p.lineno)
     
+    @_('"-" NUM %prec UMINUS')
+    def value(self, p):
+        return ('val_NUM', 0 - p[1], p.lineno)
+    
     
     @_('PID "[" PID "]"')
     def identifier(self, p):
@@ -181,6 +209,10 @@ class MyParser(Parser):
     @_('PID "[" NUM "]"')  
     def identifier(self, p):
         return ('id_ARRAY_NUM', p.PID, p.NUM, p.lineno)
+    
+    @_('PID "[" "-" NUM "]" %prec UMINUS')  
+    def identifier(self, p):
+        return ('id_ARRAY_NUM', p.PID, 0 - p.NUM, p.lineno)
         
     @_('PID')  
     def identifier(self, p):
