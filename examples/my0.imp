@@ -1,7 +1,0 @@
-# błąd: próba modyfikacji iteratora pętli FOR w linii 8
-PROGRAM IS
- a,b,arr[-10:-2]
-BEGIN
-  arr[-10]:=-2;
-  WRITE  arr[-10]; 
-END
