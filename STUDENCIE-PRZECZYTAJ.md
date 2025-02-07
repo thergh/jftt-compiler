@@ -24,7 +24,7 @@ Powodzenia!
 
 
 Pseudokod mnożenia:
-'''
+```
 if multiplicand < multiplier:
     temp = multiplicand
     multiplicand = multiplier
@@ -37,11 +37,11 @@ while multiplier > 0:
     multiplicand = multiplicand * 2
     multiplier = multiplier / 2
 return result
-'''
+```
 
 
 Pseudokod dzielenia:
-'''
+```
 quotient = 0
 remainder = dividend
 
@@ -59,5 +59,5 @@ while divisor <= remainder:
     quotient = quotient + multiple
 
 return quotient  # Quotient
-'''
+```
 
