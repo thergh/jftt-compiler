@@ -11,8 +11,6 @@ class MyParser(Parser):
         ('left', '*', '/', '%'),
         ('right', 'UMINUS')
     )
-    
-    
 
     
     @_('procedures main')
@@ -217,19 +215,3 @@ class MyParser(Parser):
     @_('PID')  
     def identifier(self, p):
         return ('id_PID', p.PID, p.lineno)
-    
-    
-if __name__ == '__main__':
-    lexer = MyLexer()
-    parser = MyParser()
-
-    with open('examples/program3.imp', 'r') as file:
-        data = file.read()
-        
-    tokens = lexer.tokenize(data)
-    
-    result = parser.parse(tokens)
-    
-    print(result)
-
-    

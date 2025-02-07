@@ -11,7 +11,6 @@ class MyLexer(Lexer):
     def NUM(self, p):
         p.value = int(p.value)
         return p
-    # NUM = r'0|[1-9]+[0-9]*|-[1-9]+[0-9]*'
     
     literals = {'+', '-', '*', '/', '%', '=', '>', '<', '(', ')',
                 '[', ']', ',', ';', ':'}
@@ -56,15 +55,3 @@ class MyLexer(Lexer):
     def error(self, t):
         print("Line %d: Wrong character %r '%s'" % (self.lineno, t.value[0]))
         self.index += 1
-        
-        
-        
-if __name__ == '__main__':
-    
-    lexer = MyLexer()
-    
-    with open('../examples/program0.imp', 'r') as file:
-        data = file.read()
-        
-    for token in lexer.tokenize(data):
-        print('type=%r, value=%r' % (token.type, token.value))

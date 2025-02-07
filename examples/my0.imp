@@ -1,10 +1,7 @@
 # błąd: próba modyfikacji iteratora pętli FOR w linii 8
 PROGRAM IS
- a,b
+ a,b,arr[-10:-2]
 BEGIN
-  READ a;
-  READ b;
-  FOR i FROM a TO b DO
-    i:=1;
-  ENDFOR
+  arr[-10]:=-2;
+  WRITE  arr[-10]; 
 END

@@ -4,7 +4,6 @@ from generator import CodeGenerator
 import sys
 
 
-
 if __name__ == '__main__':
     lexer = MyLexer()
     parser = MyParser()

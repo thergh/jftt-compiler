@@ -263,7 +263,6 @@ class CodeGenerator:
         """ returns: Code that puts symbol table position
         of PID into accumulator.
         Uses r60 """
-        # TODO: reference arrays
         
         id_tag = identifier[0]
         c_list = []
@@ -290,7 +289,6 @@ class CodeGenerator:
                 number = identifier[2]
                 arr_ref_pos = self.table.get_symbol(self.scope + arr_PID, arr_lineno)['position']
 
-                # TODO: include offset
                 c_list.append(Code('LOAD', arr_ref_pos, "DEBUG: ładuję arr_ref_pos")) # load position of array
                 c_list.append(Code('STORE ', 60))
                 c_list.append(Code('SET ', number))
@@ -732,7 +730,7 @@ class CodeGenerator:
         for_prefix = '__FOR' + str(self.for_counter) + '_'
         self.for_counter += 1
         # iterator_name = for_prefix + iterator_PID
-        iterator_name = iterator_PID # scope error!!! TODO ??? i don't remember anymore XD
+        iterator_name = iterator_PID 
         
         self.table.add_iterator(self.scope + iterator_name, for_lineno)    
         
@@ -1529,31 +1527,3 @@ class CodeGenerator:
         self.line_number += 1 # proc END
         
         return c_list
-
-
-
-if __name__ == '__main__':
-    lexer = MyLexer()
-    parser = MyParser()
-    
-    input = 'examples/my-proc.imp'
-    # input = 'examples/program1.imp'
-    output = 'output/my-out.mr'
-
-
-    with open(input, 'r') as file:
-        data = file.read()
-        
-    tokens = lexer.tokenize(data)
-    
-    parsed = parser.parse(tokens)
-    
-    gen = CodeGenerator(parsed, False)
-
-    code = gen.generate_code()
-    
-    
-    
-    # with open(output, 'w') as file:
-    #     for line in code:
-    #         file.write(line + '\n')

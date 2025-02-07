@@ -117,7 +117,7 @@ STORE 105
 JUMP -89 	# FOR jump back
 RTRN 104 	# factorial: procedure return
 SET 121 	# bc: set procedure position
-STORE 213
+STORE 214
 JUMP 179 	# bc: jump over procedure code
 SET 100
 STORE 40
@@ -132,7 +132,7 @@ STOREI 40
 SET 134 	# CALL: set return position
 STORE 104
 RTRN 103 	# CALL: go to factorial procedure
-SET 212
+SET 213
 STORE 1
 LOAD 109
 LOADI 0
@@ -225,7 +225,7 @@ STORE 1
 LOAD 110
 LOADI 0
 STORE 30
-LOAD 212
+LOAD 213
 STORE 60
 SET 111
 ADD 60
@@ -296,31 +296,31 @@ SUB 32
 STORE 32
 LOAD 32
 STOREI 1
-RTRN 214 	# bc: procedure return
-SET 215
+RTRN 215 	# bc: procedure return
+SET 216
 STORE 1
 GET 0
 STOREI 1
-SET 216
+SET 217
 STORE 1
 GET 0
 STOREI 1
 SET 108
 STORE 40
-SET 215
+SET 216
 STOREI 40
 SET 109
 STORE 40
-SET 216
+SET 217
 STOREI 40
 SET 110
 STORE 40
-SET 217
+SET 218
 STOREI 40
 SET 322 	# CALL: set return position
-STORE 214
-RTRN 213 	# CALL: go to bc procedure
-SET 217
+STORE 215
+RTRN 214 	# CALL: go to bc procedure
+SET 218
 LOADI 0
 PUT 0
 HALT

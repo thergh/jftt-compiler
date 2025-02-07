@@ -1,12 +1,10 @@
-
-
 class SymbolTable:
     def __init__(self):
         self.table = {}
         self.mem_pos = 100
         # mem slot 0: accumulator
         # 1-9 slots for code generation
-        # 10-19 slots for utility functions
+        # 10-99 slots for utility functions
         # 100+ memory
     
     

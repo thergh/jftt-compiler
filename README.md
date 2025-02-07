@@ -16,22 +16,19 @@ Program compiles a procedural language to machine code that can by run using the
 To run the compiler, **python 3.6** and **sly** library are required.
 
 ```
-apt install python3.6
+apt install python3
 ```
 
 ```
 pip3 install sly
 ```
 
-For instructions about the virtual machine,
-go to /virtual-machine/ReadMe.txt 
-
 ### USING THE COMPILER
 
 To compile your code, put its path as an argument to the compiler.
 
 ```
-python3 src/compiler.py examples/my-gcd.imp output/my-gcd.mr
+python3 src/kompilator.py examples/my-gcd.imp output/my-gcd.mr
 ```
 
 
