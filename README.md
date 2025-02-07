@@ -28,7 +28,7 @@ pip3 install sly
 To compile your code, put its path as an argument to the compiler.
 
 ```
-python3 src/kompilator.py examples/my-gcd.imp output/my-gcd.mr
+python3 src/kompilator.py tests/exampleA.imp output/exampleA.mr
 ```
 
 
