@@ -1,7 +1,7 @@
 
 ### Author: Łukasz Ciświcki
 
-Program compiles a procedural language to machine code that can by run using the provided virtual machine.
+Program compiles a procedural language to machine code that can be run using a virtual machine.
 
 ### FILES
 

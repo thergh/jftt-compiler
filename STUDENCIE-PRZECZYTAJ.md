@@ -32,7 +32,7 @@ if multiplicand < multiplier:
 
 result = 0
 while multiplier > 0:
-    if multiplier % 2 == 1:             # check if multiplier is odd
+    if multiplier % 2 == 1:
         result = result + multiplicand
     multiplicand = multiplicand * 2
     multiplier = multiplier / 2
