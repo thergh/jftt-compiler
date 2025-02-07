@@ -15,6 +15,7 @@ Polecam zacząć generowanie kodu od najprostszych możliwych komend. Coś w sty
 Co bym zmienił następnym razem?
 - Lepsza obsługa tablic i ich indeksów. To co napisałem jest zbrodnią przciwko ludzkości.
 - Schldniejsza struktura danych dla tablicy symboli. Po pewnym czasie wytworzyłem abominację, która trzyma się na słowo honoru. Stworzył się zbyt wielki chaos w atrybutach zmiennych w słowniku tablicy symboli.
+- Lepsza obsługa unarnego minusa w parserze
 - Większa uważność przy korzystaniu z drogich komend, jak SET, LOAD itp.
 - Mnożenie i dzielenie jako procedury. To pozwoliłoby nie wklejać ich gargantuicznego kodu za każdym razem gdy wykonywana jest operacja.
 - Prawdopodobnie zamiast krotek stringów lepiej byłoby stosować klasy jako nody w AST
