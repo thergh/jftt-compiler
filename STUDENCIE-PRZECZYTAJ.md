@@ -1,4 +1,4 @@
-Hej, ten kompilator został napisany na kurs Języki Formalne i Techniki Translacji 2024-2025. Ostrzegam, że pisałem go z myślą o poprawności a nie optymalności. W konkursie znajdował się na raczej na końcu tabeli, niemniej jednak pozwolił mi zaliczyć ten przedmiot. Z góry przepraszam za męki patrzenia na mój okropny kod - może on jednak okazać się przydatny jako inspiracja dla kolejnych roczników studentów Informatyki Algorytmicznej. Polecam zostawić sobie BAAAARDZO dużo czasu na napisanie kompilatora. To pomoże wam uniknąć stresu i prawdopodobnie zaoszczędzić dużo czasu na desperackie udeżanie głową w ścianę. Często natrafiałem na problemy, których rozwiązanie przychodziło naturalnie po przespaniu się, na świeżo. Moim zdaniem najlepiej zacząć na początku przerwy świąteczniej, najpóźniej przed nowym rokiem. W tym momencie ma się już całą potrzebną wiedzę teoretyczną i stosunkowo dużo wolnego czasu.
+Hej, ten kompilator został napisany na kurs Języki Formalne i Techniki Translacji 2024-2025. Program został napisany z myślą o poprawności, ze znikomą optymalizacją.
 
 Krótki opis plików:
 - lexer.py - Analizator leksykalny. Dzieli lity tekst na tokeny.
@@ -13,12 +13,12 @@ Nie jest to jedyne możliwe podejście, lecz chyba najwygodniejsze na potrzeby t
 Polecam zacząć generowanie kodu od najprostszych możliwych komend. Coś w stylu READ, WRITE. Gdy to się uda, łatwo będzie zrozumiec jak przejść do bardziej skomplikowanych struktur.
 
 Co bym zmienił następnym razem?
-- Lepsza obsługa tablic i ich indeksów. To co napisałem jest zbrodnią przciwko ludzkości.
-- Schldniejsza struktura danych dla tablicy symboli. Po pewnym czasie wytworzyłem abominację, która trzyma się na słowo honoru. Stworzył się zbyt wielki chaos w atrybutach zmiennych w słowniku tablicy symboli.
+- Lepsza obsługa tablic i ich indeksów.
+- Schldniejsza struktura danych dla tablicy symboli. Po pewnym czasie stworzył się zbyt wielki chaos w atrybutach zmiennych w słowniku tablicy symboli.
 - Lepsza obsługa unarnego minusa w parserze
 - Większa uważność przy korzystaniu z drogich komend, jak SET, LOAD itp.
 - Mnożenie i dzielenie jako procedury. To pozwoliłoby nie wklejać ich gargantuicznego kodu za każdym razem gdy wykonywana jest operacja.
-- Prawdopodobnie zamiast krotek stringów lepiej byłoby stosować klasy jako nody w AST
+- Prawdopodobnie zamiast krotek stringów lepiej byłoby stosować klasy jako node-y w AST
 
 
 Powodzenia!
