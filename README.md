@@ -12,8 +12,6 @@
 *   **Symbol Management:** Symbol table for tracking variables and scope.
 *   **Machine Code Generation:** Translation of high-level constructs into low-level instructions.
 
-
-## Tech Stack
 | Component | Technology |
 | :--- | :--- |
 | **Language** | Python 3.6+ |
